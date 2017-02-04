@@ -3,7 +3,8 @@ let Schema = mongoose.Schema;
 
 let grocerySchema = new Schema ({
 
-	name : String
+	name : String,
+	price : Number
 
 });
 

@@ -3,12 +3,14 @@ let Schema = mongoose.Schema;
 
 let userSchema = new Schema ({
 
-	name : String
+	username : {
+		type: String,
+		unique: true
+	},
+	password : String
+
 
 });
 
-module.exports = {
-
-	usersModel : mongoose.model ('users', userSchema)
-
-};
+usersModel = mongoose.model ('users', userSchema);
+module.exports = usersModel;

@@ -7,7 +7,7 @@ let app = express();
 let mongoose = require ('mongoose');
 let Schema = mongoose.Schema;
 let userModel = require ('./models/users.js');
-let {groceriesModel} = require ('./models/groceries.js');
+let groceriesModel = require ('./models/groceries.js');
 const SECRET_KEY = "This is the secret key";
 
 app.use(bodyParser.json());
@@ -52,13 +52,24 @@ app.post ('/login' , (req, res) => {
 
 
 	}).catch ((error) => {
-		res.send(error);
+		res.status(500).send(error);
 	});
 
 });
 
 app.get ('/grocery', (req, res) => {
-	
+
+	groceriesModel.find({}).exec()
+	.then ((groceries) => {
+
+		res.send(groceries);
+
+	})
+	.catch((error) => {
+
+		res.status(500).send(error);
+	});
+
 });
 
 

@@ -10,4 +10,4 @@ let grocerySchema = new Schema ({
 
 groceriesModel = mongoose.model ('groceries', grocerySchema);
 
-module.exports = {groceriesModel};
+module.exports = groceriesModel;

@@ -15,5 +15,10 @@
   "bugs": {
     "url": "https://github.com/abhishekbadjatya/coms6998_modern/issues"
   },
-  "homepage": "https://github.com/abhishekbadjatya/coms6998_modern#readme"
+  "homepage": "https://github.com/abhishekbadjatya/coms6998_modern#readme",
+  "dependencies": {
+    "body-parser": "^1.16.0",
+    "express": "^4.14.1",
+    "stripe": "^4.15.0"
+  }
 }

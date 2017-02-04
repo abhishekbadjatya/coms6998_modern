@@ -1,8 +1,5 @@
 var mongoose = require ("mongoose");
 var config=require('../config.js');
-		
-
-
 
 module.exports.connectToDB = function() {
 	mongoose.connect(config.MONGO_DB_CONNECTION_STRING, function(){
@@ -17,19 +14,19 @@ module.exports.disConnectFromDB = function() {
 };
 
 var userSchema = new mongoose.Schema({
-	
+
 });
 
 
 var productSchema = new mongoose.Schema({
-	
+
 });
 
 var paymentSchema = new mongoose.Schema({
 	paymentId : String,
 	itemId : String,
 	userId : String,
-	amount : float
+	amount : Number
 });
 
 var paymentModel = mongoose.model('paymentModel', paymentSchema);

@@ -1,4 +1,4 @@
-var dao = requrire('../dao/mongoconnect.js');
+var dao = require('../dao/mongoconnect.js');
 var express = require('express');
 var bodyParser = require('body-parser');
 var app = express();
@@ -7,15 +7,20 @@ app.use(bodyParser());
 
 var paymentModel = dao.paymentModel;
 
-app.post('/savePayment', function(req, res) {
-    
+app.post('/api/payment/save', function(req, res) {
+
 	dao.connectToDB();
-	var newPayment = paymentModel(req.body.paymentObj).save(function(err, data){
-		dao.disConnectFromDB();
-		if(err) throw err;
-    	res.json(data);
+	var newPayment = paymentModel(req.body.paymentObj).save()
+    .then(function(data){
+		    dao.disConnectFromDB();
+		    res.status(200).send(data);
+    })
+    .catch(function(err){
+        dao.disConnectFromDB();
+        console.log(err);
+        res.status(500).send(data);
     });
-        
+
 });
 
 app.use(express.static(__dirname));

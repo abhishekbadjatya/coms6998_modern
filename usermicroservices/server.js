@@ -11,13 +11,21 @@ let groceriesModel = require ('./models/groceries.js');
 const SECRET_KEY = "This is the secret key";
 
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({extended:false}));
+app.use(bodyParser.urlencoded({extended:true}));
+
 app.use (
 	expressJWT ({secret: SECRET_KEY})
-	.unless({path : ['/login', '/grocery'] }));
+	.unless({path : ['/login', new RegExp('/grocery/*/', 'i')] }));
+
+app.use(function (err, req, res, next) {
+  if (err.name === 'UnauthorizedError') {
+    res.status(401).json({error:"INVALID_TOKEN"});
+  }
+});
 
 mongoose.connect('mongodb://localhost:27017/groceriesapp');
 mongoose.Promise = global.Promise;
+
 
 
 app.get ('/' , (req, res) => {
@@ -69,6 +77,52 @@ app.get ('/grocery', (req, res) => {
 
 		res.status(500).send(error);
 	});
+
+});
+
+app.put ('/user/grocery', (req, res) => {
+
+	let {userID} = req.user;
+	let {groceryID} = req.body;
+	
+	userModel.update (
+		{_id:userID}, 
+		{
+			$push:{
+				groceriesBought: {id:groceryID}
+			}
+		},
+		{
+			upsert:true
+		})
+	.exec()
+	.then ((response) => {
+
+		res.send(response);
+	})
+	.catch((error) => {
+
+		res.status(500).json({error:error});
+
+	});
+
+
+});
+
+app.get ('/grocery/:id', (req, res) => {
+
+	let groceryID = req.params.id;
+	groceriesModel.findOne({"_id": groceryID}).exec()
+	.then ((groceries) => {
+
+		res.send(groceries);
+
+	})
+	.catch((error) => {
+
+		res.status(500).send(error);
+	});
+
 
 });
 

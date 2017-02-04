@@ -7,7 +7,9 @@ let userSchema = new Schema ({
 		type: String,
 		unique: true
 	},
-	password : String
+	password : String,
+
+	groceriesBought : Array
 
 
 });

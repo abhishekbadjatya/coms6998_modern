@@ -1,0 +1,19 @@
+{
+  "name": "coms6998_modern",
+  "version": "1.0.0",
+  "description": "Coms 6998 project",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/abhishekbadjatya/coms6998_modern.git"
+  },
+  "author": "aastv",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/abhishekbadjatya/coms6998_modern/issues"
+  },
+  "homepage": "https://github.com/abhishekbadjatya/coms6998_modern#readme"
+}

@@ -3,10 +3,11 @@ let Schema = mongoose.Schema;
 
 let grocerySchema = new Schema ({
 
-	name : String
+	name : String,
+	price : Number
 
 });
 
 groceriesModel = mongoose.model ('groceries', grocerySchema);
 
-module.exports = {groceriesModel};
+module.exports = groceriesModel;

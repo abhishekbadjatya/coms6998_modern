@@ -7,7 +7,7 @@ app.use(bodyParser());
 
 var paymentModel = dao.paymentModel;
 
-app.post('/savePayment', function(req, res) {
+app.post('/api/payment/save', function(req, res) {
 
 	dao.connectToDB();
 	var newPayment = paymentModel(req.body.paymentObj).save()

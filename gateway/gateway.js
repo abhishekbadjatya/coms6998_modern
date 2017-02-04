@@ -11,14 +11,14 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 //Test api for getting charge details
-app.get('/getCharge', function(req, res) {
+app.get('/api/gateway/transdetails', function(req, res) {
     // res.writeHead(200, {"Content-Type": "application/json"});
     res.setHeader('Content-Type', 'application/json');
     res.status(200).send({"charge":2000});
 });
 
-//Api for chargin based on token
-app.post('/charge', function(req, res) {
+//
+app.post('/api/gateway/charge', function(req, res) {
     var stripeToken = req.body.stripeToken;
     fetch('http://localhost:3000/getCharge')
     .then(function(res) {

@@ -4,6 +4,7 @@ var http = require('http');
 var config=require('../config.js');
 var stripe = require('stripe')(config.STRIPE_SECRET_KEY);
 var fetch = require('node-fetch');
+var myHeaders= {'Content-Type': 'application/json'};
 
 var app = express();
 // app.use(bodyParser());
@@ -36,8 +37,22 @@ app.post('/api/gateway/charge', function(req, res) {
             if (err) {
                 res.status(500).send(err);
             } else {
-                console.log(charge);
-                res.status(200).send(charge);
+                var postdata = {
+                    "chargeDetails":charge,
+                    "JWT":"JWTToken",
+                    "product_id":productid
+                };
+                fetch('http://localhost:3001/api/payment/save', { method: 'POST', 
+                                                                body: JSON.stringify(postdata),
+                                                                headers: myHeaders
+                })
+                .then(function(res){
+                    console.log('In then');
+                })
+                .catch(function(err){
+                    console.log('Inside catch');
+                    console.log(err);
+                });
             }
         })
     })

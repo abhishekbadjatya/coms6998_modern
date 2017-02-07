@@ -2,13 +2,13 @@ var dao = require('../dao/mongoconnect.js');
 var express = require('express');
 var bodyParser = require('body-parser');
 var app = express();
-app.use(bodyParser());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 
 
 var paymentModel = dao.paymentModel;
 
 app.post('/api/payment/save', function(req, res) {
-
 	dao.connectToDB();
 	var newPayment = paymentModel(req.body.paymentObj).save()
     .then(function(data){

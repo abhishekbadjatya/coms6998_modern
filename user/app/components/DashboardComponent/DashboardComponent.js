@@ -23,7 +23,12 @@ class DashboardComponent extends React.Component {
 
 		return groceries.map ((singleGrocery) => {
 
-			return (<SingleItemComponent key = {singleGrocery._id} {...singleGrocery} />)
+			return (
+				<SingleItemComponent 
+				alreadyBought = {false}
+				sendStripeToken = {this.props.sendStripeToken} 
+				key = {singleGrocery._id} {...singleGrocery} />
+			);
 
 		});
 	}

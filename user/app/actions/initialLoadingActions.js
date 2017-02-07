@@ -125,7 +125,7 @@ export function fetchGroceries () {
 
 		}).catch ((error) => {
 
-			console.log('error');
+			console.log(error);
 		});
 	};
 }
@@ -199,3 +199,25 @@ export function login (username, password) {
 
 }
 
+
+export function sendStripeToken (token, groceryID) {
+
+	return function (dispatch, getState) {
+
+		kfetch(urlConstants.sendStripeToken,{
+			method :'POST',
+			body: JSON.stringify({stripeToken:token, productID: groceryID})
+		})
+		.then((response) => {
+
+			return response.json();
+		})
+		.then((json)=> {
+			console.log(json);
+		})
+		.catch ((error) => {
+
+			console.log(error);
+		})
+	}
+}

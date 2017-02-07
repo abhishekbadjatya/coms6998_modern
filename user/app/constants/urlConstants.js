@@ -2,15 +2,14 @@
 
 let urlConstants = () => {
 
-	let baseUrl = "http://localhost:3000/"
+	let baseUrlUserMicroservice = "http://localhost:3000/";
+	let baseUrlGatewayMicroservice = "http://localhost:3002/"
 	return {
 
-		"login" : baseUrl + 'login',
-		// "init" : baseUrl + 'api/getSession',
-		// "signUp" : baseUrl + 'api/authz/signup',
-		// "logout" : baseUrl + 'api/authz/logout',
-		"fetchGroceries" : baseUrl + 'grocery',
-		"fetchUserData" : baseUrl + 'user'
+		"login" : baseUrlUserMicroservice + 'login',
+		"fetchGroceries" : baseUrlUserMicroservice + 'grocery',
+		"fetchUserData" : baseUrlUserMicroservice + 'user',
+		"sendStripeToken" : baseUrlGatewayMicroservice + 'api/gateway/charge'
 	};
 
 

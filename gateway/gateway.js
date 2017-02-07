@@ -1,7 +1,7 @@
 var express = require('express');
 var bodyParser = require('body-parser');
 var http = require('http');
-var config=require('../config.js');
+var config=require('./config.js');
 var stripe = require('stripe')(config.STRIPE_SECRET_KEY);
 var fetch = require('node-fetch');
 var cors = require('cors');
@@ -29,8 +29,9 @@ app.post('/api/gateway/charge', function(req, res) {
     console.log(req.headers);
     var JWT=req.headers.authorization;
     var stripeToken = req.body.stripeToken; //need to check from where to retrieve the token
-    productid=123456789
-    fetch('http://localhost:3000/api/user/grocery/'+productid)
+    var productID = req.body.productID;
+
+    fetch('http://localhost:3000/grocery/'+productID)
     .then(function(res) {
         return res.json();
     })
@@ -40,14 +41,14 @@ app.post('/api/gateway/charge', function(req, res) {
         stripe.charges.create({
         card: stripeToken,
         currency: 'usd',
-        amount: amount
+        amount: amount*100
      },function(err, charge) {
             if (err) {
                 res.status(500).send(err);
             } else {
                 var postdata = {
                     "chargeDetails":charge,
-                    "product_id":productid
+                    "product_id":productID
                 };
                 var newHeader={'Content-Type': 'application/json',
                             'Authorization': JWT};

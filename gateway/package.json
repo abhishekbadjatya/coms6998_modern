@@ -1,0 +1,27 @@
+{
+  "name": "gateway",
+  "version": "1.0.0",
+  "description": "gateway service",
+  "main": "gateway.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/abhishekbadjatya/coms6998_modern.git"
+  },
+  "author": "aastv",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/abhishekbadjatya/coms6998_modern/issues"
+  },
+  "homepage": "https://github.com/abhishekbadjatya/coms6998_modern#readme",
+  "dependencies": {
+    "body-parser": "^1.16.0",
+    "express": "^4.14.1",
+    "mongoose": "^4.8.1",
+    "node-fetch": "^1.6.3",
+    "nodemon": "^1.11.0",
+    "stripe": "^4.15.0"
+  }
+}

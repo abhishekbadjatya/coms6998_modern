@@ -18,10 +18,10 @@ app.use(bodyParser.json());
 app.use(cors());
 
 //Test api for getting charge details
-app.get('/api/user/grocery/123456789', function(req, res) {
+app.get('/grocery/123456789', function(req, res) {
     // res.writeHead(200, {"Content-Type": "application/json"});
     res.setHeader('Content-Type', 'application/json');
-    res.status(200).send({"price":2000,"name":"milk","_id":123456789});
+    res.status(200).send({"price":20,"name":"milk","_id":123456789});
 });
 
 //
@@ -31,7 +31,7 @@ app.post('/api/gateway/charge', function(req, res) {
     var stripeToken = req.body.stripeToken; //need to check from where to retrieve the token
     var productID = req.body.productID;
 
-    fetch('http://localhost:3000/grocery/'+productID)
+    fetch('http://localhost:3002/grocery/'+productID)
     .then(function(res) {
         return res.json();
     })
@@ -43,15 +43,25 @@ app.post('/api/gateway/charge', function(req, res) {
         currency: 'usd',
         amount: amount*100
      },function(err, charge) {
+            var newHeader={'Content-Type': 'application/json',
+                            'Authorization': JWT};
             if (err) {
-                res.status(500).send(err);
+                console.log(err);
+                let postdata = {
+                    "status":"FAILURE",
+                    "error":err
+                };
+                fetch('http://localhost:3001/api/payment/save', { method: 'POST', 
+                                                                body: JSON.stringify(postdata),
+                                                                headers: newHeader
+                })
+                // res.status(500).send(err);
             } else {
-                var postdata = {
+                let postdata = {
+                    "status":"SUCCESS",
                     "chargeDetails":charge,
                     "product_id":productID
                 };
-                var newHeader={'Content-Type': 'application/json',
-                            'Authorization': JWT};
                 fetch('http://localhost:3001/api/payment/save', { method: 'POST', 
                                                                 body: JSON.stringify(postdata),
                                                                 headers: newHeader

@@ -1,4 +1,4 @@
-var dao = require('../dao/mongoconnect.js');
+var dao = require('./dao/mongoconnect.js');
 var express = require('express');
 var bodyParser = require('body-parser');
 var fetch = require('node-fetch');

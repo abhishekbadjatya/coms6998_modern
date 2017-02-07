@@ -1,0 +1,17 @@
+let actionConstants  = () => {
+	
+
+	return {
+
+		"SET_USER_INFO" : "SET_USER_INFO",
+		"SET_USER_LOGGED_IN" : "SET_USER_LOGGED_IN",
+		"ADD_NOTIFICATION" : "ADD_NOTIFICATION",
+		"SET_NOTIFICATION_TRIGGER_FLAG" : "SET_NOTIFICATION_TRIGGER_FLAG",
+		"SET_FLAGS" : "SET_FLAGS",
+		"SET_GROCERIES" : "SET_GROCERIES"
+
+	};
+
+};
+
+export default actionConstants();

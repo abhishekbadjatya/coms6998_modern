@@ -1,0 +1,57 @@
+.base-header {
+	background-color : #13232f;
+	width: 100%;
+	height: 75px;
+	position:fixed;
+	z-index: 1;
+}
+.profile-pic {
+	height: 40px;
+	width : 50px;
+	margin-right: 20px;
+	border-radius: 50px;
+}
+.app-name {
+	
+	font-size : 22px;
+}
+
+.logo {
+	width : 200px;
+
+}
+.logo-container {
+	float: left;
+
+}
+.logout-container{
+	float:right;
+	padding-right: 10px;
+    padding-top: 14px;
+}
+.children{
+	padding-top:75px;
+}
+$bold: 600;
+
+.logout {
+  border:0;
+  outline:none;
+  border-radius:0;
+  padding:15px;
+  font-size:1rem;
+  font-weight:$bold;
+  text-transform:uppercase;
+  letter-spacing:.1em;
+  background-color:#c12222;
+  color:#FFFFFF;
+  transition:all.5s ease;
+  -webkit-appearance: none;
+  &:hover, &:focus {
+    background-color:darken(#c12222,5%);
+  }
+}
+.welcome-text {
+	margin-right : 15px;
+	color:#FFFFFF;
+}

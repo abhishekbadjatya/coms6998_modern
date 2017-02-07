@@ -1,0 +1,125 @@
+.buttons {
+
+	padding-top : 50px;
+
+}
+.login {
+	margin : 5px;
+}
+.new-user {
+	margin : 5px;
+	padding-right : 5px;
+}
+
+
+
+$body-bg: #c1bdba;
+$form-bg: #13232f;
+$white: #ffffff;
+
+$main: #1ab188;
+$main-light: lighten($main,5%);
+$main-dark: darken($main,5%);
+
+$gray-light: #a0b3b0;
+$gray: #ddd;
+
+$thin: 300;
+$normal: 400;
+$bold: 600;
+$br: 4px;
+
+.welcome-back-text {
+	text-align:center;
+	color:$white;
+	font-weight:$thin;
+	margin:0 0 40px;
+}
+
+
+
+.text-fields {
+	font-size:22px;
+	display:block;
+	width:100%;
+	height:100%;
+	padding:5px 10px;
+	background:none;
+	background-image:none;
+	border:1px solid $gray-light;
+	color:$white;
+	border-radius:0;
+	transition:border-color .25s ease, box-shadow .25s ease;
+	&:focus {
+		outline:0;
+		border-color:$main;
+  }
+}
+.form {
+  background:rgba($form-bg,.9);
+  padding: 40px;
+  max-width:600px;
+  margin:40px auto;
+  border-radius:$br;
+  box-shadow:0 4px 10px 4px rgba($form-bg,.3);
+}
+.gap {
+	margin : 5px;
+}
+
+
+.req {
+  	margin:2px;
+  	color:$main;
+  }
+.labels-input {
+
+
+	left:13px;
+	color:rgba($white,.5);
+	transition:all 0.25s ease;
+	-webkit-backface-visibility: hidden;
+	pointer-events: none;
+	font-size:16px;
+}
+
+.field-wrap {
+  position:relative;
+}
+
+
+.button {
+  border:0;
+  outline:none;
+  border-radius:0;
+  padding:15px 0;
+  font-size:2rem;
+  font-weight:$bold;
+  text-transform:uppercase;
+  letter-spacing:.1em;
+  background:$main;
+  color:$white;
+  transition:all.5s ease;
+  -webkit-appearance: none;
+  &:hover, &:focus {
+    background:$main-dark;
+  }
+}
+
+.button-block {
+  display:block;
+  width:100%;
+}
+.gap-up {
+	padding-top:5px;
+}
+
+.forgot-text {
+	float: right;
+	cursor : pointer;
+	color: #FFFFFF;
+}
+.forgot-text:hover {
+
+	color: #F71;
+}

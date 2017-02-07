@@ -11,21 +11,23 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 //Test api for getting charge details
-app.get('/api/gateway/transdetails', function(req, res) {
+app.get('/api/user/grocery/123456789', function(req, res) {
     // res.writeHead(200, {"Content-Type": "application/json"});
     res.setHeader('Content-Type', 'application/json');
-    res.status(200).send({"charge":2000});
+    res.status(200).send({"price":2000,"name":"milk","_id":123456789});
 });
 
 //
 app.post('/api/gateway/charge', function(req, res) {
-    var stripeToken = req.body.stripeToken;
-    fetch('http://localhost:3000/getCharge')
+    var stripeToken = req.body.stripeToken; //need to check from where to retrieve the token
+    productid=123456789
+    fetch('http://localhost:3000/api/user/grocery/'+productid)
     .then(function(res) {
         return res.json();
     })
     .then(function(json) {
-        var amount = json.charge;
+        console.log(json);
+        var amount = json.price;
         stripe.charges.create({
         card: stripeToken,
         currency: 'usd',

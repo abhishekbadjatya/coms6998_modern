@@ -22,12 +22,7 @@ var productSchema = new mongoose.Schema({
 
 });
 
-var paymentSchema = new mongoose.Schema({
-	paymentId : String,
-	itemId : String,
-	userId : String,
-	amount : Number
-});
+var paymentSchema = new mongoose.Schema({..}, { strict: false });
 
 var paymentModel = mongoose.model('paymentModel', paymentSchema);
 var productModel = mongoose.model('productModel', paymentSchema);

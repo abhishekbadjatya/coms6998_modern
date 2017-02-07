@@ -6,7 +6,8 @@ const mapStateToProps = (state) => {
 	return {
 
 		"flags" : state.flags,
-		"groceries" : state.groceries
+		"groceries" : state.groceries,
+		"userInfo" : state.userInfo
 
 	};
 };

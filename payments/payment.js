@@ -14,7 +14,7 @@ app.post('/api/payment/save', function(req, res) {
 	var chargeFromStripe = req.body.chargeDetails;
 	var productId = req.body.product_id;
 	var jwtToken = req.headers.authorization;
-	var myHeaders = {'Authorization' : 'Bearer' + jwtToken};
+	var myHeaders = {'Authorization' : jwtToken};
 	fetch('http://localhost:3000/api/user/', { method: 'GET',
 																						headers: myHeaders})
 	.then(function(res){
@@ -25,15 +25,15 @@ app.post('/api/payment/save', function(req, res) {
 				"itemId" : productId,
 				"userId" : userId
 			}).save()
-
 	})
 	.then(function(data){
 			dao.disConnectFromDB();
-
 			fetch('http://localhost:3000/api/user/paymentResponse', { method: 'POST',
-																								body: JSON.stringify{'status' : 'success', 'productId' : productId}})
-			.then()
-			res.status(200).send(data);
+																								body: JSON.stringify({'status' : 'success',
+																								 											'productId' : productId})})
+			.then(function(){
+					res.status(200).send(data);
+			})
 	})
 	.catch(function(err){
         dao.disConnectFromDB();
@@ -45,3 +45,4 @@ app.post('/api/payment/save', function(req, res) {
 
 app.use(express.static(__dirname));
 app.listen(3001);
+console.log("Server started");

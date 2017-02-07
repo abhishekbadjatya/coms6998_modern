@@ -4,6 +4,7 @@ var http = require('http');
 var config=require('../config.js');
 var stripe = require('stripe')(config.STRIPE_SECRET_KEY);
 var fetch = require('node-fetch');
+var cors = require('cors');
 // var expressJWT = require('express-jwt');
 // var jwt = require ('jsonwebtoken');
 var myHeaders= {'Content-Type': 'application/json'};
@@ -13,6 +14,8 @@ var app = express();
 // app.use(bodyParser());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+
+app.use(cors());
 
 //Test api for getting charge details
 app.get('/api/user/grocery/123456789', function(req, res) {

@@ -143,7 +143,6 @@ app.put('/user/grocery', (req,res) => {
 
 	let {userID} = req.user;
 	let {status,groceryID} = req.body;
-	console.log(req.body);
 	if (status == 'SUCCESS') {
 
 		userModel.find({_id:userID}).exec()
@@ -152,12 +151,27 @@ app.put('/user/grocery', (req,res) => {
 			if (!users.length) {
 				return Promise.reject("NO_USER");
 			}
+			return userModel
+			.update(
+				{_id: userID},
+				{ $pull: 
+					{
+						groceriesBought : {
+							id: groceryID
 
-			let user = users[0];
-			let grocery = checkIfProductAlreadyExists(user, groceryID);
-			if (!grocery) {
-				
-				return userModel.update (
+						}
+						
+					} 
+				} 
+			)
+			.exec()
+			
+
+
+		})
+		.then((response) => {
+
+			return userModel.update (
 				{_id:userID}, 
 				{
 					$push:{
@@ -168,14 +182,6 @@ app.put('/user/grocery', (req,res) => {
 					upsert:true
 				})
 				.exec()
-
-
-			} else {
-				res.send({status:"already bought"});
-			}
-			
-
-
 		})
 		.then((response) => {
 

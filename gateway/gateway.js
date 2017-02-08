@@ -26,23 +26,24 @@ app.get('/grocery/123456789', function(req, res) {
 
 //
 app.post('/api/gateway/charge', function(req, res) {
-    console.log(req.headers);
+
     var JWT=req.headers.authorization;
     var stripeToken = req.body.stripeToken; //need to check from where to retrieve the token
     var productID = req.body.productID;
 
-    fetch('http://localhost:3002/grocery/'+productID)
+    fetch('http://localhost:3000/grocery/'+productID)
     .then(function(res) {
         return res.json();
     })
     .then(function(json) {
-        console.log(json);
+
         var amount = json.price;
         stripe.charges.create({
         card: stripeToken,
         currency: 'usd',
         amount: amount*100
      },function(err, charge) {
+            console.log(charge);
             var newHeader={'Content-Type': 'application/json',
                             'Authorization': JWT};
             if (err) {
@@ -76,9 +77,11 @@ app.post('/api/gateway/charge', function(req, res) {
                 });
             }
         })
+        res.json({"status" : "Will be done."});
     })
     .catch(function(err) {
         console.log('Error');
+        console.log(err);
         res.status(500).send(err);
     });
 });

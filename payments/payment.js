@@ -20,31 +20,47 @@ app.post('/api/payment/save', function(req, res) {
 		var msg = req.body.error;
 	}
 	var jwtToken = req.headers.authorization;
-	var myHeaders = {'Authorization' : jwtToken};
-	fetch('http://localhost:3000/api/user/', { method: 'GET',
-																						headers: myHeaders})
-	.then(function(res){
-			var userId = res;
-			dao.connectToDB();
-			return paymentModel({
-				"charge" : msg,
-				"itemId" : productId,
-				"userId" : userId
-			}).save()
+	var myHeaders = {
+		'Authorization' : jwtToken,
+		'Content-Type' : 'application/json'
+		};
+
+	fetch('http://localhost:3000/user', {
+		method: 'GET',
+		headers: myHeaders})
+	.then(function(response){
+		return response.json();
+	})
+	.then((json) => {
+		var userId = json._id;
+
+		dao.connectToDB();
+		return paymentModel({
+			"charge" : msg,
+			"itemId" : productId,
+			"userId" : userId
+		}).save()
 	})
 	.then(function(data){
-			dao.disConnectFromDB();
-			fetch('http://localhost:3000/api/user/paymentResponse', { method: 'POST',
-																								body: JSON.stringify({'status' : status,
-																								 											'productId' : productId})})
-			.then(function(){
-					res.status(200).send(data);
-			})
+		dao.disConnectFromDB();
+		return fetch('http://localhost:3000/user/grocery', { 
+			method: 'PUT',
+			headers: myHeaders,
+			body: JSON.stringify({status : status,groceryID : productId})
+		})
+			
+	})
+	.then((response)=> {
+		return response.json();
+	})
+	.then(function(json){
+		console.log(json);
+		res.status(200).send(json);
 	})
 	.catch(function(err){
         dao.disConnectFromDB();
         console.log(err);
-        res.status(500).send(data);
+        res.status(500).send(err);
   });
 
 });

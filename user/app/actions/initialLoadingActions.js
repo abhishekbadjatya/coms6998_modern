@@ -191,7 +191,7 @@ export function login (username, password) {
 
 				} else {
 
-					if (json.error == "INCORRECT_PASSWORD") {
+					if (json.error == "INCORRECT_CREDENTIALS") {
 
 						dispatch (triggerNotification({
 							message : 'Incorrect Crendentials',
@@ -235,7 +235,7 @@ export function sendStripeToken (token, groceryID) {
 
 		kfetch(urlConstants.sendStripeToken,{
 			method :'POST',
-			body: JSON.stringify({stripeToken:token, productID: groceryID})
+			body: JSON.stringify({stripeToken:token.id, productID: groceryID})
 		})
 		.then((response) => {
 

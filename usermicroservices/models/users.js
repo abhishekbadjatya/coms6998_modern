@@ -9,8 +9,9 @@ let userSchema = new Schema ({
 	},
 	password : String,
 
-	groceriesBought : Array
+	groceriesBought : Array,
 
+	isVerified: Boolean
 
 });
 

@@ -49,7 +49,8 @@ app.post('/api/gateway/charge', function(req, res) {
                 console.log(err);
                 let postdata = {
                     "status":"FAILURE",
-                    "error":err
+                    "error":err,
+                    "product_id":productID
                 };
                 fetch('http://localhost:3001/api/payment/save', { method: 'POST', 
                                                                 body: JSON.stringify(postdata),

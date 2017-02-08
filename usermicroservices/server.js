@@ -9,6 +9,7 @@ let Schema = mongoose.Schema;
 let userModel = require ('./models/users.js');
 let groceriesModel = require ('./models/groceries.js');
 let cors = require('cors');
+let _ = require('lodash');
 
 
 
@@ -19,7 +20,7 @@ app.use(bodyParser.urlencoded({extended:true}));
 
 app.use (
 	expressJWT ({secret: SECRET_KEY})
-	.unless({path : ['/','/login', new RegExp('/grocery/*', 'i')] }));
+	.unless({path : ['/','/login', new RegExp('^/grocery/*', 'i')] }));
 
 app.use(function (err, req, res, next) {
   if (err.name === 'UnauthorizedError') {
@@ -127,33 +128,123 @@ app.get ('/grocery', (req, res) => {
 
 });
 
-app.put ('/user/grocery', (req, res) => {
+
+let checkIfProductAlreadyExists = (user, groceryID) => {
+
+
+	return _.find(user.groceriesBought, function(singleGrocery) { 
+
+		return singleGrocery.id == groceryID 
+	});
+
+}
+
+app.put('/user/grocery', (req,res) => {
 
 	let {userID} = req.user;
-	let {groceryID} = req.body;
-	
-	//TODO - if the grocery item already in the user's groceriesBought array, don't push.
-	
-	userModel.update (
-		{_id:userID}, 
-		{
-			$push:{
-				groceriesBought: {id:groceryID}
+	let {status,groceryID} = req.body;
+
+	if (status == 'SUCCESS') {
+
+		userModel.find({_id:userID}).exec()
+		.then((users) => {
+
+			if (!users.length) {
+				return Promise.reject("NO_USER");
 			}
-		},
-		{
-			upsert:true
+
+			let user = users[0];
+			let grocery = checkIfProductAlreadyExists(user, groceryID);
+			if (!grocery) {
+				
+				return userModel.update (
+				{_id:userID}, 
+				{
+					$push:{
+						groceriesBought: {id:groceryID, "status" : "bought"}
+					}
+				},
+				{
+					upsert:true
+				})
+				.exec()
+
+
+			} else {
+				res.send({status:"already bought"});
+			}
+			
+
+
 		})
-	.exec()
-	.then ((response) => {
+		.then((response) => {
 
-		res.send(response);
-	})
-	.catch((error) => {
+			res.send({status:"added"});
 
-		res.status(500).json({error:error});
+		})
+		.catch ((error) => {
 
-	});
+			res.status(500).send(error);
+		});
+
+
+
+
+	} else if (status == 'FAILURE') {
+
+		userModel
+		.update(
+			{_id: userID},
+			{ $pull: 
+				{
+					groceriesBought : {
+						id: groceryID,
+						status : "pending"
+
+					}
+					
+				} 
+			} 
+		)
+		.exec()
+		.then((response) => {
+
+			res.send({response});
+
+		})
+		.catch ((error) => {
+
+			res.status(500).send(error);
+		});
+
+
+	} else if (status == 'PENDING') {
+
+		userModel
+		.update (
+			{_id:userID}, 
+			{
+				$push:{
+					groceriesBought: {id:groceryID, "status" : "pending"}
+				}
+			},
+			{
+				upsert:true
+			}
+		)
+		.exec()
+		.then((response) => {
+
+			res.send({status:"added"});
+
+		})
+		.catch ((error) => {
+
+			res.status(500).send(error);
+		});
+
+
+	}
 
 
 });

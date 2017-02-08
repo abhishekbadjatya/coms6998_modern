@@ -20,7 +20,7 @@ app.use(bodyParser.urlencoded({extended:true}));
 
 app.use (
 	expressJWT ({secret: SECRET_KEY})
-	.unless({path : ['/','/login', new RegExp('^/grocery/*', 'i')] }));
+	.unless({path : ['/','/login','/signup', new RegExp('/grocery/*', 'i'), new RegExp('/accountverification/*', 'i')] }));
 
 app.use(function (err, req, res, next) {
   if (err.name === 'UnauthorizedError') {
@@ -31,7 +31,8 @@ app.use(function (err, req, res, next) {
 
 app.use(cors());
 
-mongoose.connect('mongodb://localhost:27017/groceriesapp');
+// mongoose.connect('mongodb://localhost:27017/groceriesapp');
+mongoose.connect('mongodb://aastv:aastv@ds161038.mlab.com:61038/coms6998');
 mongoose.Promise = global.Promise;
 
 
@@ -276,4 +277,71 @@ app.get ('/grocery/:id', (req, res) => {
 app.listen(3000, () => {
 
 	console.log("Server started on port 3000");
+});
+
+
+
+app.post ('/signup' , (req, res) => {
+	console.log('Insidde');
+	let {username, password} = req.body;
+	console.log(username);
+
+	userModel.find({username:username}).exec()
+	.then((users) => {
+		console.log("Here1");
+		if (users.length >= 1) {
+			res.status(401).json({error:"USER_EXISTS"});
+		} 
+    	return userModel({"username":username,"password":password,"isVerified":false}).save();
+	})
+	.then(function(data){
+		//crypt=crypto.createCipher('aes256',SECRET_KEY);
+		//let myToken =crypt.update(username,'utf8','hex')+crypt.final('hex');
+		console.log("Here2")
+		let myToken = jwt.sign({userID: username}, SECRET_KEY);
+		console.log(myToken);
+		res.status(200).json({token:myToken});
+	})
+	.catch ((error) => {
+		res.status(500).json({error:error});
+	});
+
+});
+
+
+app.post ('/accountverification/:code' , (req, res) => {
+
+	let token = req.params.code;
+	// let myToken = jwt.verify(token, SECRET_KEY);
+	jwt.verify(token,SECRET_KEY,function(err,token){
+		if(err){
+			console.log('Error');
+			res.status(500).json({error:"INVALID_TOKEN"});
+		}
+		else{
+			console.log(token);
+			let userID=token.userID;
+			console.log(userID);
+		userModel.update (
+		{username:userID}, 
+			{
+				$push:{
+					"isVerified":[true]
+				}
+			},
+		{
+			upsert:false
+		})
+	.exec()
+	.then ((response) => {
+		console.log(response);
+		res.send(response);
+	})
+	.catch((error) => {
+		console.log(error)
+		res.status(500).json({error:error});
+
+	});
+	 	}
+	});
 });

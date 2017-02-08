@@ -7,6 +7,35 @@ import {kfetch} from '../util/util.js';
 import {setFlags} from './flagActions.js';
 
 
+
+export function updateStatusOfGrocery (statusObject) {
+
+	return function (dispatch, getState) {
+
+		kfetch(urlConstants.addProductToUser,{
+			method:'PUT',
+			body : JSON.stringify({...statusObject})
+		})
+		.then((response) => {
+			return response.json();
+		})
+		.then((json) => {
+
+
+			console.log(json);
+			dispatch({
+			type : actionConstants.SET_SINGLE_GROCERY_INFO_FOR_USER,
+			payload : statusObject
+		})
+		})
+		.catch ((error) => {
+			console.log(error)
+		})
+		
+
+
+	}
+}
 export function checkInit () {
 
 	return function (dispatch, getState) {

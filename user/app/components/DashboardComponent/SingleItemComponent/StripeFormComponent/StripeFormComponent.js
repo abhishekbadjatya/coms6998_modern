@@ -12,7 +12,10 @@ class StripeFormComponent extends React.Component {
 		
 	}
 	onToken = (token) => {
-	    this.props.sendStripeToken (token.id, this.props.groceryID);
+	    this.props.updateProductToStatusAndSendStripeToken (
+	    	{status:"PENDING", groceryID: this.props.groceryID},
+	    	{token:token, groceryID: this.props.groceryID}
+	    );
 	    
 	}
 

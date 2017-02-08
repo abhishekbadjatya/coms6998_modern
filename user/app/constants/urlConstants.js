@@ -9,7 +9,8 @@ let urlConstants = () => {
 		"login" : baseUrlUserMicroservice + 'login',
 		"fetchGroceries" : baseUrlUserMicroservice + 'grocery',
 		"fetchUserData" : baseUrlUserMicroservice + 'user',
-		"sendStripeToken" : baseUrlGatewayMicroservice + 'api/gateway/charge'
+		"sendStripeToken" : baseUrlGatewayMicroservice + 'api/gateway/charge',
+		"addProductToUser" : baseUrlUserMicroservice + 'user/grocery'
 	};
 
 

@@ -10,8 +10,10 @@ const userInfo = (state = initialState.groceries, action) => {
 
 		case actionConstants.SET_GROCERIES : {
 
-			return setUserInfo (state, action.payload);
+			return setGroceryInfo (state, action.payload);
 		}
+
+		
 
 		default: 
 		return state
@@ -23,7 +25,9 @@ const userInfo = (state = initialState.groceries, action) => {
 
 
 
-function setUserInfo (state, payload) {
+
+
+function setGroceryInfo (state, payload) {
 
 
 	state = _.slice(payload);

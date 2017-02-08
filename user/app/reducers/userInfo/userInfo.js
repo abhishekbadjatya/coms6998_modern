@@ -13,6 +13,11 @@ const userInfo = (state = initialState.userInfo, action) => {
 			return setUserInfo (state, action.payload);
 		}
 
+		case actionConstants.SET_SINGLE_GROCERY_INFO_FOR_USER : {
+			return setSingleGroceryInfo (state, action.payload);
+		}
+
+
 		default: 
 		return state
 	}
@@ -21,6 +26,12 @@ const userInfo = (state = initialState.userInfo, action) => {
 
 };
 
+function setSingleGroceryInfo (state, payload)  {
+	let newGroceriesBought = _.slice(state.groceriesBought);
+	newGroceriesBought.push({id:payload.groceryID, status:"PENDING"});
+	
+	return Object.assign({},{...state}, {groceriesBought:newGroceriesBought});
+}
 
 
 function setUserInfo (state, payload) {

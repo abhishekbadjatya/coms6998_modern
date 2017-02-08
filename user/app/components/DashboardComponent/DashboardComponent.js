@@ -17,6 +17,7 @@ class DashboardComponent extends React.Component {
 
 		this.props.fetchUserData();
 		this.props.fetchGroceries();
+
 		this.intervalID = setInterval( ()=>{
 			
 			this.props.fetchUserData();
@@ -33,7 +34,7 @@ class DashboardComponent extends React.Component {
 			return (
 				<SingleItemComponent
 				status = { this.getStatus(singleGrocery._id)}
-				sendStripeToken = {this.props.sendStripeToken} 
+				updateProductToStatusAndSendStripeToken = {this.props.updateProductToStatusAndSendStripeToken} 
 				key = {singleGrocery._id} {...singleGrocery} />
 			);
 
@@ -52,11 +53,14 @@ class DashboardComponent extends React.Component {
 
 	setGroceriesBoughtHash (groceriesBought) {
 		this.groceriesBoughtHash = {};
+
+			
 		groceriesBought.map ((singleGroceryBought) => {
 
-			this.groceriesBoughtHash[singleGroceryBought.id] = singleGroceryBought;
+				this.groceriesBoughtHash[singleGroceryBought.id] = singleGroceryBought;
 		});
 
+		
 
 
 	}
@@ -71,7 +75,7 @@ class DashboardComponent extends React.Component {
 
 		
 
-		if (!isUserDataFetched && !isGroceryDetailsFetched) {
+		if (!isUserDataFetched || !isGroceryDetailsFetched) {
 
 			return (
 					<div>
@@ -79,6 +83,7 @@ class DashboardComponent extends React.Component {
 					</div>
 				);
 		} else {
+
 			this.setGroceriesBoughtHash(this.props.userInfo.groceriesBought);
 
 			let allGroceriesView = this.getAllGroceriesView (this.props.groceries);

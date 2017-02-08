@@ -1,6 +1,6 @@
 import {connect} from 'react-redux';
 import DashboardComponent from '../../components/DashboardComponent/DashboardComponent.js';
-import {fetchGroceries, fetchUserData, sendStripeToken} from '../../actions/initialLoadingActions.js';
+import {fetchGroceries, fetchUserData, sendStripeToken, updateStatusOfGrocery} from '../../actions/initialLoadingActions.js';
 
 const mapStateToProps = (state) => {
 	return {
@@ -26,10 +26,13 @@ const mapDispatchToProps = (dispatch) => {
 			dispatch (fetchUserData());
 		},
 
-		sendStripeToken : (token, groceryID) => {
+		updateProductToStatusAndSendStripeToken : (statusObject, stripeObject) => {
 
+			let {token, groceryID} = stripeObject;
 			dispatch(sendStripeToken(token, groceryID));
+			dispatch(updateStatusOfGrocery(statusObject));
 		}
+
 
 	};
 

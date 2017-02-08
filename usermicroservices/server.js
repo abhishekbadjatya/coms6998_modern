@@ -143,7 +143,7 @@ app.put('/user/grocery', (req,res) => {
 
 	let {userID} = req.user;
 	let {status,groceryID} = req.body;
-
+	console.log(req.body);
 	if (status == 'SUCCESS') {
 
 		userModel.find({_id:userID}).exec()
@@ -161,7 +161,7 @@ app.put('/user/grocery', (req,res) => {
 				{_id:userID}, 
 				{
 					$push:{
-						groceriesBought: {id:groceryID, "status" : "bought"}
+						groceriesBought: {id:groceryID, "status" : "BOUGHT"}
 					}
 				},
 				{
@@ -199,7 +199,7 @@ app.put('/user/grocery', (req,res) => {
 				{
 					groceriesBought : {
 						id: groceryID,
-						status : "pending"
+						status : "PENDING"
 
 					}
 					
@@ -225,7 +225,7 @@ app.put('/user/grocery', (req,res) => {
 			{_id:userID}, 
 			{
 				$push:{
-					groceriesBought: {id:groceryID, "status" : "pending"}
+					groceriesBought: {id:groceryID, "status" : "PENDING"}
 				}
 			},
 			{

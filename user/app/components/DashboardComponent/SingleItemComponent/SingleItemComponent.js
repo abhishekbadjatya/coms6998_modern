@@ -29,18 +29,18 @@ class SingleItemComponent extends React.Component {
 		});
 	}
 	getComponentAccordingToStatus (status) {
-		if (status == 'bought') {
+		if (status == 'BOUGHT') {
 			
 			return (<div> You have already purchased this item. </div>);
 
-		} else if  (status == 'pending') {
+		} else if  (status == 'PENDING') {
 			return (<div> Purchase is being processed. </div>);
 
 		} else {
 
 			return (
 				<StripeFormComponent 
-					sendStripeToken = {this.props.sendStripeToken} 
+					updateProductToStatusAndSendStripeToken = {this.props.updateProductToStatusAndSendStripeToken} 
 					price = {this.props.price}
 					groceryID = {this.props._id}
 				/>

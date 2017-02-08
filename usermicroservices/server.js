@@ -20,7 +20,7 @@ app.use(bodyParser.urlencoded({extended:true}));
 
 app.use (
 	expressJWT ({secret: SECRET_KEY})
-	.unless({path : ['/','/login','/signup', new RegExp('/grocery/*', 'i'), new RegExp('/accountverification/*', 'i')] }));
+	.unless({path : ['/','/login','/signup', new RegExp('^/grocery/*', 'i'), new RegExp('/accountverification/*', 'i')] }));
 
 app.use(function (err, req, res, next) {
   if (err.name === 'UnauthorizedError') {
@@ -31,8 +31,8 @@ app.use(function (err, req, res, next) {
 
 app.use(cors());
 
-// mongoose.connect('mongodb://localhost:27017/groceriesapp');
-mongoose.connect('mongodb://aastv:aastv@ds161038.mlab.com:61038/coms6998');
+mongoose.connect('mongodb://localhost:27017/groceriesapp');
+//mongoose.connect('mongodb://aastv:aastv@ds161038.mlab.com:61038/coms6998');
 mongoose.Promise = global.Promise;
 
 
@@ -144,6 +144,8 @@ app.put('/user/grocery', (req,res) => {
 
 	let {userID} = req.user;
 	let {status,groceryID} = req.body;
+	console.log(req.body);
+
 	if (status == 'SUCCESS') {
 
 		userModel.find({_id:userID}).exec()

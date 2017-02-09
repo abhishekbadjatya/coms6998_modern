@@ -10,7 +10,8 @@ let userModel = require ('./models/users.js');
 let groceriesModel = require ('./models/groceries.js');
 let cors = require('cors');
 let _ = require('lodash');
-
+let aws = require('aws-sdk');
+aws.config={ "accessKeyId": "", "secretAccessKey": "", "region": "us-east-1" };
 
 
 const SECRET_KEY = "This is the secret key";
@@ -31,8 +32,8 @@ app.use(function (err, req, res, next) {
 
 app.use(cors());
 
-mongoose.connect('mongodb://localhost:27017/groceriesapp');
-//mongoose.connect('mongodb://aastv:aastv@ds161038.mlab.com:61038/coms6998');
+//mongoose.connect('mongodb://localhost:27017/groceriesapp');
+mongoose.connect('mongodb://aastv:aastv@ds161038.mlab.com:61038/coms6998');
 mongoose.Promise = global.Promise;
 
 
@@ -287,7 +288,6 @@ app.post ('/signup' , (req, res) => {
 	console.log('Insidde');
 	let {username, password} = req.body;
 	console.log(username);
-
 	userModel.find({username:username}).exec()
 	.then((users) => {
 		console.log("Here1");
@@ -297,10 +297,30 @@ app.post ('/signup' , (req, res) => {
     	return userModel({"username":username,"password":password,"isVerified":false}).save();
 	})
 	.then(function(data){
-		//crypt=crypto.createCipher('aes256',SECRET_KEY);
-		//let myToken =crypt.update(username,'utf8','hex')+crypt.final('hex');
 		console.log("Here2")
 		let myToken = jwt.sign({userID: username}, SECRET_KEY);
+		var ses = new aws.SES({apiVersion: '2010-12-01'});
+		var to = [username]
+		var from = ''
+		ses.sendEmail({ 
+   		Source: from, 
+   		Destination: { ToAddresses: to },
+   		Message: {
+       	Subject: {
+          Data: 'Hey! Please Verify Your Account'
+       },
+       	Body: {
+           Text: {
+               		Data: 'Please click on the link to verify your account: http://localhost:3000/accountverification/'+myToken,
+           		 }
+        	  }
+   		}
+		}
+		, function(err, data) {
+    		if(err) throw err
+        	console.log('Email sent:');
+        	console.log(data);
+ });
 		console.log(myToken);
 		res.status(200).json({token:myToken});
 	})
@@ -327,8 +347,8 @@ app.post ('/accountverification/:code' , (req, res) => {
 		userModel.update (
 		{username:userID}, 
 			{
-				$push:{
-					"isVerified":[true]
+				$set:{
+					"isVerified":true
 				}
 			},
 		{

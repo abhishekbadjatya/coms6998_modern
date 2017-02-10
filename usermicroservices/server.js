@@ -308,7 +308,7 @@ app.post ('/signup' , (req, res) => {
        },
        	Body: {
            Text: {
-               		Data: 'Please click on the link to verify your account: http://localhost:3000/accountverification/'+myToken,
+               		Data: 'Please click on the link to verify your account: '+config.url_user+'/accountverification/'+myToken,
            		 }
         	  }
    		}

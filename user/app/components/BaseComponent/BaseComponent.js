@@ -42,9 +42,6 @@ class BaseComponent extends React.Component {
 		return (
 			<div >
 				<div styleName = 'base-header'>
-					<div styleName = 'logo-container'>
-						<img styleName = 'logo' src = {imageLogo} />
-					</div>
 					<div styleName = 'logout-container'>
 							{
 								(isLoggedIn) ? 

@@ -5,6 +5,8 @@ import store  from './store/store.js';
 import LoginContainer from './containers/LoginContainer/LoginContainer.js';
 import BaseContainer from './containers/BaseContainer/BaseContainer.js';
 import DashboardContainer from './containers/DashboardContainer/DashboardContainer.js';
+import SignUpContainer from './containers/SignUpContainer/SignUpContainer.js';
+
 
 import {loginCheck} from './checks/checks.js';
 import '../node_modules/bootstrap/dist/css/bootstrap.min.css';
@@ -19,6 +21,7 @@ ReactDOM.render(
 				<IndexRedirect to = '/login' />
 				<Route path = 'login' component = {LoginContainer} />
 				<Route path = 'dashboard' component = {DashboardContainer} />
+				<Route path = "signUp" component = {SignUpContainer} />
 			</Route>
 		</Router>
 

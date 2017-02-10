@@ -10,11 +10,12 @@ let userModel = require ('./models/users.js');
 let groceriesModel = require ('./models/groceries.js');
 let cors = require('cors');
 let _ = require('lodash');
+let config = require ('./config.js');
+
 let aws = require('aws-sdk');
-aws.config={ "accessKeyId": "", "secretAccessKey": "", "region": "us-east-1" };
+aws.config={ "accessKeyId": config.aws_accessKeyId, "secretAccessKey": config.aws_secretAccessKey, "region": "us-east-1" };
 
-
-const SECRET_KEY = "This is the secret key";
+const SECRET_KEY = config.SECRET_KEY;
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended:true}));
@@ -32,8 +33,9 @@ app.use(function (err, req, res, next) {
 
 app.use(cors());
 
-//mongoose.connect('mongodb://localhost:27017/groceriesapp');
-mongoose.connect('mongodb://aastv:aastv@ds161038.mlab.com:61038/coms6998');
+
+mongoose.connect(config.dbURL);
+
 mongoose.Promise = global.Promise;
 
 
@@ -133,15 +135,8 @@ app.get ('/grocery', (req, res) => {
 });
 
 
-let checkIfProductAlreadyExists = (user, groceryID) => {
 
 
-	return _.find(user.groceriesBought, function(singleGrocery) {
-
-		return singleGrocery.id == groceryID
-	});
-
-}
 
 app.put('/user/grocery', (req,res) => {
 
@@ -287,19 +282,19 @@ app.listen(3000, () => {
 
 
 app.post ('/signup' , (req, res) => {
-	console.log('Insidde');
+
 	let {username, password} = req.body;
 	console.log(username);
 	userModel.find({username:username}).exec()
 	.then((users) => {
-		console.log("Here1");
+
 		if (users.length >= 1) {
 			res.status(401).json({error:"USER_EXISTS"});
 		}
     	return userModel({"username":username,"password":password,"isVerified":false}).save();
 	})
 	.then(function(data){
-		console.log("Here2")
+
 		let myToken = jwt.sign({userID: username}, SECRET_KEY);
 		var ses = new aws.SES({apiVersion: '2010-12-01'});
 		var to = [username]
@@ -319,12 +314,15 @@ app.post ('/signup' , (req, res) => {
    		}
 		}
 		, function(err, data) {
-    		if(err) throw err
+    		// if(err) throw err
         	console.log('Email sent:');
         	console.log(data);
- });
-		console.log(myToken);
-		res.status(200).json({token:myToken});
+ 		
+ 		});
+
+
+		myToken = jwt.sign({userID: data._id}, SECRET_KEY);
+		res.status(200).json({token:myToken, userID: data._id });
 	})
 	.catch ((error) => {
 		res.status(500).json({error:error});

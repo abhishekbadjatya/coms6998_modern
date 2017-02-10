@@ -207,6 +207,16 @@ export function login (username, password) {
 						}));
 
 					}
+					if (json.error == 'USER_NOT_VERIFIED') {
+
+						dispatch (triggerNotification({
+							message : 'Please, verify the your email.',
+							level: 'error'
+						}));
+
+
+
+					}
 				}
 
 
@@ -249,4 +259,52 @@ export function sendStripeToken (token, groceryID) {
 			console.log(error);
 		})
 	}
+}
+
+export function signUp (payload)  {
+
+	return function (dispatch, getState)  {
+
+
+		kfetch(urlConstants.signup, {
+
+			method :'POST',
+			headers: {
+					'Content-Type': 'application/json'
+			},
+			body: JSON.stringify (payload)
+		}).then((response) => {
+			return response.json();
+		}).then((json)=> {
+
+
+
+			if (!json.error) {
+
+
+				hashHistory.push('login');
+
+
+
+			} else {
+				if (json.error == "USER_EXISTS") {
+					dispatch(triggerNotification({
+
+						"level" : "error",
+						"message" : "Username is taken"
+
+
+					}));
+				}
+			}
+			
+
+		}).catch(() => {
+			
+		});
+
+
+
+	}
+
 }

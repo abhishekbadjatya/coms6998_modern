@@ -36,7 +36,6 @@ app.post('/api/gateway/charge', function(req, res) {
         return res.json();
     })
     .then(function(json) {
-
         var amount = json.price;
         stripe.charges.create({
         card: stripeToken,

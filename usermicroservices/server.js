@@ -57,15 +57,15 @@ app.get ('/user', (req, res) => {
 			return Promise.reject("MORE_THAN_ONE_USER");
 		}
 		if (users.length == 0) {
-			
+
 			res.status(400).json({error:"NO_USER"});
-		} 
+		}
 
 		let user = users[0];
 		user.password = '';
 		res.status(200).json(user);
 
-		
+
 
 
 	})
@@ -91,14 +91,16 @@ app.post ('/login' , (req, res) => {
 			return Promise.reject("MORE_THAN_ONE_USER");
 		}
 		if (users.length == 0) {
-			
+
 			res.status(401).json({error:"INCORRECT_CREDENTIALS"});
-		} 
+		}
 
 		let user = users[0];
 
-		if (user.password == password) {
-			
+		if (user.isVerified == false) {
+				res.status(401).json({error:"USER_NOT_VERIFIED"});			
+
+		} else if(user.password == password) {
 			let myToken = jwt.sign ({userID: user._id}, SECRET_KEY);
 			res.status(200).json({token:myToken, userID : user._id});
 
@@ -134,9 +136,9 @@ app.get ('/grocery', (req, res) => {
 let checkIfProductAlreadyExists = (user, groceryID) => {
 
 
-	return _.find(user.groceriesBought, function(singleGrocery) { 
+	return _.find(user.groceriesBought, function(singleGrocery) {
 
-		return singleGrocery.id == groceryID 
+		return singleGrocery.id == groceryID
 	});
 
 }
@@ -158,25 +160,25 @@ app.put('/user/grocery', (req,res) => {
 			return userModel
 			.update(
 				{_id: userID},
-				{ $pull: 
+				{ $pull:
 					{
 						groceriesBought : {
 							id: groceryID
 
 						}
-						
-					} 
-				} 
+
+					}
+				}
 			)
 			.exec()
-			
+
 
 
 		})
 		.then((response) => {
 
 			return userModel.update (
-				{_id:userID}, 
+				{_id:userID},
 				{
 					$push:{
 						groceriesBought: {id:groceryID, "status" : "BOUGHT"}
@@ -205,16 +207,16 @@ app.put('/user/grocery', (req,res) => {
 		userModel
 		.update(
 			{_id: userID},
-			{ $pull: 
+			{ $pull:
 				{
 					groceriesBought : {
 						id: groceryID,
 						status : "PENDING"
 
 					}
-					
-				} 
-			} 
+
+				}
+			}
 		)
 		.exec()
 		.then((response) => {
@@ -232,7 +234,7 @@ app.put('/user/grocery', (req,res) => {
 
 		userModel
 		.update (
-			{_id:userID}, 
+			{_id:userID},
 			{
 				$push:{
 					groceriesBought: {id:groceryID, "status" : "PENDING"}
@@ -293,7 +295,7 @@ app.post ('/signup' , (req, res) => {
 		console.log("Here1");
 		if (users.length >= 1) {
 			res.status(401).json({error:"USER_EXISTS"});
-		} 
+		}
     	return userModel({"username":username,"password":password,"isVerified":false}).save();
 	})
 	.then(function(data){
@@ -302,8 +304,8 @@ app.post ('/signup' , (req, res) => {
 		var ses = new aws.SES({apiVersion: '2010-12-01'});
 		var to = [username]
 		var from = ''
-		ses.sendEmail({ 
-   		Source: from, 
+		ses.sendEmail({
+   		Source: from,
    		Destination: { ToAddresses: to },
    		Message: {
        	Subject: {
@@ -345,7 +347,7 @@ app.post ('/accountverification/:code' , (req, res) => {
 			let userID=token.userID;
 			console.log(userID);
 		userModel.update (
-		{username:userID}, 
+		{username:userID},
 			{
 				$set:{
 					"isVerified":true

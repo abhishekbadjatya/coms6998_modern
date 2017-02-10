@@ -176,7 +176,7 @@ export function login (username, password) {
 
 
 				if (!json.error) {
-
+					console.log(json);
 					localStorage.setItem('token',json.token);
 
 					dispatch({
@@ -307,4 +307,38 @@ export function signUp (payload)  {
 
 	}
 
+}
+
+export function logout () {
+	console.log("Here");
+	console.log(localStorage.getItem('token'));
+	localStorage.removeItem('token');
+	console.log(localStorage.getItem('token'));
+	hashHistory.push('login');
+	location.reload();
+	
+	// return function (dispatch)  {
+
+	// 	kfetch(urlConstants.logout)
+	// 	.then((response) => {
+	// 		location.reload();
+	// 		return response.json();
+	// 	}).then((json)=> {
+
+
+
+	// 		console.log('here');
+	// 		//TODO- CHECK FOR 200
+			
+
+			
+			
+
+	// 	}).catch(() => {
+			
+	// 	});
+
+
+
+	// }
 }

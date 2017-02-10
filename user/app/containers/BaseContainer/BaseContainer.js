@@ -1,11 +1,13 @@
 import {connect} from 'react-redux';
 import BaseComponent from '../../components/BaseComponent/BaseComponent.js';
-// import {logout, fetchMetadata} from '../../actions/initialLoadingActions.js';
+import {logout} from '../../actions/initialLoadingActions.js';
 
 const mapStateToProps = (state) => {
+	//console.log(state);
 	return {
 		userInfo : state.userInfo,
-		notifConfig : state.notifConfig
+		notifConfig : state.notifConfig,
+		flags: state.flags
 	};
 };
 
@@ -13,12 +15,12 @@ const mapDispatchToProps = (dispatch) => {
 
 	return {
 
-		// logout : () => {
+		logout : () => {
 
-		// 	dispatch(logout());
+			dispatch(logout());
 
 
-		// },
+		}
 		// fetchMetadata: () => {
 		// 		dispatch(fetchMetadata());
 		// }

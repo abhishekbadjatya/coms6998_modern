@@ -98,7 +98,7 @@ class SignUpComponent extends React.Component {
 
 				<div styleName="form">
 					<div id="login">   
-			          <h1 styleName ='welcome-back-text'>Welcome to goVolunteer!</h1>
+			          <h1 styleName ='welcome-back-text'>Welcome!</h1>
 			          
 			          <form>
 			          

@@ -31,7 +31,7 @@ app.post('/api/gateway/charge', function(req, res) {
     var stripeToken = req.body.stripeToken; //need to check from where to retrieve the token
     var productID = req.body.productID;
 
-    fetch('http://localhost:3000/grocery/'+productID)
+    fetch(config.BASE_URL_USER+'/grocery/'+productID)
     .then(function(res) {
         return res.json();
     })
@@ -52,7 +52,7 @@ app.post('/api/gateway/charge', function(req, res) {
                     "error":err,
                     "product_id":productID
                 };
-                fetch('http://localhost:3001/api/payment/save', { method: 'POST', 
+                fetch(config.BASE_URL_PAYMENT+'/api/payment/save', { method: 'POST', 
                                                                 body: JSON.stringify(postdata),
                                                                 headers: newHeader
                 })
@@ -63,7 +63,7 @@ app.post('/api/gateway/charge', function(req, res) {
                     "chargeDetails":charge,
                     "product_id":productID
                 };
-                fetch('http://localhost:3001/api/payment/save', { method: 'POST', 
+                fetch(config.BASE_URL_PAYMENT+'/api/payment/save', { method: 'POST', 
                                                                 body: JSON.stringify(postdata),
                                                                 headers: newHeader
                 })

@@ -1,3 +1,4 @@
+var config=require('./config.js');
 var dao = require('./dao/mongoconnect.js');
 var express = require('express');
 var bodyParser = require('body-parser');
@@ -25,7 +26,7 @@ app.post('/api/payment/save', function(req, res) {
 		'Content-Type' : 'application/json'
 		};
 
-	fetch('http://localhost:3000/user', {
+	fetch(config.BASE_URL_USER+'/user', {
 		method: 'GET',
 		headers: myHeaders})
 	.then(function(response){
@@ -43,7 +44,7 @@ app.post('/api/payment/save', function(req, res) {
 	})
 	.then(function(data){
 		dao.disConnectFromDB();
-		return fetch('http://localhost:3000/user/grocery', { 
+		return fetch(config.BASE_URL_USER+'/user/grocery', { 
 			method: 'PUT',
 			headers: myHeaders,
 			body: JSON.stringify({status : status,groceryID : productId})

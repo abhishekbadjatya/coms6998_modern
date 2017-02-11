@@ -294,7 +294,7 @@ app.post ('/signup' , (req, res) => {
 		let myToken = jwt.sign({userID: username}, SECRET_KEY);
 		var ses = new aws.SES({apiVersion: '2010-12-01'});
 		var to = [username]
-		var from = ''
+		var from = 'ab4349@columbia.edu'
 		ses.sendEmail({
    		Source: from,
    		Destination: { ToAddresses: to },
@@ -327,7 +327,7 @@ app.post ('/signup' , (req, res) => {
 });
 
 
-app.post ('/accountverification/:code' , (req, res) => {
+app.get ('/accountverification/:code' , (req, res) => {
 
 	let token = req.params.code;
 	// let myToken = jwt.verify(token, SECRET_KEY);
@@ -353,7 +353,7 @@ app.post ('/accountverification/:code' , (req, res) => {
 	.exec()
 	.then ((response) => {
 		console.log(response);
-		res.send(response);
+		res.status(200).send("Your account has been verified");
 	})
 	.catch((error) => {
 		console.log(error)

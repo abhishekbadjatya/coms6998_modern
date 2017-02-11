@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "eslint app && NODE_ENV=production webpack",
+    "build": "NODE_ENV=production webpack",
     "dev": "NODE_ENV=dev webpack-dev-server --progress --inline",
     "lint": "eslint app"
   },

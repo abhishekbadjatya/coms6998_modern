@@ -175,7 +175,7 @@ app.put('/user/grocery', (req,res) => {
 		})
 		.then((response) => {
 
-			res.status(200):send({status:"GROCERY_ADDED"});
+			res.status(200).send({status:"GROCERY_ADDED"});
 
 		})
 		.catch ((error) => {
@@ -205,7 +205,7 @@ app.put('/user/grocery', (req,res) => {
 		.exec()
 		.then((response) => {
 
-			rres.status(200):send({status:"GROCERY_DELETED"});
+			res.status(200).send({status:"GROCERY_DELETED"});
 
 		})
 		.catch ((error) => {
@@ -231,7 +231,7 @@ app.put('/user/grocery', (req,res) => {
 		.exec()
 		.then((response) => {
 
-			res.status(200):send({status:"GROCERY_ADDED"});
+			res.status(200).send({status:"GROCERY_ADDED"});
 
 		})
 		.catch ((error) => {

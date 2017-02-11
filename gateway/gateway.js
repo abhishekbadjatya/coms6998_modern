@@ -5,26 +5,17 @@ var config=require('./config.js');
 var stripe = require('stripe')(config.STRIPE_SECRET_KEY);
 var fetch = require('node-fetch');
 var cors = require('cors');
-// var expressJWT = require('express-jwt');
-// var jwt = require ('jsonwebtoken');
 var myHeaders= {'Content-Type': 'application/json'};
-// const SECRET_KEY = "This is the secret key";
+
 
 var app = express();
-// app.use(bodyParser());
+
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 app.use(cors());
 
-//Test api for getting charge details
-app.get('/grocery/123456789', function(req, res) {
-    // res.writeHead(200, {"Content-Type": "application/json"});
-    res.setHeader('Content-Type', 'application/json');
-    res.status(200).send({"price":20,"name":"milk","_id":123456789});
-});
 
-//
 app.post('/api/gateway/charge', function(req, res) {
 
     var JWT=req.headers.authorization;
@@ -56,7 +47,6 @@ app.post('/api/gateway/charge', function(req, res) {
                                                                 body: JSON.stringify(postdata),
                                                                 headers: newHeader
                 })
-                // res.status(500).send(err);
             } else {
                 let postdata = {
                     "status":"SUCCESS",
@@ -76,12 +66,12 @@ app.post('/api/gateway/charge', function(req, res) {
                 });
             }
         })
-        res.json({"status" : "Will be done."});
+        res.status(202).json({"message" : "CHARGE_TO_BE_CREATED"});
     })
     .catch(function(err) {
         console.log('Error');
         console.log(err);
-        res.status(500).send(err);
+        res.status(500).send("INTERNAL_SERVER_ERROR");
     });
 });
 

@@ -56,12 +56,12 @@ app.post('/api/payment/save', function(req, res) {
 	})
 	.then(function(json){
 		console.log(json);
-		res.status(200).send(json);
+		res.status(202).json("message":"PAYMENT_TO_BE_SAVED");
 	})
 	.catch(function(err){
         dao.disConnectFromDB();
         console.log(err);
-        res.status(500).send(err);
+        res.status(500).send("INTERNAL_SERVER_ERROR");
   });
 
 });

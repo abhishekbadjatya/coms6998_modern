@@ -26,7 +26,7 @@ app.use (
 
 app.use(function (err, req, res, next) {
   if (err.name === 'UnauthorizedError') {
-    res.status(401).json({error:"INVALID_TOKEN"});
+    res.status(401).json({"error":"INVALID_TOKEN"});
   }
 });
 
@@ -39,15 +39,6 @@ mongoose.connect(config.dbURL);
 mongoose.Promise = global.Promise;
 
 
-
-app.get ('/' , (req, res) => {
-
-	res.json({status:"working"});
-
-
-});
-
-//This API name should be something else
 app.get ('/user', (req, res) => {
 
 	let {userID} = req.user;
@@ -72,7 +63,8 @@ app.get ('/user', (req, res) => {
 
 	})
 	.catch ((error) => {
-		res.status(500).json({error:error});
+		console.log(error);
+		res.status(500).json({error:"INTERNAL_SERVER_ERROR"});
 	});
 
 
@@ -114,7 +106,8 @@ app.post ('/login' , (req, res) => {
 
 	})
 	.catch ((error) => {
-		res.status(500).json({error:error});
+		console.log(error);
+		res.status(500).json({error:"INTERNAL_SERVER_ERROR"});
 	});
 
 });
@@ -124,12 +117,12 @@ app.get ('/grocery', (req, res) => {
 	groceriesModel.find({}).exec()
 	.then ((groceries) => {
 
-		res.send(groceries);
+		res.status(200).send(groceries);
 
 	})
 	.catch((error) => {
-
-		res.status(500).send(error);
+		console.log(error);
+		res.status(500).send({error:"INTERNAL_SERVER_ERROR"});
 	});
 
 });
@@ -150,7 +143,7 @@ app.put('/user/grocery', (req,res) => {
 		.then((users) => {
 
 			if (!users.length) {
-				return Promise.reject("NO_USER");
+				return res.status(400).send({error:"NO_USER"});
 			}
 			return userModel
 			.update(
@@ -159,15 +152,11 @@ app.put('/user/grocery', (req,res) => {
 					{
 						groceriesBought : {
 							id: groceryID
-
 						}
-
 					}
 				}
 			)
 			.exec()
-
-
 
 		})
 		.then((response) => {
@@ -186,12 +175,12 @@ app.put('/user/grocery', (req,res) => {
 		})
 		.then((response) => {
 
-			res.send({status:"added"});
+			res.status(200):send({status:"GROCERY_ADDED"});
 
 		})
 		.catch ((error) => {
-
-			res.status(500).send(error);
+			console.log(error);
+			res.status(500).send({error:"INTERNAL_SERVER_ERROR"});
 		});
 
 
@@ -216,12 +205,12 @@ app.put('/user/grocery', (req,res) => {
 		.exec()
 		.then((response) => {
 
-			res.send({response});
+			rres.status(200):send({status:"GROCERY_DELETED"});
 
 		})
 		.catch ((error) => {
-
-			res.status(500).send(error);
+			console.log(error);
+			res.status(500).send({error:"INTERNAL_SERVER_ERROR"});
 		});
 
 
@@ -242,12 +231,12 @@ app.put('/user/grocery', (req,res) => {
 		.exec()
 		.then((response) => {
 
-			res.send({status:"added"});
+			res.status(200):send({status:"GROCERY_ADDED"});
 
 		})
 		.catch ((error) => {
-
-			res.status(500).send(error);
+			console.log(error);
+			res.status(500).send({error:"INTERNAL_SERVER_ERROR"});
 		});
 
 
@@ -262,19 +251,16 @@ app.get ('/grocery/:id', (req, res) => {
 	groceriesModel.findOne({"_id": groceryID}).exec()
 	.then ((groceries) => {
 
-		res.send(groceries);
+		res.status(200).send(groceries);
 
 	})
 	.catch((error) => {
-
-		res.status(500).send(error);
+		console.log(error)
+		res.status(500).send({error:"INTERNAL_SERVER_ERROR"});
 	});
 
 
 });
-
-
-
 
 
 app.post ('/signup' , (req, res) => {
@@ -293,8 +279,8 @@ app.post ('/signup' , (req, res) => {
 
 		let myToken = jwt.sign({userID: username}, SECRET_KEY);
 		var ses = new aws.SES({apiVersion: '2010-12-01'});
-		var to = [username]
-		var from = 'ab4349@columbia.edu'
+		var to = [username];
+		var from = 'aastv6998@gmail.com';
 		ses.sendEmail({
    		Source: from,
    		Destination: { ToAddresses: to },
@@ -318,10 +304,11 @@ app.post ('/signup' , (req, res) => {
 
 
 		myToken = jwt.sign({userID: data._id}, SECRET_KEY);
-		res.status(200).json({token:myToken, userID: data._id });
+		res.status(202).json({token:myToken, userID: data._id });
 	})
 	.catch ((error) => {
-		res.status(500).json({error:error});
+		console.log(error);
+		res.status(500).json({error:"INTERNAL_SERVER_ERROR"});
 	});
 
 });
@@ -356,8 +343,8 @@ app.get ('/accountverification/:code' , (req, res) => {
 		res.status(200).send("Your account has been verified");
 	})
 	.catch((error) => {
-		console.log(error)
-		res.status(500).json({error:error});
+		console.log(error);
+		res.status(500).json({error:"INTERNAL_SERVER_ERROR"});
 
 	});
 	 	}

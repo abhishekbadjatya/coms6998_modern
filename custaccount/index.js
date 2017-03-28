@@ -12,6 +12,7 @@ var config=require('./config.js');
 var dao = require('./dao/mongoconnect.js');
 var bodyParser = require('body-parser');
 var fetch = require('node-fetch');
+var controller = require('./Controller/AccountController.js')
 
 function extractOperationAndParams(event, callback) {
   console.log('Received event:`', JSON.stringify(event, null, 2));
@@ -25,21 +26,15 @@ function extractOperationAndParams(event, callback) {
 }
 
 exports.customerAccountControllerHandler = (event, context, callback) => {
-  callController(event, 'customersController', callback);
+  callController(event, 'AccountsController', callback);
   extractOperationAndParams(event, (err, operation, params) => {
     switch (operation) {
       case 'fetchAll':
       case 'fetch'://Need to change the controller function names here
-        controller.show(params, mapping.sendHttpResponse(callback));
+        controller.allAccounts(params, mapping.sendHttpResponse(callback));
         break;
       case 'create':
         controller.create(params, mapping.sendHttpResponse(callback));
-        break;
-      case 'update':
-        controller.update(params, mapping.sendHttpResponse(callback));
-        break;
-      case 'delete':
-        controller.delete(params, mapping.sendHttpResponse(callback));
         break;
       default:
         mapping.sendHttpResponse(callback)(new InvalidInputException(

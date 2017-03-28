@@ -19,7 +19,7 @@ module.exports = class AccountsController {
           } else if (_.isEmpty(customers)) {
             callback(null, {});
           } else {
-            this.customerSerializer.render(customers, callback);
+            this.render(customers, callback);
           }
         });
     } 
@@ -39,7 +39,7 @@ module.exports = class AccountsController {
           if (err) {
             return callback(err);
           } else {
-            this.customerSerializer.render(account, callback);
+            this.render(account, callback);
           }
         }); 
       }
@@ -60,7 +60,7 @@ module.exports = class AccountsController {
           if (err) {
             return callback(err);
           } else {
-            this.customerSerializer.render(account, callback);
+            this.render(account, callback);
           }
         }); 
       }
@@ -74,7 +74,7 @@ module.exports = class AccountsController {
 
   create(params, callback) {
     if (areValidParams(params)) {
-      this.buildCustomerFromParams(params, (err, customer) => {
+      this.buildAccountFromParams(params, (err, customer) => {
         if (err) {
           return callback(err);
         } else {
@@ -82,7 +82,14 @@ module.exports = class AccountsController {
             if (err) {
                 return callback(err);
               } else {
-                this.customerSerializer.render(account, callback);
+                this.render(account, callback);
+              }
+          });
+          this.accountService.save(customer, (err, account) => {
+            if (err) {
+                return callback(err);
+              } else {
+                this.render(account, callback);
               }
           });
         }

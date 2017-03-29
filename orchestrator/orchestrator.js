@@ -25,6 +25,79 @@ let orchestrator = (event, context, callback) => {
                 method: 'POST',
                 headers : basicHeader,
                 body : JSON.stringify (event.payload)
+            }).then ((response) => {
+                return response.json();
+
+            }).then ((json) => {
+
+                console.log(json);
+
+            }).catch ((err) => {
+                console.log(err);
+            });
+
+            break;
+            
+        case 'signup' :
+
+            fetch (config.USERMICROSERVICE + 'signup', {
+                method: 'POST',
+                headers : basicHeader,
+                body : JSON.stringify (event.payload)
+            }).then ((response) => {
+                return response.json();
+
+            }).then ((json) => {
+
+                console.log(json);
+
+            }).catch ((err) => {
+                console.log(err);
+            });
+            break;
+            
+        case 'getAllApps' :
+            fetch (config.PRODUCTMICROSERVICE + 'api/getproducts')
+            .then ((response) => {
+                return response.json();
+
+            }).then ((json) => {
+
+                console.log(json);
+
+            }).catch ((err) => {
+                console.log(err);
+            });
+
+            break;
+            
+        case 'getAppWithID' :
+            fetch (config.PRODUCTMICROSERVICE + 'api/getproducts/' +  event.id)
+            .then ((response) => {
+                return response.json();
+
+            }).then ((json) => {
+
+                console.log(json);
+
+            }).catch ((err) => {
+                console.log(err);
+            });
+            break;
+        
+        case 'emailVerification' :
+            //TODO - 
+            response.body.message = 'calling verfying email';
+            break;
+        
+        case 'getAllCustomerInfo' :
+            response.body.message = 'calling getAllCustomerInfo';
+            break;
+            
+            
+        case 'getCustomerWithID' :
+            fetch (config.USERMICROSERVICE + '/customerInfo', {
+                headers : Object.assign ({}, basicHeader, {"Authorization": event.params.header.Authorization})
             })
             .then ((response) => {
                 return response.json();
@@ -35,42 +108,35 @@ let orchestrator = (event, context, callback) => {
 
             }).catch ((err) => {
                 console.log(err);
-            })
-
-            break;
+            });
             
-        case 'signup' :
-            response.body.message = 'calling signup';
-            break;
-            
-        case 'getAllApps' :
-            response.body.message = 'calling get all apps';
-            break;
-            
-        case 'getAppWithID' :
-            response.body.message = 'calling get app with ID';
-            break;
-        
-        case 'emailVerification' :
-            response.body.message = 'calling verfying email';
-            break;
-        
-        case 'getAllCustomerInfo' :
-            response.body.message = 'calling getAllCustomerInfo';
-            break;
-            
-            
-        case 'getCustomerWithID' :
-            response.body.message = 'calling getCustomerWithID';
-            break; 
-        
-        case 'getCustomerWithID' :
-            response.body.message = 'calling getCustomerWithID';
             break;
             
         
         case 'getCustomerAllApps' :
-            response.body.message = 'calling getCustomerAllApps';
+            fetch (config.USERMICROSERVICE + '/customerInfo', {
+                headers : Object.assign ({}, basicHeader, {"Authorization": event.params.header.Authorization})
+            })
+            .then ((response) => {
+                return response.json();
+
+            }).then ((json) => {
+
+                let {_id} = json;
+
+                return fetch (config.ORDERMICROSERVICE + 'api/orders/purchaseHistory/' + _id)
+
+            }).then ((response) => {
+                return response.json();
+            }).then ((json) => {
+
+                let productIDs = json;
+                //TODO - now call product micro services to return all the products info.
+                
+            })
+            .catch ((err) => {
+                console.log(err);
+            });
             break; 
         
         case 'getSingleCustomerGetSingleApp' :
@@ -134,15 +200,15 @@ let orchestrator = (event, context, callback) => {
 
 orchestrator({
 
-    "operation" : "login",
+    "operation" : "getCustomerAllApps",
     "payload": {
-        "emailID": "sk4226@columbia.edu",
-        "password": "sk4226"
+        "emailID": "ab4349@columbia.edu",
+        "password": "ab4349"
 
     },
     "params" : {
         "header" : {
-            "Authorization": "Bearer askdjnkasndkjasndkjnaskdjnasd"
+            "Authorization" : "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjdXN0SUQiOiI1OGRhZmZmOTMwMmJhMTIyZDUyYjRhMmIiLCJpYXQiOjE0OTA4MTM4MDR9.JlwkCd8SSFLLZB4gxUXBdbCkHz0x1hevBrW7Vj0Zb3Q"
         }
     }
 });

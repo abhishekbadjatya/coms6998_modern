@@ -1,18 +1,41 @@
 'use strict';
 
 const Account = require('../models/account');
+const customerAccount = require('../models/customerAccount');
+
+
+var accountModel = Account.account;
+var customerAccountModel = customerAccount.cutomeraccount;
+
 
 /*
- * TODO: Move these mapping functions to a data layer. The service shouldn't 
+ * TODO: Move these mapping functions to a data layer. The service shouldn't
  * know about them.
  */
 function mapDbObjectToAccountAttributes(dbObject) {
   return {
-    accountNumber: dbObject.accountNumber,
-    accountType: dbObject.accountType,
-    accountBalance: dbObject.accountBalance,
+    "accountNumber": dbObject.accountNumber,
+    "accountType": dbObject.accountType,
+    "accountBalance": dbObject.accountBalance
   };
 }
+
+function mapAccountAttributes(object) {
+  return {
+    //accountNumber: dbObject.accountNumber,
+    "accountType": object.accountType,
+    "accountBalance": object.accountBalance
+  };
+}
+
+
+function mapCustomerAccountAttributes(dbObject, object) {
+  return {
+    "accountNumber": dbObject.id,
+    "custID": object.custID
+  };
+}
+
 
 function createAccountNumber(number) {
   return {
@@ -88,13 +111,77 @@ module.exports = class AccountService {
   });
   }
 
+
+
+
+
+//duplicating method : Anand
+
+
+save(account, callback) {
+
+  console.log("Proceeding to save Account : " + JSON.stringify(account));
+  var accountReturn = null;
+
+  dao.connectToDB();
+  accountModel(mapAccountAttributes(account)).save()
+  .then(function(accountObj){
+    accountReturn = accountObj;
+    return customerAccountModel(mapCustomerAccountAttributes(accountObj, account)).save();
+  })
+  .then(function(customerAccountObj){
+    dao.disConnectFromDB();
+    return accountReturn;
+  })
+  .catch(function(err){
+    dao.disConnectFromDB();
+    //send error
+  });
+}
+
+
+//end method : Anand
+
+
+
+
+
   /**
    * Fetches Account objects from persistence and returns them.
    * @id - id corresponding to the Customer that needs to be fetched.
    * If nothing is provided then it returns all Customers.
    * @callback - callback function with parameters (err, customers).
    **/
+
+
+//duplicating method : Anand
+
   fetch(id, callback) {
+
+    dao.connectToDB();
+    customerAccountModel.find({"custID": id}).exec()
+    .then(function(customerAccounts){
+      var accountIDs = [];
+      for(var i=0; i < customerAccounts.length; i++){
+        accountIDs.push(customerAccounts.custID);
+      }
+      return accountModel.find(_id : {$in : accountIDs}).exec();
+    })
+    .then(function(accounts){
+      //return accounts;
+    })
+    .catch(function(err){
+      dao.disConnectFromDB();
+      //throw err;
+    })
+  }
+
+
+//
+
+
+fetch(id, callback) {
+
     if (id) {
       // Fetch just one.
       try {

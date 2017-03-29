@@ -9,7 +9,6 @@ module.exports.connectToDB = function() {
 
 module.exports.disConnectFromDB = function() {
 	mongoose.connection.close(function(){
-		console.log("Dis-connected to DB");
+		console.log("Dis-connected from DB");
 	});
 };
-

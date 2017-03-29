@@ -2,13 +2,10 @@ let mongoose = require ('mongoose');
 let Schema = mongoose.Schema;
 
 let accountSchema = new Schema ({
-
 	accountType : Number,
-	accountNumber : String,
 	accountBalance : Number
-
 });
 
-account = mongoose.model ('account', accountSchema);
+account = mongoose.model ('accounts', accountSchema);
 
 module.exports = account;

@@ -1,0 +1,21 @@
+{
+  "name": "ordermicroservice",
+  "version": "1.0.0",
+  "description": "This is the payment microservices",
+  "main": "ordermicroservice.js",
+  "scripts": {
+		"start": "node ordermicroservice.js"
+  },
+  "author": "Anand Naik",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.16.0",
+    "cors": "^2.8.1",
+    "express": "^4.14.1",
+    "express-jwt": "^5.1.0",
+    "jsonwebtoken": "^7.2.1",
+	"node-fetch": "^1.6.3",
+    "nodemon": "^1.11.0",
+    "mongoose": "^4.8.1"
+  }
+}

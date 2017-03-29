@@ -44,12 +44,13 @@ app.get('/',(req,res) =>{
 res.status(200).json({message:"Hello"});
 });
 
-app.get ('/customerInfo/:emailID', (req, res) => {
+app.get ('/customerInfo', (req, res) => {
 
-	let {emailID} = req.params.emailID;
-	console.log(emailID);
+	let {custID} = req.user;
+	console.log(req.user);
+	console.log(custID);
 
-	customerModel.find({_id:emailID}).exec()
+	customerModel.find({_id:custID}).exec()
 	.then((customers) => {
 
 		if (customers.length > 1) {

@@ -44,12 +44,12 @@ app.get('/',(req,res) =>{
 res.status(200).json({message:"Hello"});
 });
 
-app.get ('/getCustomerInfo', (req, res) => {
+app.get ('/getCustomerInfo/:emailID', (req, res) => {
 
-	let {custID} = req.user;
-	console.log(custID);
+	let {emailID} = req.params.emailID;
+	console.log(emailID);
 
-	customerModel.find({_id:custID}).exec()
+	customerModel.find({_id:emailID}).exec()
 	.then((customers) => {
 
 		if (customers.length > 1) {
@@ -112,155 +112,7 @@ app.post ('/login' , (req, res) => {
 
 });
 
-// app.get ('/grocery', (req, res) => {
 
-// 	groceriesModel.find({}).exec()
-// 	.then ((groceries) => {
-
-// 		res.status(200).send(groceries);
-
-// 	})
-// 	.catch((error) => {
-// 		console.log(error);
-// 		res.status(500).send({error:"INTERNAL_SERVER_ERROR"});
-// 	});
-
-// });
-
-
-
-
-
-// app.put('/user/grocery', (req,res) => {
-
-// 	let {userID} = req.user;
-// 	let {status,groceryID} = req.body;
-// 	console.log(req.body);
-
-// 	if (status == 'SUCCESS') {
-
-// 		userModel.find({_id:userID}).exec()
-// 		.then((users) => {
-
-// 			if (!users.length) {
-// 				return res.status(400).send({error:"NO_USER"});
-// 			}
-// 			return userModel
-// 			.update(
-// 				{_id: userID},
-// 				{ $pull:
-// 					{
-// 						groceriesBought : {
-// 							id: groceryID
-// 						}
-// 					}
-// 				}
-// 			)
-// 			.exec()
-
-// 		})
-// 		.then((response) => {
-
-// 			return userModel.update (
-// 				{_id:userID},
-// 				{
-// 					$push:{
-// 						groceriesBought: {id:groceryID, "status" : "BOUGHT"}
-// 					}
-// 				},
-// 				{
-// 					upsert:true
-// 				})
-// 				.exec()
-// 		})
-// 		.then((response) => {
-
-// 			res.status(200).send({status:"GROCERY_ADDED"});
-
-// 		})
-// 		.catch ((error) => {
-// 			console.log(error);
-// 			res.status(500).send({error:"INTERNAL_SERVER_ERROR"});
-// 		});
-
-
-
-
-// 	} else if (status == 'FAILURE') {
-
-// 		userModel
-// 		.update(
-// 			{_id: userID},
-// 			{ $pull:
-// 				{
-// 					groceriesBought : {
-// 						id: groceryID,
-// 						status : "PENDING"
-
-// 					}
-
-// 				}
-// 			}
-// 		)
-// 		.exec()
-// 		.then((response) => {
-
-// 			res.status(200).send({status:"GROCERY_DELETED"});
-
-// 		})
-// 		.catch ((error) => {
-// 			console.log(error);
-// 			res.status(500).send({error:"INTERNAL_SERVER_ERROR"});
-// 		});
-
-
-// 	} else if (status == 'PENDING') {
-
-// 		userModel
-// 		.update (
-// 			{_id:userID},
-// 			{
-// 				$push:{
-// 					groceriesBought: {id:groceryID, "status" : "PENDING"}
-// 				}
-// 			},
-// 			{
-// 				upsert:true
-// 			}
-// 		)
-// 		.exec()
-// 		.then((response) => {
-
-// 			res.status(200).send({status:"GROCERY_ADDED"});
-
-// 		})
-// 		.catch ((error) => {
-// 			console.log(error);
-// 			res.status(500).send({error:"INTERNAL_SERVER_ERROR"});
-// 		});
-
-
-// 	}
-
-
-// });
-
-// app.get ('/grocery/:id', (req, res) => {
-
-// 	let groceryID = req.params.id;
-// 	groceriesModel.findOne({"_id": groceryID}).exec()
-// 	.then ((groceries) => {
-
-// 		res.status(200).send(groceries);
-
-// 	})
-// 	.catch((error) => {
-// 		console.log(error)
-// 		res.status(500).send({error:"INTERNAL_SERVER_ERROR"});
-// 	});
-
-
-// });
 
 
 app.post ('/signup' , (req, res) => {
@@ -301,32 +153,7 @@ console.log(req.hostname);
     		
         return res.json();
     	})
-    	// .then(function(res){
-    	// 	console.log(res);
-    	// })
-		// ses.sendEmail({
-  //  		Source: from,
-  //  		Destination: { ToAddresses: to },
-  //  		Message: {
-  //      	Subject: {
-  //         Data: 'Hey! Please Verify Your Account'
-  //      },
-  //      	Body: {
-  //          Text: {
-  //              		Data: 'Please click on the link to verify your account: '+config.url_user+'/accountverification/'+myToken,
-  //          		 }
-  //       	  }
-  //  		}
-		// }
-		// , function(err, data) {
-  //   		// if(err) throw err
-  //       	console.log('Email sent:');
-  //       	console.log(data);
- 		
- 	// 	});
 
-
-		// myToken = jwt.sign({userID: data._id}, SECRET_KEY);
 		res.status(202).json({message: "USER_ADDED" });
 	})
 	.catch ((error) => {
@@ -368,56 +195,17 @@ app.get ('/accountverification/:code' , (req, res) => {
 			res.status(500).json({error:err});
     		}
 
-    // const response = {
-    //   statusCode: 200,
-    //   body: JSON.stringify({
-    //     message: 'started state machine',
-    //     result: data
-    //   })
-    // };
     		console.log(data);
  			res.status(200).json({message:"Your account has been verified!"});
 
-    // callback(null, response);
+    
   		});
 	}
-	// emailID=token;
+	
 });
 
 
 
-	// let myToken = jwt.verify(token, SECRET_KEY);
-	// jwt.verify(token,SECRET_KEY,function(err,token){
-	// 	if(err){
-	// 		console.log('Error');
-	// 		res.status(500).json({error:"INVALID_TOKEN"});
-	// 	}
-	// 	else{
-			// console.log(token);
-			// let custID=token.custID;
-			// console.log(custID);
-	// 	userModel.update (
-	// 	{username:userID},
-	// 		{
-	// 			$set:{
-	// 				"isVerified":true
-	// 			}
-	// 		},
-	// 	{
-	// 		upsert:false
-	// 	})
-	// .exec()
-	// .then ((response) => {
-	// 	console.log(response);
-	// 	res.status(200).send("Your account has been verified");
-	// })
-	// .catch((error) => {
-	// 	console.log(error);
-	// 	res.status(500).json({error:"INTERNAL_SERVER_ERROR"});
-
-	// });
-	 	// }
-//	});
 });
 
 app.put ('/updateVerificationStatus' , (req, res) => {

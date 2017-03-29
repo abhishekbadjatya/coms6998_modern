@@ -44,7 +44,7 @@ app.get('/',(req,res) =>{
 res.status(200).json({message:"Hello"});
 });
 
-app.get ('/getCustomerInfo/:emailID', (req, res) => {
+app.get ('/customerInfo/:emailID', (req, res) => {
 
 	let {emailID} = req.params.emailID;
 	console.log(emailID);

@@ -4,7 +4,7 @@
   "description": "This is the user microservices",
   "main": "server.js",
   "scripts": {
-    "start" : "node app.js"
+    "start": "node app.js"
   },
   "author": "",
   "license": "ISC",
@@ -16,6 +16,8 @@
     "express-jwt": "^5.1.0",
     "jsonwebtoken": "^7.2.1",
     "lodash": "^4.17.4",
-    "mongoose": "^4.8.1"
-  }
+    "mongoose": "^4.8.1",
+    "node-fetch": "^1.6.3"
+  },
+  "devDependencies": {}
 }

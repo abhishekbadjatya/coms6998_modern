@@ -3,5 +3,6 @@ module.exports = {
 	'aws_accessKeyId' : '',
 	'aws_secretAccessKey': '',
 	'dbURL' : '',
-	'url_user': 'http://localhost:3000'
+	'sendEmailURL' : ''
+	// 'url_user': 'http://localhost:3000'
 }

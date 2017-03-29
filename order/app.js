@@ -119,5 +119,5 @@ app.get('/',(req,res) =>{
 });
 
 app.use(express.static(__dirname));
-app.listen(3001);
+app.listen(process.env.PORT||3001);
 console.log("Server started");

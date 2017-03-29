@@ -1,6 +1,6 @@
 branch-defaults:
   default:
-    environment: ordermicros2
+    environment: ordermicroser1-dev
     group_suffix: null
 global:
   application_name: ordermicroser1

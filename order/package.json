@@ -2,9 +2,9 @@
   "name": "ordermicroservice",
   "version": "1.0.0",
   "description": "This is the payment microservices",
-  "main": "ordermicroservice.js",
+  "main": "server.js",
   "scripts": {
-		"start": "node ordermicroservice.js"
+		"start": "node app.js"
   },
   "author": "Anand Naik",
   "license": "ISC",

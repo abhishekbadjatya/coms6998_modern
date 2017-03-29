@@ -114,6 +114,10 @@ app.post('/api/orders/createOrder', function(req, res) {
 });
 
 
+app.get('/',(req,res) =>{
+	res.status(200).json({message:"Hello"});
+});
+
 app.use(express.static(__dirname));
 app.listen(3001);
 console.log("Server started");

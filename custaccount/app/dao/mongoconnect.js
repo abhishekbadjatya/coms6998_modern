@@ -1,5 +1,5 @@
 var mongoose = require ("mongoose");
-var config=require('../config.js');
+var config=require('../../config.js');
 
 module.exports.connectToDB = function() {
 	mongoose.connect(config.MONGO_DB_CONNECTION_STRING, function(){

@@ -1,98 +1,67 @@
 'use strict';
 
+var _ = require('underscore')
+
 function areValidParams(params) {
   return _.isObject(params)
 }
 
 module.exports = class AccountsController {
-  constructor(AccountService) {
-    this.Service = AccountService;
+   constructor(AccountService) {
+    this.accountService = AccountService
   }
 
-  getUserAccounts(params) {
-    if (areValidParams(params)) {
-      var containsId = _.isString(params.custId);
-
-      if (containsId) {
-        var custId = params.custId;
-        this.accountService.fetchOne(custId, (err, account) => {
-          if (err) {
-            return callback(err);
-          } else {
-            return account;
-          }
-        }); 
-      }
-      else {
-      // Invalid params.
-      // Raise error.
-    }
-  }
+getUserAccounts(params, callback){
+//function getUserAccounts(params) {
+      console.log(params)
+      var custId = params.custId;
+      this.accountService.fetchOne(custId, (err, account) => {
+        if (err) {
+          
+          callback(err)
+        } else {
+          console.log(account)
+          callback(null, account)
+        }
+      }); 
 }
 
-  accountById(params) {
-    if (areValidParams(params)) {
-      var containsId = _.isString(params.accountId);
+ //  accountById(params) {
+ //      if (containsId) {
+ //        var accountId = params.accountId;
+ //        this.accountService.fetchOne(accountId, (err, account) => {
+ //          if (err) {
+ //            return err;
+ //          } else {
+ //            return account;
+ //          }
+ //        }); 
+ //      }
+ // }
 
-      if (containsId) {
-        var accountId = params.accountId;
-        this.accountService.fetchOne(accountId, (err, account) => {
-          if err {
-            return err;
-          } else {
-            return account;
-          }
-        }); 
-      }
-      else {
-      // Invalid params.
-      // Raise error.
-    }
-   }
- }
-
-
-  create(params, callback) {
-    if (areValidParams(params)) {
-      this.buildAccountFromParams(params, (err, customer) => {
-        if (err) {
-          return err;
-        } else {
-          this.accountService.save(customer, (err, account) => {
+create(params, callback) {
+          this.accountService.save(params, (err, account) => {
             if (err) {
                 return err;
               } else {
-                return account;
+                console.log(account)
+          callback(null, account)
               }
           });
-          this.accountService.save(customer, (err, account) => {
-            if (err) {
-                return err;
-              } else {
-                return account;
-              }
-          });
-        }
-      });
-    } else {
-      // Invalid params.
-      // Raise error.
-    }
-  }
-
-
-  buildAccountFromParams(params, callback) {
-    var accountAttributes = this.accountSerializer.deserialize(params);
-    console.log(sprintf("Account attributes received %s.",
-      JSON.stringify(accountAttributes)));
-
-    try {
-      var account = this.accountService.create(accountAttributes);
-    } catch (err) {
-      return err;
     }
 
-    console.log(sprintf("Account object created %s.", JSON.stringify(account)));
-    return account;
-  }
+
+// buildAccountFromParams(params, callback) {
+//     console.log(sprintf("Account attributes received %s.",
+//       JSON.stringify(params)));
+
+//     try {
+//       var account = this.accountService.create(params);
+//     } catch (err) {
+//       return err;
+//     }
+
+//     console.log(sprintf("Account object created %s.", JSON.stringify(account)));
+//     return account;
+//   }
 };

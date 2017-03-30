@@ -6,6 +6,6 @@ let accountSchema = new Schema ({
 	accountBalance : Number
 });
 
-account = mongoose.model ('accounts', accountSchema);
+account = mongoose.model('accounts', accountSchema);
 
 module.exports = account;

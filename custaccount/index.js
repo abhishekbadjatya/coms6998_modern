@@ -9,10 +9,17 @@ const HTTPS = require('https');
 
 
 var config=require('./config.js');
-var dao = require('./app/dao/mongoconnect.js');
-var bodyParser = require('body-parser');
-var fetch = require('node-fetch');
-var controller = require('./app/Controller/AccountController.js')
+
+// var bodyParser = require('body-parser');
+// var fetch = require('node-fetch');
+
+var dao = require('./app/dao/mongoconnect');
+var Account_Controller = require('./app/Controller/AccountController');
+var Account_service = require('./app/Service/AccountService');
+
+var accountService  = new Account_service(dao)
+
+var controller = new Account_Controller(accountService)
 
 function extractOperationAndParams(event, callback) {
   console.log('Received event:`', JSON.stringify(event, null, 2));
@@ -24,64 +31,80 @@ function extractOperationAndParams(event, callback) {
 }
 
 exports.handler = (event, context, callback) => {
-  extractOperationAndParams(event, (err, operation, params) => {
+  extractOperationAndParams (event, (err, operation, params) => {
     switch (operation) {
       case 'fetchAll':
       case 'fetch'://Need to change the controller function names here
-        controller.getUserAccounts(params);
-      .then((res) => {
+        console.log("Haha7");
+        controller.getUserAccounts(params, (err, promise) => {
+          if (err){
+            callback(err)
+          }else{
+            promise.then((res) => {
 
-        let response = {
-            statusCode: '200',
-            body: JSON.stringify(res),
-            headers: {
-                'Content-Type': 'application/json',
-            }
-        };
+              let response = {
+                  statusCode: '200',
+                  body: JSON.stringify(res),
+                  headers: {
+                      'Content-Type': 'application/json',
+                  }
+              };
 
-        context.succeed(response);
+              // context.succeed(response);
+              callback(null, response);
 
+            }).catch((err)=> {
 
-      }).catch((err)=> {
+              let response = {
+                  statusCode: '500',
+                  body: JSON.stringify(err),
+                  headers: {
+                      'Content-Type': 'application/json',
+                  }
+              };
+              callback(null, response);
+              // context.succeed(response);
+            });
+          
+          }
 
-        let response = {
-            statusCode: '500',
-            body: JSON.stringify(err),
-            headers: {
-                'Content-Type': 'application/json',
-            }
-        };
+          
 
-        context.succeed(response);
-      });
+        })
+        
         break;
       case 'create':
-        controller.create(params, callback).
-        .then((res) => {
+        controller.create(params,(err, promise)=> {
+        if (err){
+            callback(err)
+          }else{
+        promise.then((res) => {
 
-        let response = {
-            statusCode: '200',
-            body: JSON.stringify(res),
-            headers: {
-                'Content-Type': 'application/json',
-            }
-        };
+          let response = {
+              statusCode: '200',
+              body: JSON.stringify(res),
+              headers: {
+                  'Content-Type': 'application/json',
+              }
+          };
 
-        context.succeed(response);
+          callback(null, response);
 
 
-      }).catch((err)=> {
+        }).catch((err)=> {
 
-        let response = {
-            statusCode: '500',
-            body: JSON.stringify(err),
-            headers: {
-                'Content-Type': 'application/json',
-            }
-        };
+          let response = {
+              statusCode: '500',
+              body: JSON.stringify(err),
+              headers: {
+                  'Content-Type': 'application/json',
+              }
+          };
 
-        context.succeed(response);
-      });
+          callback(null, response);
+        });
+       }
+      })
         break;
       default:
         let response = {
@@ -91,8 +114,7 @@ exports.handler = (event, context, callback) => {
                 'Content-Type': 'application/json',
             }
         };
-
-        context.succeed(response);
+      callback(null, response);
     }
-  });
-};
+  })
+}

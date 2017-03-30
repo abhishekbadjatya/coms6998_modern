@@ -82,20 +82,24 @@ app.post('/api/products', function(req, res) {
 	var result = [];
 
 	for(var i=0; i < orderProducts.length; i++){
+		if (dao.validateID(orderProducts[i].productID)) {
 		productsId.push(orderProducts[i].productID);
 	}
+}
 	console.log(productsId)
 	dao.connectToDB();
 	productModel.find({
-			"_id" : {$in : productsId}
+			"_id" : { $in : productsId}
 		}).exec().then ((product_data) => {
-				for(var i=0; i < orderProducts.length; i++) {
+				console.log(product_data);
+				for(var i=0; i < productsId.length; i++) {
+			if (dao.validateID(orderProducts[i].productID)) {
 			result.push({"orderId" : orderProducts[i].orderID,
 				"productId" : product_data[i]._id,
 				"productName" : product_data[i].productName,
 				"productPrice" : product_data[i].productPrice
 			});
-		}
+		} }
 		console.log(result)
 		res.status(200).send(result);
 

@@ -14,9 +14,9 @@ var orderModel = dao.orderModel;
 var orderProductModel = dao.orderProductModel;
 
 
-app.post('/api/orders/purchaseHistory', function(req, res) {
-	var customerID = req.body.custID;
-	var accountNumber = req.body.accountNumber;
+app.get('/api/orders/purchaseHistory/:custID', function(req, res) {
+	var customerID = req.params.custID;
+	//var accountNumber = req.body.accountNumber;
 	console.log(customerID);
 	dao.connectToDB();
 	orderModel.find({"customer_id" : customerID, "status" : "SUCCESS"}).exec()

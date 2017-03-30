@@ -1,0 +1,18 @@
+{
+  "name": "products",
+  "version": "1.0.0",
+  "description": "product micro service",
+  "main": "server.js",
+  "scripts": {
+    "start" : "node app.js"
+  },
+  "author": "Tushar Agarwal",
+  "license": "ISC",
+  "dependencies": {
+    "aws-sdk": "^2.11.0",
+    "body-parser": "^1.17.1",
+    "express": "^4.15.2",
+    "mongoose": "^4.9.1",
+    "node-fetch": "^1.6.3"
+  }
+}

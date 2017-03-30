@@ -69,7 +69,7 @@ module.exports = class AccountService {
    * @input - attributes used to build the Account.
    * Throws InputValidationException.
    **/
-  create(input) {
+ create(input) {
     if (input instanceof Account) {
       return input;
     } else {
@@ -83,7 +83,7 @@ module.exports = class AccountService {
    * @callback - callback function with parameters (err, account).
    * Throws InputValidationException.
    **/
-  save(account, callback) {
+  /*save(account, callback) {
     try {
       account.validate();
     } catch (err) {
@@ -94,7 +94,7 @@ module.exports = class AccountService {
     console.log(sprintf("Ready to persist: %s.", JSON.stringify(accountDbObject)));
     dao.connectToDB();
     return account(mapAccountToDbObject(account)).save()
-    /*this.dao.persist(createAccountKey(account.accountNumber), accountDbObject,
+    this.dao.persist(createAccountKey(account.accountNumber), accountDbObject,
     (err, item) => {
             if (err) {
               console.log(sprintf("Error while trying to persist: %s.",
@@ -103,13 +103,13 @@ module.exports = class AccountService {
             } else {
               callback(null, account);
             }
-   });*/
+   });
    .catch(function(err){
         dao.disConnectFromDB();
         console.log(err);
         res.status(500).send({error:"INTERNAL_SERVER_ERROR"});
   });
-  }
+  }*/
 
 
 
@@ -119,7 +119,7 @@ module.exports = class AccountService {
 
 
 save(account, callback) {
-
+  let p = new Promise((resolve, reject)=> {
   console.log("Proceeding to save Account : " + JSON.stringify(account));
   var accountReturn = null;
 
@@ -137,6 +137,9 @@ save(account, callback) {
     dao.disConnectFromDB();
     //send error
   });
+  });
+
+  return p;
 }
 
 
@@ -156,8 +159,8 @@ save(account, callback) {
 
 //duplicating method : Anand
 
-  fetch(id, callback) {
-
+ function fetchOne(id, callback) {
+  let p = new Promise((resolve, reject)=> {
     dao.connectToDB();
     customerAccountModel.find({"custID": id}).exec()
     .then(function(customerAccounts){
@@ -174,6 +177,9 @@ save(account, callback) {
       dao.disConnectFromDB();
       //throw err;
     })
+    });
+
+  return p;
   }
 
 

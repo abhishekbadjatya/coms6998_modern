@@ -9,36 +9,90 @@ const HTTPS = require('https');
 
 
 var config=require('./config.js');
-var dao = require('./dao/mongoconnect.js');
+var dao = require('./app/dao/mongoconnect.js');
 var bodyParser = require('body-parser');
 var fetch = require('node-fetch');
-var controller = require('./Controller/AccountController.js')
+var controller = require('./app/Controller/AccountController.js')
 
 function extractOperationAndParams(event, callback) {
   console.log('Received event:`', JSON.stringify(event, null, 2));
   if (event.operation) {
     var operation = event.operation;
-    var params = Utils.omit(event, 'operation');
+    var params = event.payload;
     callback(null, operation, params);
-  } else {
-    callback(new InvalidInputException('An operation has to be specified.'));
   }
 }
 
-exports.customerAccountControllerHandler = (event, context, callback) => {
-  callController(event, 'AccountsController', callback);
+exports.handler = (event, context, callback) => {
   extractOperationAndParams(event, (err, operation, params) => {
     switch (operation) {
       case 'fetchAll':
       case 'fetch'://Need to change the controller function names here
-        controller.allAccounts(params, mapping.sendHttpResponse(callback));
+        controller.getUserAccounts(params);
+      .then((res) => {
+
+        let response = {
+            statusCode: '200',
+            body: JSON.stringify(res),
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        };
+
+        context.succeed(response);
+
+
+      }).catch((err)=> {
+
+        let response = {
+            statusCode: '500',
+            body: JSON.stringify(err),
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        };
+
+        context.succeed(response);
+      });
         break;
       case 'create':
-        controller.create(params, mapping.sendHttpResponse(callback));
+        controller.create(params, callback).
+        .then((res) => {
+
+        let response = {
+            statusCode: '200',
+            body: JSON.stringify(res),
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        };
+
+        context.succeed(response);
+
+
+      }).catch((err)=> {
+
+        let response = {
+            statusCode: '500',
+            body: JSON.stringify(err),
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        };
+
+        context.succeed(response);
+      });
         break;
       default:
-        mapping.sendHttpResponse(callback)(new InvalidInputException(
-          'Invalid operation "${operation}" given.'));
+        let response = {
+            statusCode: '400',
+            body: JSON.stringify(),
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        };
+
+        context.succeed(response);
     }
   });
 };

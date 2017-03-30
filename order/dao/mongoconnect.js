@@ -17,12 +17,27 @@ var userSchema = new mongoose.Schema({
 
 });
 
-
+module.exports.validateID = function(id) {
+	return mongoose.Types.ObjectId.isValid(id);
+}
 
 var orderProductSchema = new mongoose.Schema({
 	productID : String,
 	orderID : String
 });
+
+var accountSchema = new mongoose.Schema ({
+	"accountType" : String,
+	"accountBalance" : Number
+});
+
+var account = mongoose.model('accounts', accountSchema);
+
+exports.account = account;
+
+
+
+
 
 var paymentSchema = new mongoose.Schema({}, { strict: false });
 var orderSchema = new mongoose.Schema({}, { strict: false });

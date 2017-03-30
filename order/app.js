@@ -12,6 +12,7 @@ var paymentModel = dao.paymentModel;
 
 var orderModel = dao.orderModel;
 var orderProductModel = dao.orderProductModel;
+var accountModel = dao.account;
 
 
 app.get('/api/orders/purchaseHistory/:custID', function(req, res) {
@@ -23,20 +24,27 @@ app.get('/api/orders/purchaseHistory/:custID', function(req, res) {
 	.then(function(orders){
 		var orderIDs = [];
 		for(var j = 0; j < orders.length; j++){
-			orderIDs.push(orders[j].id);
+			if(dao.validateID(orders[j].id)){
+				orderIDs.push(orders[j].id);
+			}
 		}
-						console.log(orderIDs);
+		//console.log(orderIDs);
 		return orderProductModel.find({
 			"orderID" : {$in : orderIDs}
 		}).exec();
 	})
 	.then(function(orderProducts){
 		dao.disConnectFromDB();
-		var products = [];
+		var orderProductsResp = [];
 		for(var i=0; i < orderProducts.length; i++){
-			products.push(orderProducts[i].productID);
+			orderProductsResp.push({
+				"productID" : orderProducts[i].productID,
+				"orderID"  	: orderProducts[i].orderID
+			});
 		}
-		res.status(200).json(products);
+		res.status(200).json({
+			"orderProducts" : orderProductsResp
+		});
 	})
 	.catch(function(err){
 		dao.disConnectFromDB();
@@ -112,6 +120,23 @@ app.post('/api/orders/createOrder', function(req, res) {
 	});
 
 });
+
+
+app.post('/api/orders/vedant', function(req, res) {
+
+	dao.connectToDB();
+	accountModel({
+    "accountType": "saving",
+    "accountBalance": 10
+  }).save()
+  .then(function(accountObj){
+		res.status(202).json(accountObj);
+	})
+	.catch(function(err){
+		res.status(500).send({error:"INTERNAL_SERVER_ERROR"});
+	});
+});
+
 
 
 app.get('/',(req,res) =>{

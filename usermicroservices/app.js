@@ -15,7 +15,7 @@ let port=process.env.PORT||3000;
 let aws = require('aws-sdk');
 var fetch = require('node-fetch');
 
-aws.config={ "accessKeyId": config.aws_accessKeyId, "secretAccessKey": config.aws_secretAccessKey, "region": "us-east-1" };
+aws.config={ "accessKeyId": config.aws_accessKeyId, "secretAccessKey": config.aws_secretAccessKey, "region": "us-west-2" };
 
 const SECRET_KEY = config.SECRET_KEY;
 
@@ -180,10 +180,10 @@ app.get ('/accountverification/:code' , (req, res) => {
 			let emailID=token.emailID;
 			console.log(emailID);
 
-			var AWS = require('aws-sdk');
-			AWS.config={ "accessKeyId": "AKIAI42OI74LLARR4DPQ", "secretAccessKey": "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", "region": "us-west-2" };
+			// var AWS = require('aws-sdk');
+			// AWS.config={ "accessKeyId": "AKIAI42OI74LLARR4DPQ", "secretAccessKey": "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", "region": "us-west-2" };
 
-			let stepfunctions = new AWS.StepFunctions();
+			let stepfunctions = new aws.StepFunctions();
 			console.log(stepfunctions);
 			let params = {
     			stateMachineArn: "arn:aws:states:us-west-2:932068603235:stateMachine:LambdaStateMachine",

@@ -1,11 +1,12 @@
 'use strict';
 
+// const  account= require('../models/account');
+// const customerAccount = require('../models/customerAccount');
 var  account= require('../models/account.js');
 var customerAccount = require('../models/customerAccount.js');
 
-
-var accountModel = account.account;
-var customerAccountModel = customerAccount.cutomeraccount;
+var accountModel = account.accountModel;
+var customerAccountModel = customerAccount.customeraccountModel;
 
 
 /*
@@ -60,107 +61,11 @@ function mapAccountToDbObject(account) {
 }
 
 module.exports = class AccountService {
-  constructor(dao) {
+  
+constructor(dao) {
     this.dao = dao;
   }
 
-  /**
-   * Builds a Account object, with all its dependencies. Does not persist it.
-   * @input - attributes used to build the Account.
-   * Throws InputValidationException.
-   **/
-// create(input) {
-//     if (input instanceof Account) {
-//       return input;
-//     } else {
-//       return new Account(input);
-//     }
-//   }
-
-  /**
-   * Saves the given Account to persistence.
-   * @account - a valid Account object.
-   * @callback - callback function with parameters (err, account).
-   * Throws InputValidationException.
-   **/
-  /*save(account, callback) {
-    try {
-      account.validate();
-    } catch (err) {
-      return callback(err);
-    }
-    console.log(sprintf("Proceeding to save Account %s.", JSON.stringify(account)));
-    var accountDbObject = mapAccountToDbObject(account);
-    console.log(sprintf("Ready to persist: %s.", JSON.stringify(accountDbObject)));
-    dao.connectToDB();
-    return account(mapAccountToDbObject(account)).save()
-    this.dao.persist(createAccountKey(account.accountNumber), accountDbObject,
-    (err, item) => {
-            if (err) {
-              console.log(sprintf("Error while trying to persist: %s.",
-                JSON.stringify(accountDbObject)));
-              return callback(err);
-            } else {
-              callback(null, account);
-            }
-   });
-   .catch(function(err){
-        dao.disConnectFromDB();
-        console.log(err);
-        res.status(500).send({error:"INTERNAL_SERVER_ERROR"});
-  });
-  }*/
-
-
-
-
-
-//duplicating method : Anand
-
-
-// save(account, callback) {
-
-//   let p = new Promise((resolve, reject)=> {
-//   console.log("Proceeding to save Account : " + JSON.stringify(account));
-//   var accountReturn = null;
-
-//   this.dao.connectToDB();
-//   accountModel(mapAccountAttributes(account)).save()
-//   .then(function(accountObj){
-//     accountReturn = accountObj;
-//     return customerAccountModel(mapCustomerAccountAttributes(accountObj, account)).save();
-//   })
-//   .then(function(customerAccountObj){
-//     dao.disConnectFromDB();
-//     return accountReturn;
-//   })
-//   .catch(function(err){
-//     this.dao.disConnectFromDB();
-
-//   },(err, account) => {
-//         if (err) {
-
-
-//           reject ({
-//             account : err
-//           });
-
-//         } else {
-
-//           resolve ({
-//             account : account
-//           });
-
-//         }
-
-//        });
-//   });
-
-//   return p;
-// }
-
-
-//end method : Anand
 
 save(account, callback) {
 
@@ -168,51 +73,52 @@ save(account, callback) {
   console.log("Proceeding to save Account : " + JSON.stringify(account));
   var accountReturn = null;
 
-  this.dao.connectToDB();
-
+  this.dao.connectToDB()
+  console.log('here1----')
   accountModel({
     "accountType": account.accountType,
     "accountBalance": account.accountBalance
-  }).save()
+  })
+  .save()
   .then(function(accountObj){
-    console.log('Here')
+    console.log('Here1')
     accountReturn = accountObj;
     return customerAccountModel({
-
+      
     "accountNumber": accountReturn.id,
     "custID": account.custID
-
-    }).save();
+  
+    })
+    .save()
+    .then(function(response){
+      console.log("account service resposne");
+      console.log(response);
+      resolve({account:response});
+    })
+    .catch;
   })
   .then(function(customerAccountObj){
-    dao.disConnectFromDB();
+    //this.dao.disConnectFromDB();
     return accountReturn;
   })
-  .catch(function(err){
-    this.dao.disConnectFromDB();
+  .catch((error) =>{
+        console.log("account service error");
+        console.log(error);
+        reject({error:"INTERNAL_SERVER_ERROR"});
+        // return error;
+    });
+  })
 
-  },(err, account) => {
-        if (err) {
+  // });
 
-
-          reject ({
-            account : err
-          });
-
-        } else {
-
-          resolve ({
-            account : account
-          });
-
-        }
-
-       });
+  p.then(function(res){
+    console.log("Inside p then");
+    console.log(res);
+    callback(null, res);
+    // return res;
   });
 
-  return p;
 }
-
 
 
   /**
@@ -226,104 +132,48 @@ save(account, callback) {
 //duplicating method : Anand
 
 fetchOne(id, callback) {
-
+  
   let p = new Promise((resolve, reject)=> {
     this.dao.connectToDB();
+
     customerAccountModel.find({"custID": id}).exec()
     .then(function(customerAccounts){
+      console.log(customerAccounts);
+      console.log('Here,Here');
       var accountIDs = [];
       for(var i=0; i < customerAccounts.length; i++){
-        accountIDs.push(customerAccounts.custID);
+        console.log(customerAccounts[i]);
+        accountIDs.push(customerAccounts[i].accountNumber);
       }
-      return accountModel.find({_id : {$in : accountIDs}}).exec();
+      console.log(accountIDs);
+      console.log("Done push");
+      // return accountModel.find({_id : {$in : accountIDs}}).exec();
+      accountModel.find({_id : {$in : accountIDs}})
+      .exec()
+      .then((response) => {
+        console.log("fetchOne resposne");
+        console.log(response);
+        resolve({account:response});
+        // return response;
+      })
+      .catch((error) =>{
+        console.log("fetchOne error");
+        console.log(error);
+        reject({error:"INTERNAL_SERVER_ERROR"});
+        // return error;
+      });
     })
-    .then(function(accounts){
-      //return accounts;
-    })
-    .catch(function(err){
-      this.dao.disConnectFromDB();
-      //throw err;
-    },(err, account) => {
-        if (err) {
-
-
-          reject ({
-            err : err
-          });
-
-        } else {
-          resolve ({
-            accounts : account
-          });
-        }
-
-       });
+    
     });
-  callback(null, p);
-  }
 
+  p.then(function(res){
+    console.log("Inside p then");
+    console.log(res);
+    callback(null, res);
+    // return res;
+  });
+  
 
-
-// fetch(id, callback) {
-
-//     if (id) {
-//       // Fetch just one.
-//       try {
-//         var account = new Account({ id: id });
-//       } catch (err) {
-//         return callback(err);
-//       }
-
-//       var queryResult = this.dao.fetch({ id: account.id },
-//         (err, accountDbObject) => {
-
-//           if (err) {
-//             return callback(err);
-//           }
-
-//           if (_.isEmpty(accountDbObject)) {
-//             return callback(null, {});
-//           } else {
-//             var accountAttributes = mapDbObjectToCustomerAttributes(
-//               accountDbObject);
-
-//             try {
-//               var account = this.create(accountAttributes);
-//             } catch (err) {
-//               return callback(err);
-//             }
-
-//             console.log("Successfully fetched Account with id: " +
-//               account.id);
-//             return callback(null, account);
-//           }
-//         });
-
-//     } else {
-//       // Fetch all.
-//       this.dao.fetch(null, (err, accountDbObjects) => {
-
-//         if (err) {
-//           return callback(err);
-//         }
-
-//         var accounts = [];
-
-//         for (var accountDbObject of accountDbObjects) {
-//           var accountAttributes = mapDbObjectToAccountAttributes(
-//             accountDbObject);
-//           try {
-//             var account = this.create(accountAttributes);
-//           } catch (err) {
-//             return callback(err);
-//           }
-//           accounts.push(account);
-//         }
-
-//         console.log("Successfully fetched all Customers.");
-//         return callback(err, accounts);
-//       });
-//     }
-//   }
+}
 
 }

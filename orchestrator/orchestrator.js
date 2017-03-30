@@ -160,6 +160,7 @@ let orchestrator = (event, context, callback) => {
             break;
         
         case 'updateCustomerInfo' : 
+            // NOT TO DO
             response.body.message = 'calling getSingleOrder';
             break;
         

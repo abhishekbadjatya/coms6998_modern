@@ -22,4 +22,9 @@ var productSchema = new mongoose.Schema({
 
 var productModel = mongoose.model('products', productSchema);
 
+
+module.exports.validateID = function(id) {
+    return mongoose.Types.ObjectId.isValid(id);
+}
+
 exports.productModel = productModel;

@@ -1,11 +1,11 @@
 'use strict';
 
-const  account= require('../models/account');
-const customerAccount = require('../models/customerAccount');
+var  account= require('../models/account.js');
+var customerAccount = require('../models/customerAccount.js');
 
 
 var accountModel = account.account;
-var customerAccountModel = customerAccount.customerAccount;
+var customerAccountModel = customerAccount.cutomeraccount;
 
 
 /*
@@ -136,7 +136,7 @@ module.exports = class AccountService {
 //   })
 //   .catch(function(err){
 //     this.dao.disConnectFromDB();
-    
+
 //   },(err, account) => {
 //         if (err) {
 
@@ -144,7 +144,7 @@ module.exports = class AccountService {
 //           reject ({
 //             account : err
 //           });
-        
+
 //         } else {
 
 //           resolve ({
@@ -169,7 +169,7 @@ save(account, callback) {
   var accountReturn = null;
 
   this.dao.connectToDB();
-  
+
   accountModel({
     "accountType": account.accountType,
     "accountBalance": account.accountBalance
@@ -178,10 +178,10 @@ save(account, callback) {
     console.log('Here')
     accountReturn = accountObj;
     return customerAccountModel({
-      
+
     "accountNumber": accountReturn.id,
     "custID": account.custID
-  
+
     }).save();
   })
   .then(function(customerAccountObj){
@@ -190,7 +190,7 @@ save(account, callback) {
   })
   .catch(function(err){
     this.dao.disConnectFromDB();
-    
+
   },(err, account) => {
         if (err) {
 
@@ -198,7 +198,7 @@ save(account, callback) {
           reject ({
             account : err
           });
-        
+
         } else {
 
           resolve ({
@@ -226,7 +226,7 @@ save(account, callback) {
 //duplicating method : Anand
 
 fetchOne(id, callback) {
-  
+
   let p = new Promise((resolve, reject)=> {
     this.dao.connectToDB();
     customerAccountModel.find({"custID": id}).exec()
@@ -250,7 +250,7 @@ fetchOne(id, callback) {
           reject ({
             err : err
           });
-        
+
         } else {
           resolve ({
             accounts : account

@@ -2,12 +2,12 @@ let mongoose = require ('mongoose');
 let Schema = mongoose.Schema;
 
 let customerAccountSchema = new Schema ({
-	
-	accountNumber : String,
-	custID : String
+
+	"accountNumber" : String,
+	"custID" : String
 
 });
 
-cutomeraccount = mongoose.model ('customeraccount', customerAccountSchema);
+var cutomeraccount = mongoose.model ('customeraccount', customerAccountSchema);
 
 module.exports = cutomeraccount;

@@ -3,6 +3,7 @@ var dao = require('./dao/mongoconnect.js');
 var express = require('express');
 var bodyParser = require('body-parser');
 var fetch = require('node-fetch');
+var AWS = require('aws-sdk');
 var app = express();
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
@@ -13,6 +14,9 @@ var paymentModel = dao.paymentModel;
 var orderModel = dao.orderModel;
 var orderProductModel = dao.orderProductModel;
 var accountModel = dao.account;
+
+
+AWS.config.update(config.AWS_config);
 
 
 app.get('/api/orders/purchaseHistory/:custID', function(req, res) {
@@ -119,6 +123,50 @@ app.post('/api/orders/createOrder', function(req, res) {
 		console.log(err);
 	});
 
+});
+
+
+app.post('/api/orders/createBlankOrder', function(req, res) {
+
+	var orderID = null;
+	var productID = req.body.productID;
+	var customerID = req.body.custID;
+	var accountNumber = req.body.accountNumber;
+	var status = 'PENDING';
+
+	dao.connectToDB();
+	orderModel({
+		"customer_id" 	 : customerID,
+		"account_number" : accountNumber,
+		"charge"				 : null,
+		"status"         : status
+	}).save()
+	.then(function(order){
+		res.status(202).send({"orderID" :order.id});
+		var sns = new AWS.SNS();
+		var params = {
+		  // Message: 'just testing', /* required */
+		  Message: JSON.stringify({
+				"default" : "Default message.",
+				"order" 	: order.id
+			}),
+		  MessageStructure: 'json',
+		  Subject: 'createOrder',
+		  TargetArn: config.takeProductARN
+		};
+		
+		sns.publish(params, function(err, data) {
+  			if (err) console.log(err, err.stack); // an error occurred
+  			else     console.log(data);           // successful response
+		});
+	})
+	.then(function(snsCreated){
+		console.log(snsCreated);
+	})
+	.catch(function(err){
+		console.log(err);
+		//res.status(500).send({error:"INTERNAL_SERVER_ERROR"});
+	});
 });
 
 

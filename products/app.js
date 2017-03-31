@@ -8,6 +8,9 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 console.log('test')
 var productModel = dao.productModel;
+var AWS = require('aws-sdk');
+
+AWS.config.update(config.AWS_config);
 
 app.post('/api/insertproducts', function(req, res) {
 	dao.connectToDB();
@@ -132,6 +135,61 @@ app.get('/api/getproducts/:id', function(req, res) {
 	.catch((error) => {
 		console.log(error)
 		res.status(500).send({error:"INTERNAL_SERVER_ERROR"});
+	});
+
+	dao.disConnectFromDB();
+
+
+})
+
+app.post('/api/getproductsbyid', function(req, res) {
+
+	dao.connectToDB();
+	var result;
+	let productID = req.body.productID;
+	console.log(productID);
+	productModel.findOne({"_id": productID})
+	.then ((product_data) => {
+
+				res.status(202).send();
+		
+				var data = {
+				"productID" : product_data._id,
+				"productName" : product_data.productName,
+				"productPrice" : product_data.productPrice,
+                "order"     : req.body.order,
+                "custID" : req.body.custID,
+                "accountNumber" : req.body.accountNumber,
+                "stripeToken" : req.body.stripeToken
+			};
+
+			var data_str = JSON.stringify(data)
+
+
+		var sns = new AWS.SNS();
+		
+		var params = {
+		  // Message: 'just testing', /* required */
+		  Message: JSON.stringify({
+		  	"object" : data_str,
+		  	"default" : "Default Message"
+		  }),
+		  MessageStructure: 'json',
+		  Subject: 'createOrder',
+		  TargetArn: config.placeOrderARN
+		};
+		
+		sns.publish(params, function(err, data) {
+  			if (err) console.log(err, err.stack); // an error occurred
+  			else     console.log(data);           // successful response
+		});
+	})
+	.then(function(snsCreated){
+		console.log(snsCreated);
+	})
+	.catch((error) => {
+		console.log(error)
+		//res.status(500).send({error:"INTERNAL_SERVER_ERROR"});
 	});
 
 	dao.disConnectFromDB();

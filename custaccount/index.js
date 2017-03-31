@@ -35,42 +35,17 @@ exports.handler = (event, context, callback) => {
     switch (operation) {
       case 'fetchAll':
       case 'fetch'://Need to change the controller function names here
-        console.log("Haha7");
         controller.getUserAccounts(params, (err, promise) => {
           if (err){
-            callback(err)
+            callback(err);
           }else{
-            promise.then((res) => {
-
-              let response = {
-                  statusCode: '200',
-                  body: JSON.stringify(res),
-                  headers: {
-                      'Content-Type': 'application/json',
-                  }
-              };
-
-              // context.succeed(response);
-              callback(null, response);
-
-            }).catch((err)=> {
-
-              let response = {
-                  statusCode: '500',
-                  body: JSON.stringify(err),
-                  headers: {
-                      'Content-Type': 'application/json',
-                  }
-              };
-              callback(null, response);
-              // context.succeed(response);
-            });
+            console.log("logging promise");
+            console.log(promise);
+            context.succeed(promise);
           
           }
 
-          
-
-        })
+        });
         
         break;
       case 'create':
@@ -78,31 +53,9 @@ exports.handler = (event, context, callback) => {
         if (err){
             callback(err)
           }else{
-        promise.then((res) => {
-
-          let response = {
-              statusCode: '200',
-              body: JSON.stringify(res),
-              headers: {
-                  'Content-Type': 'application/json',
-              }
-          };
-
-          callback(null, response);
-
-
-        }).catch((err)=> {
-
-          let response = {
-              statusCode: '500',
-              body: JSON.stringify(err),
-              headers: {
-                  'Content-Type': 'application/json',
-              }
-          };
-
-          callback(null, response);
-        });
+        console.log("logging promise");
+            console.log(promise);
+            context.succeed(promise);            
        }
       })
         break;

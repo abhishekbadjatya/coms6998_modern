@@ -8,6 +8,6 @@ let customerAccountSchema = new Schema ({
 
 });
 
-var cutomeraccount = mongoose.model ('customeraccount', customerAccountSchema);
+var customeraccount = mongoose.model ('customeraccount', customerAccountSchema);
 
-module.exports = cutomeraccount;
+exports.customeraccountModel = customeraccount;

@@ -144,19 +144,24 @@ app.post('/api/orders/createBlankOrder', function(req, res) {
 	.then(function(order){
 		res.status(202).send({"orderID" :order.id});
 		var sns = new AWS.SNS();
-		return sns.publish({
-			TopicArn:'arn:aws:sns:us-east-1:219375999692:takeProduct', Message:"Just testing for now ", Subject: "testing "
-    	/*Message: JSON.stringify({
+		var params = {
+		  // Message: 'just testing', /* required */
+		  Message: JSON.stringify({
 				"default" : "Default message.",
 				"order" 	: order.id
 			}),
-    	MessageStructure: 'json',
-    	// TargetArn: 'arn:aws:sns:us-east-1:219375999692:takeProduct:390fd012-0afe-4953-9a57-379b9be02ff8'//config.takeProductARN,
-			//TopicArn: 'arn:aws:sns:us-east-1:219375999692:takeProduct'*/
-  	});
+		  MessageStructure: 'json',
+		  Subject: 'createOrder',
+		  TargetArn: config.takeProductARN
+		};
+		
+		sns.publish(params, function(err, data) {
+  			if (err) console.log(err, err.stack); // an error occurred
+  			else     console.log(data);           // successful response
+		});
 	})
 	.then(function(snsCreated){
-		console.log(snsCreated.MessageID);
+		console.log(snsCreated);
 	})
 	.catch(function(err){
 		console.log(err);

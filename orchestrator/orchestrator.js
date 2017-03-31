@@ -182,11 +182,7 @@ let orchestrator = (event, context, callback) => {
                 // console.log(_id);
                 // console.log(event.payload)
                 console.log('Here')
-            //     fetch (config.USERMICROSERVICE + 'login', {
-            //     method: 'POST',
-            //     headers : basicHeader,
-            //     body : JSON.stringify (event.payload)
-            // })
+            
                 event.payload.custID=_id;
                 console.log(event.payload);
                 console.log(JSON.stringify(event.payload));
@@ -200,6 +196,7 @@ let orchestrator = (event, context, callback) => {
             }).then ((json) => {
 
                 console.log(json);
+
                 //TODO - now call product micro services to return all the products info.
                 
             })
@@ -208,23 +205,9 @@ let orchestrator = (event, context, callback) => {
                 console.log(err);
             });
             break; 
-            // fetch (config.USERACCOUNTMICROSERVICE, {
-            //     method: 'POST',
-            //     headers : basicHeader,
-            //     body : JSON.stringify (event.payload)
-            // }).then ((response) => {
-            //     return response.json();
 
-            // }).then ((json) => {
-
-            //     console.log(json);
-
-            // }).catch ((err) => {
-            //     console.log(err);
-            // });
-            // break;
         case 'getCustomerAccounts' :
-            fetch (config.USERACCOUNTMICROSERVICE + '/customerInfo', {
+            fetch (config.USERMICROSERVICE + '/customerInfo', {
                 headers : Object.assign ({}, basicHeader, {"Authorization": event.params.header.Authorization})
             })
             .then ((response) => {
@@ -233,21 +216,22 @@ let orchestrator = (event, context, callback) => {
             }).then ((json) => {
 
                 let {_id} = json;
-
-                return fetch (config.ORDERMICROSERVICE + 'api/orders/purchaseHistory/' + _id)
-
-            }).then ((response) => {
+                console.log(_id);
+                _id='ab1';
+                console.log(config.USERACCOUNTMICROSERVICE + _id);
+                fetch (config.USERACCOUNTMICROSERVICE + _id)
+                .then ((response) => {
                 return response.json();
-            }).then ((json) => {
-
-                let productIDs = json;
-                //TODO - now call product micro services to return all the products info.
-                
+                })
+                .then ((json) => {
+                console.log(json)
+            })
             })
             .catch ((err) => {
                 console.log(err);
             });
             break;
+
         case 'getSingleAccountInfo' :
             response.body.message = 'calling getSingleAccountInfo';
             break;
@@ -275,17 +259,17 @@ let orchestrator = (event, context, callback) => {
 
 orchestrator({
 
-    "operation" : "createAccount",
+    "operation" : "getCustomerAccounts",
     "payload": {
         // "emailID": "ab4349@columbia.edu",
         // "password": "ab4349"
-        "accountType": 0,
-        "accountBalance": 100
+        // "accountType": 0,
+        // "accountBalance": 100
 
     },
     "params" : {
         "header" : {
-            "Authorization" : "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjdXN0SUQiOiI1OGRiZWIwOWE4ZDk5OTBkOGU3MzFiODgiLCJpYXQiOjE0OTA5MjU3NDR9.s0uIT5TiHYqJNPAt9W_0BQ8s2Xsbv9NNLk28qdjPpPM"
+            "Authorization" : "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjdXN0SUQiOiI1OGRiZWIwOWE4ZDk5OTBkOGU3MzFiODgiLCJpYXQiOjE0OTA5Mjc5ODB9.mwLClfKDeDZbmw32k_0Dr5K1OPLmsDw0GJYkne4J88M"
         }
     }
 });

@@ -7,6 +7,28 @@ import {kfetch} from '../util/util.js';
 import {setFlags} from './flagActions.js';
 
 
+export function fetchSingleCustomerInfo () {
+
+	return (dispatch, getState) => {
+
+		kfetch(urlConstants.singleCustomerInfo)
+		.then((response) => {
+			return response.json();
+		}).then((json) => {
+			dispatch({
+				type : actionConstants.SET_USER_INFO,
+				payload : json
+			});
+			dispatch (setFlags({isLoggedIn:true, isLoggedInChecked : true}));
+
+			hashHistory.push('dashboard');
+			
+		}).catch((error) => {
+			console.log(error);
+		})
+
+	};
+} 
 
 export function updateStatusOfGrocery (statusObject) {
 
@@ -140,6 +162,7 @@ export function fetchGroceries () {
 		})
 		.then((json) => {
 
+
 			dispatch({
 				
 				type : actionConstants.SET_GROCERIES,
@@ -158,7 +181,7 @@ export function fetchGroceries () {
 		});
 	};
 }
-export function login (username, password) {
+export function login (emailID, password) {
 
 
 	return function (dispatch, getState) {
@@ -168,7 +191,7 @@ export function login (username, password) {
 			kfetch(urlConstants.login, {
 
 				method :'POST',
-				body: JSON.stringify({username, password})
+				body: JSON.stringify({emailID, password})
 			}).then((response) => {
 				return response.json();
 			}).then((json)=> {
@@ -181,10 +204,9 @@ export function login (username, password) {
 
 					dispatch({
 						type : actionConstants.SET_USER_INFO,
-						payload : {userID: json.userID}
+						payload : json
 					});
-					dispatch (setFlags({isLoggedIn:true}));
-
+					dispatch (setFlags({isLoggedIn:true, isLoggedInChecked : true}));
 
 					hashHistory.push('dashboard');
 
@@ -307,6 +329,39 @@ export function signUp (payload)  {
 
 	}
 
+}
+
+export function createOrder (payload) {
+
+	return function (dispatch, getState) {
+
+		console.log(payload);
+
+		let payloadToBeSent = {
+		    "productID" : payload.productID,
+		    "productPrice" : payload.productPrice,
+		    "custID" : getState().userInfo.custID,
+		    "accountNumber" : '58ded807a0f9ca00019e6fe6',
+		    "stripeToken" : payload.token.id
+		}
+
+
+		kfetch(urlConstants.newOrder,{
+			method :'POST',
+			body: JSON.stringify(payloadToBeSent)
+		})
+		.then((response) => {
+
+			return response.json();
+		})
+		.then((json)=> {
+			console.log(json);
+		})
+		.catch ((error) => {
+
+			console.log(error);
+		})
+	}
 }
 
 export function logout () {

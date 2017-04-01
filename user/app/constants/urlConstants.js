@@ -2,16 +2,18 @@
 
 let urlConstants = () => {
 
-	let baseUrlUserMicroservice = "http://localhost:3000/";
-	let baseUrlGatewayMicroservice = "http://localhost:3002/"
+	let baseOrchestratorURL = "https://k0yo0m53qf.execute-api.us-west-2.amazonaws.com/prod/";
 	return {
 
-		"login" : baseUrlUserMicroservice + 'login',
-		"signup" : baseUrlUserMicroservice + 'signup',
-		"fetchGroceries" : baseUrlUserMicroservice + 'grocery',
-		"fetchUserData" : baseUrlUserMicroservice + 'user',
-		"sendStripeToken" : baseUrlGatewayMicroservice + 'api/gateway/charge',
-		"addProductToUser" : baseUrlUserMicroservice + 'user/grocery'
+		"login" : baseOrchestratorURL + 'login',
+		"signup" : baseOrchestratorURL + 'signup',
+		"singleCustomerInfo" : baseOrchestratorURL + 'customer/single',
+		"getCustomerAllPurchases" : baseOrchestratorURL + 'customer/app',
+		"newOrder" : baseOrchestratorURL + 'order',
+		"fetchGroceries" : baseOrchestratorURL + 'app',
+		"fetchUserData" : baseOrchestratorURL + 'user',
+		"sendStripeToken" : baseOrchestratorURL + 'api/gateway/charge',
+		"addProductToUser" : baseOrchestratorURL + 'user/grocery'
 	};
 
 

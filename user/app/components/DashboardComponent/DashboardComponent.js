@@ -1,8 +1,8 @@
 import React from 'react';
 import CSSModules from 'react-css-modules';
 import DashboardComponentStyle from './assets/DashboardComponent.scss';
-import SingleItemComponent from './SingleItemComponent/SingleItemComponent.js';
-
+// import SingleItemComponent from './SingleItemComponent/SingleItemComponent.js';
+import {hashHistory} from 'react-router';
 
 class DashboardComponent extends React.Component {
 
@@ -15,31 +15,31 @@ class DashboardComponent extends React.Component {
 
 	componentWillMount () {
 
-		this.props.fetchUserData();
+		// this.props.fetchUserData();
 		this.props.fetchGroceries();
 
-		this.intervalID = setInterval( ()=>{
+		// this.intervalID = setInterval( ()=>{
 			
-			this.props.fetchUserData();
-			this.props.fetchGroceries();
+		// 	this.props.fetchUserData();
+		// 	this.props.fetchGroceries();
 
-		}, 15000);
+		// }, 15000);
 
 	}
 
-	getAllGroceriesView (groceries) {
+	// getAllGroceriesView (groceries) {
 
-		return groceries.map ((singleGrocery) => {
+	// 	return groceries.map ((singleGrocery) => {
 
-			return (
-				<SingleItemComponent
-				status = { this.getStatus(singleGrocery._id)}
-				updateProductToStatusAndSendStripeToken = {this.props.updateProductToStatusAndSendStripeToken} 
-				key = {singleGrocery._id} {...singleGrocery} />
-			);
+	// 		return (
+	// 			<SingleItemComponent
+	// 			status = { this.getStatus(singleGrocery._id)}
+	// 			updateProductToStatusAndSendStripeToken = {this.props.updateProductToStatusAndSendStripeToken} 
+	// 			key = {singleGrocery._id} {...singleGrocery} />
+	// 		);
 
-		});
-	}
+	// 	});
+	// }
 
 	getStatus (id)  {
 		if (this.groceriesBoughtHash[id]) {
@@ -69,36 +69,30 @@ class DashboardComponent extends React.Component {
 		clearInterval(this.intervalID);
 	}
 
+	onClickAnApp (productId) {
+
+		hashHistory.push ('product/' + productId);
+	}
+	getAllGroceriesView (groceries) {
+
+		return groceries.map ((singleGrocery) => {
+
+			return (
+				<div key = {singleGrocery.productId} onClick = {() => this.onClickAnApp(singleGrocery.productId) } > {singleGrocery.productName}</div>
+				);
+		})
+
+	}
+
 	render () {
 
-		let {isUserDataFetched,isGroceryDetailsFetched} = this.props.flags;
+		let {groceries} = this.props;
 
-		
+		let allGroceriesView = this.getAllGroceriesView (groceries);
 
-		if (!isUserDataFetched || !isGroceryDetailsFetched) {
-
-			return (
-					<div>
-						Loading..
-					</div>
-				);
-		} else {
-
-			this.setGroceriesBoughtHash(this.props.userInfo.groceriesBought);
-
-			let allGroceriesView = this.getAllGroceriesView (this.props.groceries);
-			
-
-			return (
-				<div>
-
-					{allGroceriesView}
-					
-				</div>
-				);
-
-
-		}
+		return (
+			<div> {allGroceriesView} </div>
+			);
 
 		
 	}

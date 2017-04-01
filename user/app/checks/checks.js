@@ -1,58 +1,24 @@
 import store from '../store/store.js';
-// import {checkInit} from '../actions/initialLoadingActions.js';
+import {fetchSingleCustomerInfo} from '../actions/initialLoadingActions.js';
 import {hashHistory} from 'react-router';
 
-// export function loginCheck () {
+export function dashboardCheck () {
 
-// 	store.dispatch(checkInit())
-// 	.then((response) => {
+	if (localStorage.getItem('token') && store.getState().flags.isLoggedIn && store.getState().flags.isLoggedInChecked) {
 
-// 		switch (response) {
+		console.log('all good');
 
-// 			case 'SESSION_DOES_NOT_EXIST' : 
-// 			case 'USER_NOT_LOGGED_IN' : 
-// 										break;
-// 			case 'USER_LOGGED_IN' : 
-// 			if (store.getState().userInfo.type == 'ORGANIZATION') {
+	} else if ( localStorage.getItem('token') && (!store.getState().flags.isLoggedIn || !store.getState().flags.isLoggedInChecked ) ) {
 
-// 				hashHistory.push('org/events');
+		store.dispatch(fetchSingleCustomerInfo());
 
-// 			} else {
-// 				hashHistory.push('user/myposts');
-
-// 			}
-// 		}
-
-// 	});
+	} else {
+		hashHistory.push('login');
+	}
+	
 
 
-// }
+}
 
-// export function userCheck () {
-
-// 	store.dispatch(checkInit())
-// 	.then((response) => {
-
-// 		switch (response) {
-
-// 			case 'SESSION_DOES_NOT_EXIST' : 
-// 			case 'USER_NOT_LOGGED_IN' : hashHistory.push ('login')
-// 										break;
-// 			case 'USER_LOGGED_IN' :
-// 			if (store.getState().userInfo.type == 'ORGANIZATION') {
-
-// 				hashHistory.push('org/events');
-
-// 			}
-// 			break;
-
-
-// 		}
-
-// 	});
-
-
-
-// }
 
 

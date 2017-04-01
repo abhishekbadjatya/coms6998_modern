@@ -3,7 +3,7 @@ let initialState = () => {
 	return {
 
 		"userInfo" : {
-			"userID" : null
+			"custID" : null
 		},
 		"notifConfig" : {
 			

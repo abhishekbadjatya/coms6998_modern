@@ -37,13 +37,11 @@ class BaseComponent extends React.Component {
 	}
 
 	render () {
-		//console.log(this.props);
 
-		let {pic,username} = this.props.userInfo;
-		//let {name} = this.props.userInfo.username;
+		let {custName} = this.props.userInfo;
+
 		let {isLoggedIn} = this.props.flags;
-		// console.log(isLoggedIn)
-		//console.log(isLoggedIn);
+
 		return (
 			<div >
 				<div styleName = 'base-header'>
@@ -51,16 +49,9 @@ class BaseComponent extends React.Component {
 							{
 								(isLoggedIn) ? 
 									(	<span>
-											{
-												(pic=='None' || pic==null ) ?
-												(null)
-													 : 
-												(<img styleName = 'profile-pic'
-													src = {pic}/>
-													) 
-											}
+											
 											<span styleName = 'welcome-text'>
-												Welcome, {username}.
+												Welcome, {custName}.
 											</span>
 											<input type = 'button'  styleName = 'logout'
 								 			onClick = {() => this.props.logout()} value = 'Logout'/>

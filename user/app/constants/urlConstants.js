@@ -2,7 +2,7 @@
 
 let urlConstants = () => {
 
-	let baseOrchestratorURL = "https://k0yo0m53qf.execute-api.us-west-2.amazonaws.com/prod/";
+	let baseOrchestratorURL = "";
 	return {
 
 		"login" : baseOrchestratorURL + 'login',

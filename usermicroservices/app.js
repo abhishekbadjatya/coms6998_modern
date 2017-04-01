@@ -50,7 +50,7 @@ app.get ('/customerInfo', (req, res) => {
 	console.log(req.user);
 	console.log(custID);
 
-	customerModel.find({_id:custID}).exec()
+	customerModel.find({_id:custID}).lean().exec()
 	.then((customers) => {
 
 		if (customers.length > 1) {
@@ -63,6 +63,7 @@ app.get ('/customerInfo', (req, res) => {
 
 		let customer = customers[0];
 		customer.password = '';
+		customer.custID=customer._id;
 		res.status(200).json(customer);
 
 	})
@@ -129,8 +130,21 @@ app.post ('/signup' , (req, res) => {
     	return customerModel({"custName":custName,"emailID":emailID,"password":password,"isVerified":false}).save();
 	})
 	.then(function(data){
+		console.log(data);
+		// res.status(202).json({message: "Testing" });
+		var custID = data._id;
+		var accountBalance = 0;
+		var accountType = 0;
+		var accountData={custID,accountBalance,accountType};
 console.log(req.hostname);
 		// res.status(202).json({message: "USER_ADDED" });
+
+		fetch(config.customerAccountURL+'customerAccount/', { method: 'POST', 
+                                     body: JSON.stringify(accountData)
+        })
+        .then(function(res){
+        	console.log(res);
+        })
 
 		let myToken = jwt.sign({emailID: emailID}, SECRET_KEY);
 		// var ses = new aws.SES({apiVersion: '2010-12-01'});

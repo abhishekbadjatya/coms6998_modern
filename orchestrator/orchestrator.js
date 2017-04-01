@@ -17,6 +17,61 @@ let orchestrator = (event, context, callback) => {
         
     };
     
+    if (event.Records != undefined) {
+
+        console.log('From SNS:', message);
+        console.log('From SNS2323:', JSON.parse(JSON.parse(message).object));
+        let data = JSON.parse(message);
+        let Subject = event.Records[0].Sns.Subject;
+
+        switch(Subject) {
+
+            case 'pickOrder':
+
+        fetch (config.PRODUCTMICROSERVICE + 'api/getproductsbyid', {
+                method: 'POST',
+                headers : basicHeader,
+                body : data.object
+            }).then ((response) => {
+                return response.json();
+
+            }).then ((json) => {
+
+                console.log(json);
+
+            }).catch ((err) => {
+                console.log(err);
+            });
+
+
+                break;
+
+            case 'createOrder':
+
+            fetch (config.ORDERMICROSERVICE + 'api/orders/createOrder', {
+                method: 'POST',
+                headers : basicHeader,
+                body : data.object
+            }).then ((response) => {
+                return response.json();
+
+            }).then ((json) => {
+
+                console.log(json);
+
+            }).catch ((err) => {
+                console.log(err);
+            });
+                break;
+            default:
+                console.log("Error in event Records")
+                break;
+
+
+        }
+       
+    } else {
+
     switch (event.operation) {
         
         case 'login' :
@@ -152,7 +207,21 @@ let orchestrator = (event, context, callback) => {
             break; 
         
         case 'createOrder' :
-            response.body.message = 'calling creating order';
+            //response.body.message = 'calling creating order';
+            fetch (config.ORDERMICROSERVICE + 'api/orders/createBlankOrder', {
+                method: 'POST',
+                headers : basicHeader,
+                body : JSON.stringify (event.payload)
+            }).then ((response) => {
+                return response.json();
+
+            }).then ((json) => {
+
+                console.log(json);
+
+            }).catch ((err) => {
+                console.log(err);
+            });
             break;
         
         case 'getSingleOrder' : 
@@ -217,7 +286,7 @@ let orchestrator = (event, context, callback) => {
 
                 let {_id} = json;
                 console.log(_id);
-                _id='ab1';
+                //_id='ab1';
                 console.log(config.USERACCOUNTMICROSERVICE + _id);
                 fetch (config.USERACCOUNTMICROSERVICE + _id)
                 .then ((response) => {
@@ -253,6 +322,7 @@ let orchestrator = (event, context, callback) => {
         
         
     }
+}
     
     //context.succeed(response);
 };
@@ -269,7 +339,7 @@ orchestrator({
     },
     "params" : {
         "header" : {
-            "Authorization" : "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjdXN0SUQiOiI1OGRiZWIwOWE4ZDk5OTBkOGU3MzFiODgiLCJpYXQiOjE0OTA5Mjc5ODB9.mwLClfKDeDZbmw32k_0Dr5K1OPLmsDw0GJYkne4J88M"
+            "Authorization" : "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjdXN0SUQiOiI1OGRlZDgwNjg3NjI3NDE1Nzc4NGJjOGYiLCJpYXQiOjE0OTA5OTk1MTV9.so1wGUGTLUwuKd32hoPSVKxLdsGoBJsNVnineG86z6g"
         }
     }
 });

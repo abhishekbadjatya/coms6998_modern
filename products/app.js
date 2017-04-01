@@ -162,30 +162,27 @@ app.post('/api/getproductsbyid', function(req, res) {
                 "accountNumber" : req.body.accountNumber,
                 "stripeToken" : req.body.stripeToken
 			};
-
+			console.log(data)
 			var data_str = JSON.stringify(data)
-
+			console.log(data_str)
 
 		var sns = new AWS.SNS();
 		
 		var params = {
-		  // Message: 'just testing', /* required */
 		  Message: JSON.stringify({
 		  	"object" : data_str,
-		  	"default" : "Default Message"
+		  	"default" : "Default Message."
 		  }),
-		  MessageStructure: 'json',
+
+		  MessageStructure: 'JSON',
 		  Subject: 'createOrder',
 		  TargetArn: config.placeOrderARN
 		};
-		
+		 console.log(params)
 		sns.publish(params, function(err, data) {
   			if (err) console.log(err, err.stack); // an error occurred
   			else     console.log(data);           // successful response
 		});
-	})
-	.then(function(snsCreated){
-		console.log(snsCreated);
 	})
 	.catch((error) => {
 		console.log(error)

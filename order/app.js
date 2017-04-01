@@ -67,9 +67,10 @@ app.post('/api/orders/createOrder', function(req, res) {
 	var accountNumber = req.body.accountNumber;
 	var status = 'PENDING';
 	var stripeToken = req.body.stripeToken;
+	var orderID = req.body.order;
 
 
-	dao.connectToDB();
+	/*dao.connectToDB();
 	orderModel({
 		"customer_id" 	 : customerID,
 		"account_number" : accountNumber,
@@ -81,22 +82,25 @@ app.post('/api/orders/createOrder', function(req, res) {
 		console.log("Order id " + order.id);
 		orderID = order.id;
 		res.status(202).json({"orderID":orderID, "status":status});
-		return fetch('https://o6iadgh01m.execute-api.us-west-2.amazonaws.com/dev/charge', {//(config.BASE_URL_USER+'/adapter/placeCharge', { //
+		return */
+		fetch('https://o6iadgh01m.execute-api.us-west-2.amazonaws.com/dev/charge', {//(config.BASE_URL_USER+'/adapter/placeCharge', { //
 			method 				: 'POST',
 			body	: JSON.stringify({
 				"productID" 		: productID,
 				"stripeToken" 	: stripeToken,
 				"productPrice" 	: productPrice
-			})});
-		}, function(err){
+			})})
+		/*}, function(err){
 			dao.disConnectFromDB();
 			console.log(err);
 			res.status(500).send({error:"INTERNAL_SERVER_ERROR"});
-		})
+		})*/
 		.then(function(response){
+
 			return response.json();
 		})
 		.then((json) => {
+			console.log(orderID);
 			var charge = json.stripeInfo;
 			status = json.status;
 			dao.connectToDB();
@@ -106,6 +110,7 @@ app.post('/api/orders/createOrder', function(req, res) {
 			}, {new : true});
 	})
 	.then(function(order){
+		console.log(order);
 		if(status == 'FAILURE'){
 			return Promise.reject();
 		}
@@ -117,6 +122,7 @@ app.post('/api/orders/createOrder', function(req, res) {
 	.then(function(orderProduct){
 		console.log("Order product created. Everything done");
 		dao.disConnectFromDB();
+		res.status(200).send({"status" :"SUCCESS"});
 	})
 	.catch(function(err){
 		dao.disConnectFromDB();
@@ -126,44 +132,56 @@ app.post('/api/orders/createOrder', function(req, res) {
 });
 
 
+
+
 app.post('/api/orders/createBlankOrder', function(req, res) {
 
 	var orderID = null;
 	var productID = req.body.productID;
-	var customerID = req.body.custID;
+	var custID = req.body.custID;
 	var accountNumber = req.body.accountNumber;
 	var status = 'PENDING';
+	var stripeToken = req.body.stripeToken;
 
 	dao.connectToDB();
 	orderModel({
-		"customer_id" 	 : customerID,
+		"customer_id" 	 : custID,
 		"account_number" : accountNumber,
 		"charge"				 : null,
 		"status"         : status
 	}).save()
 	.then(function(order){
-		res.status(202).send({"orderID" :order.id});
+		dao.disConnectFromDB();
+		res.status(202).send({"callback" :"/api/orders/poll/"+order.id});
 		var sns = new AWS.SNS();
+		var respJSON = {
+			"order" 	: order.id,
+			"productID" : productID,
+			"custID" : custID,
+			"accountNumber" : accountNumber,
+			"stripeToken" : stripeToken,
+		};
+		var respJSONStr = JSON.stringify(respJSON);
 		var params = {
-		  // Message: 'just testing', /* required */
-		  Message: JSON.stringify({
-				"default" : "Default message.",
-				"order" 	: order.id
+			Message: JSON.stringify({
+				"object" : respJSONStr,
+				"default" : "Default message."
 			}),
-		  MessageStructure: 'json',
-		  Subject: 'createOrder',
+		  MessageStructure: 'JSON',
+		  Subject: 'pickPrice',
 		  TargetArn: config.takeProductARN
 		};
-		
-		sns.publish(params, function(err, data) {
-  			if (err) console.log(err, err.stack); // an error occurred
-  			else     console.log(data);           // successful response
+		sns.publish(params, function(err, data){
+				if(err) {
+					console.log(err);
+				} else {
+					console.log(data);
+				}
+
 		});
 	})
-	.then(function(snsCreated){
-		console.log(snsCreated);
-	})
 	.catch(function(err){
+		dao.disConnectFromDB();
 		console.log(err);
 		//res.status(500).send({error:"INTERNAL_SERVER_ERROR"});
 	});
@@ -185,6 +203,24 @@ app.post('/api/orders/vedant', function(req, res) {
 	});
 });
 
+
+app.get('/api/orders/poll/:id', function(req, res) {
+
+	var orderID = req.params.id;
+
+	dao.connectToDB();
+	orderModel.find({_id : orderID, status : 'SUCCESS'}).exec()
+  .then(function(orderObj){
+		if(orderObj != undefined) {
+			res.status(200).json({'status':'SUCCESS'});
+		} else {
+			res.status(404).json({'status':'FAILURE'});
+		}
+	})
+	.catch(function(err){
+		res.status(500).send({error:"INTERNAL_SERVER_ERROR"});
+	});
+});
 
 
 app.get('/',(req,res) =>{

@@ -118,12 +118,8 @@ exports.handler = (event, context, callback) => {
 
             })
             .then ((json) => {
-                // resMessage={message:}
                 callback(null, {
                     statusCode: 200,
-                    // headers: {
-                    //     'Content-Type': 'application/json'
-                    // },
                     headers:resHeader,
                     body: JSON.stringify(json)
 
@@ -132,9 +128,6 @@ exports.handler = (event, context, callback) => {
             .catch ((err) => {
                 callback(null, {
                     statusCode: 500,
-                    // headers: {
-                    //     'Content-Type': 'application/json'
-                    // },
                     headers:resHeader,
                     body: JSON.stringify(err)
                 });
@@ -157,9 +150,7 @@ exports.handler = (event, context, callback) => {
             .then ((json) => {
                 callback(null, {
                     statusCode: 200,
-                    // headers: {
-                    //     'Content-Type': 'application/json'
-                    // },
+
                     headers:resHeader,
                     body: JSON.stringify(json)
 
@@ -170,9 +161,6 @@ exports.handler = (event, context, callback) => {
             .catch ((err) => {
                 callback(null, {
                     statusCode: 500,
-                    // headers: {
-                    //     'Content-Type': 'application/json'
-                    // },
                     headers:resHeader,
                     body: JSON.stringify(err)
                 });
@@ -197,9 +185,6 @@ exports.handler = (event, context, callback) => {
             .then ((json) => {
                 callback(null, {
                     statusCode: 200,
-                    // headers: {
-                    //     'Content-Type': 'application/json'
-                    // },
                     headers:resHeader,
                     body: JSON.stringify(json)
 
@@ -210,9 +195,6 @@ exports.handler = (event, context, callback) => {
             .catch ((err) => {
                 callback(null, {
                     statusCode: 500,
-                    // headers: {
-                    //     'Content-Type': 'application/json'
-                    // },
                     headers:resHeader,
                     body: JSON.stringify(err)
                 });
@@ -226,9 +208,6 @@ exports.handler = (event, context, callback) => {
             if (httpMethod=='GET'){
                 callingURL= config.USERMICROSERVICE + '/customerInfo';
             }
-            // fetch (config.USERMICROSERVICE + '/customerInfo', {
-            //     headers : Object.assign ({}, basicHeader, {"Authorization": event.params.header.Authorization})
-            // })
             fetch (callingURL, {
                 method: httpMethod,
                 headers : header,
@@ -240,9 +219,6 @@ exports.handler = (event, context, callback) => {
             }).then ((json) => {
                 callback(null, {
                     statusCode: 200,
-                    // headers: {
-                    //     'Content-Type': 'application/json'
-                    // },
                     headers:resHeader,
                     body: JSON.stringify(json)
 
@@ -252,9 +228,6 @@ exports.handler = (event, context, callback) => {
             }).catch ((err) => {
                 callback(null, {
                     statusCode: 500,
-                    // headers: {
-                    //     'Content-Type': 'application/json'
-                    // },
                     headers:resHeader,
                     body: JSON.stringify(err)
                 });
@@ -268,7 +241,7 @@ exports.handler = (event, context, callback) => {
             if (httpMethod=='POST'){
                 callingURL= config.ORDERMICROSERVICE + 'api/orders/createBlankOrder';
             }
-            //response.body.message = 'calling creating order';
+
             fetch (callingURL, {
                 method: httpMethod,
                 headers : header,
@@ -279,9 +252,6 @@ exports.handler = (event, context, callback) => {
             }).then ((json) => {
                 callback(null, {
                     statusCode: 202,
-                    // headers: {
-                    //     'Content-Type': 'application/json'
-                    // },
                     headers:resHeader,
                     body: JSON.stringify(json)
 
@@ -291,9 +261,6 @@ exports.handler = (event, context, callback) => {
             }).catch ((err) => {
                 callback(null, {
                     statusCode: 500,
-                    // headers: {
-                    //     'Content-Type': 'application/json'
-                    // },
                     headers:resHeader,
                     body: JSON.stringify(err)
                 });
@@ -301,67 +268,48 @@ exports.handler = (event, context, callback) => {
             });
             break;
 
-        // case '/customer/app' :
-        //     var callingURL=null;
-        //     if (httpMethod=='GET'){
-        //         callingURL= config.USERMICROSERVICE + '/customerInfo';
-        //     }
-        //     fetch (callingURL,  {method: httpMethod,
-        //         headers : header,
-        //         body : payload
-        //     })
-        //     .then ((response) => {
-        //         return response.json();
 
-        //     })
-        //     .then ((json) => {
+            case '/customer/app' :
+            var callingURL=null;
+            if (httpMethod=='GET'){
+                callingURL= config.USERMICROSERVICE + '/customerInfo';
+            }
 
-        //         let {_id} = json;
+            fetch (callingURL, {
+                method: httpMethod,
+                headers : header
+            })
+            .then ((response) => {
+                return response.json();
 
-        //         return fetch (config.ORDERMICROSERVICE + 'api/orders/purchaseHistory/' + _id)
-
-        //     })
-        //     .then ((response) => {
-        //         return response.json();
-        //     })
-        //     .then ((json) => {
-
-        //         let productIDs = json;
-        //         //TODO - now call product micro services to return all the products info.
-        //         return fetch (config.PRODUCTMICROSERVICE + 'api/products',
-        //             {method: 'POST',
-        //         headers : header,
-        //         body : productIDs
-        //         })
-        //     })
-        //     .then((response) => {
-        //         return response.json();
-        //         })
-        //     .then ((json) => {
-        //         callback(null, {
-        //             statusCode: 200,
-        //             // headers: {
-        //             //     'Content-Type': 'application/json'
-        //             // },
-        //             headers:resHeader,
-        //             body: JSON.stringify(json)
-
-        //         })
-        //         console.log(json);
+            }).then ((json) => {
                 
-        //     })
-        //     .catch ((err) => {
-        //         callback(null, {
-        //             statusCode: 500,
-        //             // headers: {
-        //             //     'Content-Type': 'application/json'
-        //             // },
-        //             headers:resHeader,
-        //             body: JSON.stringify(err)
-        //         });
-        //         console.log(err);
-        //     });
-        //     break; 
+                let _id = json._id;
+                
+                return fetch (config.ORDERMICROSERVICE + 'api/orders/purchaseHistory/' + _id)
+
+            })
+            .then ((response) => {
+                return response.json();
+            })
+            .then ((json) => {
+
+                callback(null, {
+                    statusCode: 200,
+                    headers:resHeader,
+                    body: JSON.stringify(json.orderProducts)
+                });
+
+            }).catch ((err) => {
+                callback(null, {
+                    statusCode: 500,
+                    headers:resHeader,
+                    body: JSON.stringify(err)
+                });
+                console.log(err);
+            });
+            
+            break;
             
 
         default:

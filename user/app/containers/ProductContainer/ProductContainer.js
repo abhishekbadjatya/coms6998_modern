@@ -1,12 +1,14 @@
 import {connect} from 'react-redux';
 import ProductComponent from '../../components/ProductComponent/ProductComponent.js';
-import {fetchGroceries, createOrder} from '../../actions/initialLoadingActions.js';
+import {fetchGroceries, createOrder, getUserPurchaseHistory} from '../../actions/initialLoadingActions.js';
 import {triggerNotification} from '../../actions/notificationActions.js';
 const mapStateToProps = (state) => {
 
 	return {
 
-		groceries: state.groceries
+		groceries: state.groceries,
+		customerAccounts: state.customerAccounts,
+		userPurchaseHistory : state.userPurchaseHistory
 	
 
 	};
@@ -25,9 +27,10 @@ const mapDispatchToProps = (dispatch) => {
 
 
 			dispatch(createOrder(object));
-			// let {token, groceryID} = stripeObject;
-			// dispatch(sendStripeToken(token, groceryID));
-			// dispatch(updateStatusOfGrocery(statusObject));
+		},
+
+		getUserPurchaseHistory : () => {
+			dispatch(getUserPurchaseHistory());
 		}
 
 

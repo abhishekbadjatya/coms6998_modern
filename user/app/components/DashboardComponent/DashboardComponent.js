@@ -15,31 +15,10 @@ class DashboardComponent extends React.Component {
 
 	componentWillMount () {
 
-		// this.props.fetchUserData();
-		this.props.fetchGroceries();
 
-		// this.intervalID = setInterval( ()=>{
-			
-		// 	this.props.fetchUserData();
-		// 	this.props.fetchGroceries();
-
-		// }, 15000);
+		this.props.initialData();
 
 	}
-
-	// getAllGroceriesView (groceries) {
-
-	// 	return groceries.map ((singleGrocery) => {
-
-	// 		return (
-	// 			<SingleItemComponent
-	// 			status = { this.getStatus(singleGrocery._id)}
-	// 			updateProductToStatusAndSendStripeToken = {this.props.updateProductToStatusAndSendStripeToken} 
-	// 			key = {singleGrocery._id} {...singleGrocery} />
-	// 		);
-
-	// 	});
-	// }
 
 	getStatus (id)  {
 		if (this.groceriesBoughtHash[id]) {

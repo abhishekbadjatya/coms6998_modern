@@ -37,8 +37,7 @@ class BaseComponent extends React.Component {
 	}
 
 	render () {
-
-		let {custName} = this.props.userInfo;
+		let {emailID} = this.props.userInfo;
 
 		let {isLoggedIn} = this.props.flags;
 
@@ -51,7 +50,7 @@ class BaseComponent extends React.Component {
 									(	<span>
 											
 											<span styleName = 'welcome-text'>
-												Welcome, {custName}.
+												Welcome, {emailID}.
 											</span>
 											<input type = 'button'  styleName = 'logout'
 								 			onClick = {() => this.props.logout()} value = 'Logout'/>

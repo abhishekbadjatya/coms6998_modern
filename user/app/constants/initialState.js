@@ -5,6 +5,8 @@ let initialState = () => {
 		"userInfo" : {
 			"custID" : null
 		},
+		"customerAccounts" : [],
+		"userPurchaseHistory" : [],
 		"notifConfig" : {
 			
 			isTriggered : false,
@@ -16,7 +18,8 @@ let initialState = () => {
 			"isLoggedInChecked" : false,
 			"isLoggedIn" : false,
 			"isUserDataFetched" : false,
-			"isGroceryDetailsFetched" : false
+			"isGroceryDetailsFetched" : false,
+			"isCustomerAccountsFetched" : false
 		},
 
 		groceries : []

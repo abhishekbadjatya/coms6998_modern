@@ -14,7 +14,7 @@ class StripeFormComponent extends React.Component {
 	onToken = (token) => {
 	    this.props.createOrder (
 	    	
-	    	{token:token, productID: this.props.groceryID, productPrice: this.props.price}
+	    	{token:token, productID: this.props.groceryID, productPrice: this.props.price, accountNumber: this.props.customerAccountID}
 	    );
 	    
 	}
@@ -23,7 +23,6 @@ class StripeFormComponent extends React.Component {
 	
 
 	render () {
-
 		return (
 			<StripeCheckout
 			amount={this.props.price*100}

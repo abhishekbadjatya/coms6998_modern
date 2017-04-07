@@ -28,7 +28,31 @@ export function fetchSingleCustomerInfo () {
 		})
 
 	};
-} 
+}
+
+
+export function getUserAccounts () {
+	
+	return function (dispatch, getState) {
+
+		kfetch (urlConstants.customerAllAccounts).then((response) => {
+
+			return response.json();
+		}).then ((json) => {
+
+			dispatch ({
+				type : actionConstants.SET_CUSTOMERACCOUNTS,
+				payload : json.account
+			})
+
+
+		}).catch ((error) => {
+
+			console.log(error);
+		})
+
+	}
+}
 
 export function updateStatusOfGrocery (statusObject) {
 
@@ -119,36 +143,6 @@ export function checkInit () {
 
 
 
-}
-
-export function fetchUserData () {
-
-	return function (dispatch, getState) {
-
-		kfetch (urlConstants.fetchUserData)
-		.then ((response) => {
-
-			return response.json();
-
-		})
-		.then((json) => {
-
-			dispatch({
-				
-				type : actionConstants.SET_USER_INFO,
-				payload : json
-			
-			});
-
-			dispatch (setFlags({isUserDataFetched:true}));
-
-		}).catch ((error) => {
-
-			console.log(error);
-		});
-
-		
-	};
 }
 
 export function fetchGroceries () {
@@ -341,7 +335,7 @@ export function createOrder (payload) {
 		    "productID" : payload.productID,
 		    "productPrice" : payload.productPrice,
 		    "custID" : getState().userInfo.custID,
-		    "accountNumber" : '58ded807a0f9ca00019e6fe6',
+		    "accountNumber" : payload.accountNumber,
 		    "stripeToken" : payload.token.id
 		}
 
@@ -364,6 +358,44 @@ export function createOrder (payload) {
 	}
 }
 
+export function getUserPurchaseHistory () {
+
+	return (dispatch, getState) => {
+
+		kfetch (urlConstants.customerPurchaseHistory).then((response) => {
+
+			return response.json();
+		}).then ((json) => {
+
+			dispatch ({
+				type : actionConstants.SET_USER_PURCHASE_HISTORY,
+				payload : json
+			})
+
+
+		}).catch ((error) => {
+
+			console.log(error);
+		})
+
+
+	};
+}
+
+
+
+export function initialData () {
+
+	return (dispatch, getState) => {
+
+		dispatch (fetchSingleCustomerInfo());
+		dispatch (fetchGroceries());
+		dispatch (getUserAccounts());
+		dispatch (getUserPurchaseHistory());
+
+	}
+}
+
 export function logout () {
 	console.log("Here");
 	console.log(localStorage.getItem('token'));
@@ -371,29 +403,5 @@ export function logout () {
 	console.log(localStorage.getItem('token'));
 	hashHistory.push('login');
 	location.reload();
-	
-	// return function (dispatch)  {
 
-	// 	kfetch(urlConstants.logout)
-	// 	.then((response) => {
-	// 		location.reload();
-	// 		return response.json();
-	// 	}).then((json)=> {
-
-
-
-	// 		console.log('here');
-	// 		//TODO- CHECK FOR 200
-			
-
-			
-			
-
-	// 	}).catch(() => {
-			
-	// 	});
-
-
-
-	// }
 }

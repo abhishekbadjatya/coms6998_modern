@@ -15,7 +15,6 @@ import {Route, hashHistory, Router, IndexRedirect} from 'react-router';
 ReactDOM.render(
 
 	<Provider store = {store}>
-		
 		<Router history = {hashHistory} >
 			<Route path = '/' component = {BaseContainer}  >
 				<IndexRedirect to = '/login' />
@@ -25,10 +24,5 @@ ReactDOM.render(
 				<Route path = "signUp" component = {SignUpContainer} />
 			</Route>
 		</Router>
-
 	</Provider>
-
-
-
-
 	,document.getElementById('app'));

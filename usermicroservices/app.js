@@ -131,20 +131,11 @@ app.post ('/signup' , (req, res) => {
 	})
 	.then(function(data){
 		console.log(data);
-		// res.status(202).json({message: "Testing" });
-		var custID = data._id;
-		var accountBalance = 0;
-		var accountType = 0;
-		var accountData={custID,accountBalance,accountType};
-console.log(req.hostname);
-		// res.status(202).json({message: "USER_ADDED" });
-
-		fetch(config.customerAccountURL+'customerAccount/', { method: 'POST', 
-                                     body: JSON.stringify(accountData)
-        })
-        .then(function(res){
-        	console.log(res);
-        })
+		accountData=data;
+		accountData.custID=accountData._id;
+		accountData.password="";
+		
+		console.log(req.hostname);
 
 		let myToken = jwt.sign({emailID: emailID}, SECRET_KEY);
 		// var ses = new aws.SES({apiVersion: '2010-12-01'});
@@ -161,15 +152,19 @@ console.log(req.hostname);
 		
 		var emailData={to,from,subject,body};
 		console.log(emailData);
-		fetch(config.sendEmailURL, { method: 'POST', 
+		res.status(200).json(accountData);
+		return fetch(config.sendEmailURL, { method: 'POST', 
                                      body: JSON.stringify(emailData)
                 })
-    	.then(function(res) {
-    		
-        return res.json();
-    	})
+		
 
-		res.status(202).json({message: "USER_ADDED" });
+
+	}).then((response) => {
+
+		return response.json();
+	}).then((json) => {
+
+		console.log(json);
 	})
 	.catch ((error) => {
 		console.log(error);

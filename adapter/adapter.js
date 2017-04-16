@@ -143,13 +143,17 @@ let makePayment = (payload) => {
 	let productPrice = payload.productPrice;
 	let productID = payload.productID;
 	let stripeToken = payload.stripeToken;
-
+	let metadata = {
+		'productID': productID,
+		'href' : config.orchestrator + productID
+	};
 	let  p = new Promise ((resolve, reject) => {
 		stripe.charges.create({
 	     
 	        card: stripeToken,
 	        currency: 'usd',
-	        amount: productPrice*100
+	        amount: productPrice*100,
+	        metadata: metadata
 	     
 	     }, (err, charge) => {
 	     	if (err) {
@@ -182,18 +186,5 @@ let makePayment = (payload) => {
 
 
 };
-
-
-// adapter ({
-// 	"path"  : "/email",
-// 	"body" : JSON.stringify({
-
-// 		"from" : "sajal50@gmail.com",
-// 	    "to" : "sk4226@columbia.edu" ,
-// 	    "subject" : "yo" ,
-// 	    "body" : "yoyoy"
-
-// 	})
-// });
 
 

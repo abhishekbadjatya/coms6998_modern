@@ -119,8 +119,8 @@ app.post ('/login' , (req, res) => {
 
 app.post ('/signup' , (req, res) => {
 
-	let {custName,emailID, password} = req.body;
-	// console.log(custName);
+	let {emailID, password} = req.body;
+	let custName = emailID;
 	customerModel.find({emailID:emailID}).exec()
 	.then((cutomers) => {
 

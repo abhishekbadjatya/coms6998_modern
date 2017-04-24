@@ -44,6 +44,15 @@ app.get('/',(req,res) =>{
 res.status(200).json({message:"Hello"});
 });
 
+app.get ('/jwtDetails', (req, res) => {
+
+	let {custID,role,accessRules} = req.user;
+	console.log(custID);
+	console.log(role);
+	res.status(200).json({custID,role,accessRules});
+
+});
+
 app.get ('/customerInfo', (req, res) => {
 
 	let {custID} = req.user;
@@ -97,7 +106,31 @@ app.post ('/login' , (req, res) => {
 				res.status(401).json({error:"USER_NOT_VERIFIED"});			
 
 		} else if(customer.password == password) {
-			let myToken = jwt.sign ({custID: customer.custID}, SECRET_KEY);
+			let myToken;
+			if (customer.role=='CUSTOMER'){
+				myToken = jwt.sign ({custID: customer.custID, role: customer.role}, SECRET_KEY);
+			}
+			else if (customer.role=='ADMIN') {
+				let accessRules = [
+				{
+					resource:'custInfo',
+					operation: ['GET','POST','PUT','DELETE']
+				},
+				{
+					resource:'custAccount',
+					operation: ['GET','POST','PUT','DELETE']
+				},
+				{
+					resource:'order',
+					operation: ['GET','POST','PUT','DELETE']
+				},
+				{
+					resource:'product',
+					operation: ['GET','POST','PUT','DELETE']
+				}
+				];
+				myToken = jwt.sign ({custID: customer.custID, role: customer.role, accessRules:accessRules}, SECRET_KEY);	
+			}
 			res.status(200).json({token:myToken, custID : customer.custID, custName:customer.custName});
 
 		} else {
@@ -119,7 +152,7 @@ app.post ('/login' , (req, res) => {
 
 app.post ('/signup' , (req, res) => {
 
-	let {emailID, password} = req.body;
+	let {emailID, password, role} = req.body;
 	let custName = emailID;
 	customerModel.find({emailID:emailID}).exec()
 	.then((cutomers) => {
@@ -127,7 +160,7 @@ app.post ('/signup' , (req, res) => {
 		if (cutomers.length >= 1) {
 			res.status(401).json({error:"USER_EXISTS"});
 		}
-    	return customerModel({"custName":custName,"emailID":emailID,"password":password,"isVerified":false}).save();
+    	return customerModel({"custName":custName,"emailID":emailID,"password":password,"isVerified":false,"role":role}).save();
 	})
 	.then(function(data){
 		console.log(data);

@@ -11,6 +11,8 @@ let customerSchema = new Schema ({
 
 	custName: String,
 
+	role: String,
+
 	isVerified: Boolean
 
 });

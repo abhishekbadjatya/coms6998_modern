@@ -1,0 +1,1694 @@
+---
+swagger: "2.0"
+info:
+  version: "1"
+  title: "APIGateway5"
+basePath: "/orch1"
+schemes:
+- "https"
+paths:
+  /app:
+    get:
+      operationId: "getAllProducts"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "200 response"
+          schema:
+            $ref: "#/definitions/Product"
+        201:
+          description: "201 response"
+          schema:
+            $ref: "#/definitions/Product"
+        400:
+          description: "400 response"
+          schema:
+            $ref: "#/definitions/ErrorDetails"
+        202:
+          description: "202 response"
+          headers:
+            link:
+              type: "string"
+        500:
+          description: "500 response"
+          schema:
+            $ref: "#/definitions/ErrorDetails"
+        401:
+          description: "401 response"
+          schema:
+            $ref: "#/definitions/ErrorDetails"
+        403:
+          description: "403 response"
+          schema:
+            $ref: "#/definitions/ErrorDetails"
+        404:
+          description: "404 response"
+          schema:
+            $ref: "#/definitions/ErrorDetails"
+        418:
+          description: "418 response"
+          schema:
+            $ref: "#/definitions/ErrorDetails"
+      x-amazon-apigateway-integration:
+        responses:
+          \S*403.*:
+            statusCode: "403"
+            responseTemplates:
+              application/json: "#set($inputRoot = $input.path('$.errorMessage'))\n\
+                $input.path('$.errorMessage')"
+          \S*500.*:
+            statusCode: "500"
+            responseTemplates:
+              application/json: "#set($inputRoot = $input.path('$.errorMessage'))\n\
+                $input.path('$.errorMessage')"
+          \S*404.*:
+            statusCode: "404"
+            responseTemplates:
+              application/json: "#set($inputRoot = $input.path('$.errorMessage'))\n\
+                $input.path('$.errorMessage')"
+          default:
+            statusCode: "200"
+            responseTemplates:
+              application/json: "#set($inputRoot = $input.path('$'))\n{    \n\"products\"\
+                \ : [\n    #foreach($elem in $inputRoot)\n    {\n    \"productId\"\
+                : \"$elem.productId\",\n    \"productName\": \"$elem.productName\"\
+                ,\n    \"productPrice\": $elem.productPrice\n    }#if($foreach.hasNext),#end\n\
+                \    #end\n    ]\n}"
+          \S418.*:
+            statusCode: "418"
+            responseTemplates:
+              application/json: "#set($inputRoot = $input.path('$.errorMessage'))\n\
+                $input.path('$.errorMessage')"
+          \S*201.*:
+            statusCode: "201"
+            responseTemplates:
+              application/json: "#set($inputRoot = $input.path('$.errorMessage'))\n\
+                $input.path('$.errorMessage')"
+          \S*202.*:
+            statusCode: "202"
+            responseTemplates:
+              application/json: "#set($inputRoot = $input.path('$.errorMessage'))\n\
+                $input.path('$.errorMessage')"
+          \S*400.*:
+            statusCode: "400"
+            responseTemplates:
+              application/json: "#set($inputRoot = $input.path('$.errorMessage'))\n\
+                $input.path('$.errorMessage')\n"
+          \S*401.*:
+            statusCode: "401"
+            responseTemplates:
+              application/json: "#set($inputRoot = $input.path('$.errorMessage'))\n\
+                $input.path('$.errorMessage')"
+        requestTemplates:
+          application/json: "##  See http://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-mapping-template-reference.html\n\
+            ##  This template will pass through all parameters including path, querystring,\
+            \ header, stage variables, and context through to the integration endpoint\
+            \ via the body/payload\n#set($allParams = $input.params())\n{\n\"body-json\"\
+            \ : $input.json('$'),\n\"params\" : {\n#foreach($type in $allParams.keySet())\n\
+            \    #set($params = $allParams.get($type))\n\"$type\" : {\n    #foreach($paramName\
+            \ in $params.keySet())\n    \"$paramName\" : \"$util.escapeJavaScript($params.get($paramName))\"\
+            \n        #if($foreach.hasNext),#end\n    #end\n}\n    #if($foreach.hasNext),#end\n\
+            #end\n},\n\"stage-variables\" : {\n#foreach($key in $stageVariables.keySet())\n\
+            \"$key\" : \"$util.escapeJavaScript($stageVariables.get($key))\"\n   \
+            \ #if($foreach.hasNext),#end\n#end\n},\n\"context\" : {\n    \"account-id\"\
+            \ : \"$context.identity.accountId\",\n    \"api-id\" : \"$context.apiId\"\
+            ,\n    \"api-key\" : \"$context.identity.apiKey\",\n    \"authorizer-principal-id\"\
+            \ : \"$context.authorizer.principalId\",\n    \"caller\" : \"$context.identity.caller\"\
+            ,\n    \"cognito-authentication-provider\" : \"$context.identity.cognitoAuthenticationProvider\"\
+            ,\n    \"cognito-authentication-type\" : \"$context.identity.cognitoAuthenticationType\"\
+            ,\n    \"cognito-identity-id\" : \"$context.identity.cognitoIdentityId\"\
+            ,\n    \"cognito-identity-pool-id\" : \"$context.identity.cognitoIdentityPoolId\"\
+            ,\n    \"http-method\" : \"$context.httpMethod\",\n    \"stage\" : \"\
+            $context.stage\",\n    \"source-ip\" : \"$context.identity.sourceIp\"\
+            ,\n    \"user\" : \"$context.identity.user\",\n    \"user-agent\" : \"\
+            $context.identity.userAgent\",\n    \"user-arn\" : \"$context.identity.userArn\"\
+            ,\n    \"request-id\" : \"$context.requestId\",\n    \"resource-id\" :\
+            \ \"$context.resourceId\",\n    \"resource-path\" : \"$context.resourcePath\"\
+            \n    },\n    \"operation\" : \"getAllProducts\"\n}\n"
+        uri: "arn:aws:apigateway:us-west-2:lambda:path/2015-03-31/functions/arn:aws:lambda:us-west-2:223135171140:function:orchestrator/invocations"
+        passthroughBehavior: "when_no_match"
+        httpMethod: "POST"
+        contentHandling: "CONVERT_TO_TEXT"
+        type: "aws"
+    options:
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "200 response"
+          schema:
+            $ref: "#/definitions/Empty"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+      x-amazon-apigateway-integration:
+        responses:
+          default:
+            statusCode: "200"
+            responseParameters:
+              method.response.header.Access-Control-Allow-Methods: "'DELETE,GET,HEAD,OPTIONS,PATCH,POST,PUT'"
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,Authorization,X-Amz-Date,X-Api-Key,X-Amz-Security-Token'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+        requestTemplates:
+          application/json: "{\"statusCode\": 200}"
+        passthroughBehavior: "when_no_match"
+        type: "mock"
+  /app/{id}:
+    get:
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "id"
+        in: "path"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "200 response"
+          schema:
+            $ref: "#/definitions/SingleProduct"
+        201:
+          description: "201 response"
+          schema:
+            $ref: "#/definitions/SingleProduct"
+        400:
+          description: "400 response"
+          schema:
+            $ref: "#/definitions/ErrorDetails"
+        202:
+          description: "202 response"
+          headers:
+            link:
+              type: "string"
+        500:
+          description: "500 response"
+          schema:
+            $ref: "#/definitions/ErrorDetails"
+        401:
+          description: "401 response"
+          schema:
+            $ref: "#/definitions/ErrorDetails"
+        403:
+          description: "403 response"
+          schema:
+            $ref: "#/definitions/ErrorDetails"
+        404:
+          description: "404 response"
+          schema:
+            $ref: "#/definitions/ErrorDetails"
+        418:
+          description: "418 response"
+          schema:
+            $ref: "#/definitions/ErrorDetails"
+      x-amazon-apigateway-integration:
+        responses:
+          \S*403.*:
+            statusCode: "403"
+            responseTemplates:
+              application/json: "#set($inputRoot = $input.path('$.errorMessage'))\n\
+                $input.path('$.errorMessage')"
+          \S*500.*:
+            statusCode: "500"
+            responseTemplates:
+              application/json: "#set($inputRoot = $input.path('$.errorMessage'))\n\
+                $input.path('$.errorMessage')"
+          \S*404.*:
+            statusCode: "404"
+            responseTemplates:
+              application/json: "#set($inputRoot = $input.path('$.errorMessage'))\n\
+                $input.path('$.errorMessage')"
+          default:
+            statusCode: "200"
+            responseTemplates:
+              application/json: "#set($inputRoot = $input.path('$'))\n{    \n\"products\"\
+                \ : \n    {\n    \"productId\": \"$inputRoot.productId\",\n    \"\
+                productName\": \"$inputRoot.productName\",\n    \"productPrice\":\
+                \ $inputRoot.productPrice\n    }\n}"
+          \S418.*:
+            statusCode: "418"
+            responseTemplates:
+              application/json: "#set($inputRoot = $input.path('$.errorMessage'))\n\
+                $input.path('$.errorMessage')"
+          \S*201.*:
+            statusCode: "201"
+            responseTemplates:
+              application/json: "#set($inputRoot = $input.path('$.errorMessage'))\n\
+                $input.path('$.errorMessage')"
+          \S*202.*:
+            statusCode: "202"
+            responseTemplates:
+              application/json: "#set($inputRoot = $input.path('$.errorMessage'))\n\
+                $input.path('$.errorMessage')"
+          \S*400.*:
+            statusCode: "400"
+            responseTemplates:
+              application/json: "#set($inputRoot = $input.path('$.errorMessage'))\n\
+                $input.path('$.errorMessage')\n"
+          \S*401.*:
+            statusCode: "401"
+            responseTemplates:
+              application/json: "#set($inputRoot = $input.path('$.errorMessage'))\n\
+                $input.path('$.errorMessage')"
+        requestTemplates:
+          application/json: "##  See http://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-mapping-template-reference.html\n\
+            ##  This template will pass through all parameters including path, querystring,\
+            \ header, stage variables, and context through to the integration endpoint\
+            \ via the body/payload\n#set($allParams = $input.params())\n{\n\"body-json\"\
+            \ : $input.json('$'),\n\"params\" : {\n#foreach($type in $allParams.keySet())\n\
+            \    #set($params = $allParams.get($type))\n\"$type\" : {\n    #foreach($paramName\
+            \ in $params.keySet())\n    \"$paramName\" : \"$util.escapeJavaScript($params.get($paramName))\"\
+            \n        #if($foreach.hasNext),#end\n    #end\n}\n    #if($foreach.hasNext),#end\n\
+            #end\n},\n\"stage-variables\" : {\n#foreach($key in $stageVariables.keySet())\n\
+            \"$key\" : \"$util.escapeJavaScript($stageVariables.get($key))\"\n   \
+            \ #if($foreach.hasNext),#end\n#end\n},\n\"context\" : {\n    \"account-id\"\
+            \ : \"$context.identity.accountId\",\n    \"api-id\" : \"$context.apiId\"\
+            ,\n    \"api-key\" : \"$context.identity.apiKey\",\n    \"authorizer-principal-id\"\
+            \ : \"$context.authorizer.principalId\",\n    \"caller\" : \"$context.identity.caller\"\
+            ,\n    \"cognito-authentication-provider\" : \"$context.identity.cognitoAuthenticationProvider\"\
+            ,\n    \"cognito-authentication-type\" : \"$context.identity.cognitoAuthenticationType\"\
+            ,\n    \"cognito-identity-id\" : \"$context.identity.cognitoIdentityId\"\
+            ,\n    \"cognito-identity-pool-id\" : \"$context.identity.cognitoIdentityPoolId\"\
+            ,\n    \"http-method\" : \"$context.httpMethod\",\n    \"stage\" : \"\
+            $context.stage\",\n    \"source-ip\" : \"$context.identity.sourceIp\"\
+            ,\n    \"user\" : \"$context.identity.user\",\n    \"user-agent\" : \"\
+            $context.identity.userAgent\",\n    \"user-arn\" : \"$context.identity.userArn\"\
+            ,\n    \"request-id\" : \"$context.requestId\",\n    \"resource-id\" :\
+            \ \"$context.resourceId\",\n    \"resource-path\" : \"$context.resourcePath\"\
+            \n    },\n    \"operation\" : \"getProductById\",\n    \"product_id\"\
+            \ : \"$input.params('id')\"\n}\n"
+        uri: "arn:aws:apigateway:us-west-2:lambda:path/2015-03-31/functions/arn:aws:lambda:us-west-2:223135171140:function:orchestrator/invocations"
+        passthroughBehavior: "when_no_templates"
+        httpMethod: "POST"
+        contentHandling: "CONVERT_TO_TEXT"
+        type: "aws"
+    options:
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "200 response"
+          schema:
+            $ref: "#/definitions/Empty"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+      x-amazon-apigateway-integration:
+        responses:
+          default:
+            statusCode: "200"
+            responseParameters:
+              method.response.header.Access-Control-Allow-Methods: "'DELETE,GET,HEAD,OPTIONS,PATCH,POST,PUT'"
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,Authorization,X-Amz-Date,X-Api-Key,X-Amz-Security-Token'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+        requestTemplates:
+          application/json: "{\"statusCode\": 200}"
+        passthroughBehavior: "when_no_match"
+        type: "mock"
+  /createorder:
+    post:
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "createOrderModel"
+        required: true
+        schema:
+          $ref: "#/definitions/createOrderModel"
+      responses:
+        200:
+          description: "200 response"
+          schema:
+            $ref: "#/definitions/createOrderResp"
+        201:
+          description: "201 response"
+          schema:
+            $ref: "#/definitions/createOrderResp"
+        400:
+          description: "400 response"
+          schema:
+            $ref: "#/definitions/ErrorDetails"
+        202:
+          description: "202 response"
+          headers:
+            link:
+              type: "string"
+        500:
+          description: "500 response"
+          schema:
+            $ref: "#/definitions/ErrorDetails"
+        401:
+          description: "401 response"
+          schema:
+            $ref: "#/definitions/ErrorDetails"
+        403:
+          description: "403 response"
+          schema:
+            $ref: "#/definitions/ErrorDetails"
+        404:
+          description: "404 response"
+          schema:
+            $ref: "#/definitions/ErrorDetails"
+        418:
+          description: "418 response"
+          schema:
+            $ref: "#/definitions/ErrorDetails"
+      x-amazon-apigateway-request-validator: "Validate body"
+      x-amazon-apigateway-integration:
+        responses:
+          \S*403.*:
+            statusCode: "403"
+            responseTemplates:
+              application/json: "#set($inputRoot = $input.path('$.errorMessage'))\n\
+                $input.path('$.errorMessage')"
+          \S*500.*:
+            statusCode: "500"
+            responseTemplates:
+              application/json: "#set($inputRoot = $input.path('$.errorMessage'))\n\
+                $input.path('$.errorMessage')"
+          \S*404.*:
+            statusCode: "404"
+            responseTemplates:
+              application/json: "#set($inputRoot = $input.path('$.errorMessage'))\n\
+                $input.path('$.errorMessage')"
+          \S418.*:
+            statusCode: "418"
+            responseTemplates:
+              application/json: "#set($inputRoot = $input.path('$.errorMessage'))\n\
+                $input.path('$.errorMessage')"
+          \S*201.*:
+            statusCode: "201"
+            responseTemplates:
+              application/json: "#set($inputRoot = $input.path('$.errorMessage'))\n\
+                $input.path('$.errorMessage')"
+          \S*202.*:
+            statusCode: "202"
+            responseTemplates:
+              application/json: "#set($inputRoot = $input.path('$.errorMessage'))\n\
+                $input.path('$.errorMessage')"
+          \S*400.*:
+            statusCode: "400"
+            responseTemplates:
+              application/json: "#set($inputRoot = $input.path('$.errorMessage'))\n\
+                $input.path('$.errorMessage')\n"
+          \S*401.*:
+            statusCode: "401"
+            responseTemplates:
+              application/json: "#set($inputRoot = $input.path('$.errorMessage'))\n\
+                $input.path('$.errorMessage')"
+          default:
+            statusCode: "200"
+            responseTemplates:
+              application/json: "#set($inputRoot = $input.path('$'))\n    \n{   \n\
+                \    \"callback\": \"$inputRoot.callback\"\n}"
+        requestTemplates:
+          application/json: "##  See http://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-mapping-template-reference.html\n\
+            ##  This template will pass through all parameters including path, querystring,\
+            \ header, stage variables, and context through to the integration endpoint\
+            \ via the body/payload\n#set($allParams = $input.params())\n{\n\"body-json\"\
+            \ : $input.json('$'),\n\"params\" : {\n#foreach($type in $allParams.keySet())\n\
+            \    #set($params = $allParams.get($type))\n\"$type\" : {\n    #foreach($paramName\
+            \ in $params.keySet())\n    \"$paramName\" : \"$util.escapeJavaScript($params.get($paramName))\"\
+            \n        #if($foreach.hasNext),#end\n    #end\n}\n    #if($foreach.hasNext),#end\n\
+            #end\n},\n\"stage-variables\" : {\n#foreach($key in $stageVariables.keySet())\n\
+            \"$key\" : \"$util.escapeJavaScript($stageVariables.get($key))\"\n   \
+            \ #if($foreach.hasNext),#end\n#end\n},\n\"context\" : {\n    \"account-id\"\
+            \ : \"$context.identity.accountId\",\n    \"api-id\" : \"$context.apiId\"\
+            ,\n    \"api-key\" : \"$context.identity.apiKey\",\n    \"authorizer-principal-id\"\
+            \ : \"$context.authorizer.principalId\",\n    \"caller\" : \"$context.identity.caller\"\
+            ,\n    \"cognito-authentication-provider\" : \"$context.identity.cognitoAuthenticationProvider\"\
+            ,\n    \"cognito-authentication-type\" : \"$context.identity.cognitoAuthenticationType\"\
+            ,\n    \"cognito-identity-id\" : \"$context.identity.cognitoIdentityId\"\
+            ,\n    \"cognito-identity-pool-id\" : \"$context.identity.cognitoIdentityPoolId\"\
+            ,\n    \"http-method\" : \"$context.httpMethod\",\n    \"stage\" : \"\
+            $context.stage\",\n    \"source-ip\" : \"$context.identity.sourceIp\"\
+            ,\n    \"user\" : \"$context.identity.user\",\n    \"user-agent\" : \"\
+            $context.identity.userAgent\",\n    \"user-arn\" : \"$context.identity.userArn\"\
+            ,\n    \"request-id\" : \"$context.requestId\",\n    \"resource-id\" :\
+            \ \"$context.resourceId\",\n    \"resource-path\" : \"$context.resourcePath\"\
+            \n    },\n    \"operation\" : \"createOrder\"\n}\n"
+        uri: "arn:aws:apigateway:us-west-2:lambda:path/2015-03-31/functions/arn:aws:lambda:us-west-2:223135171140:function:orchestrator/invocations"
+        passthroughBehavior: "when_no_match"
+        httpMethod: "POST"
+        contentHandling: "CONVERT_TO_TEXT"
+        type: "aws"
+    options:
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "200 response"
+          schema:
+            $ref: "#/definitions/Empty"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+      x-amazon-apigateway-integration:
+        responses:
+          default:
+            statusCode: "200"
+            responseParameters:
+              method.response.header.Access-Control-Allow-Methods: "'DELETE,GET,HEAD,OPTIONS,PATCH,POST,PUT'"
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,Authorization,X-Amz-Date,X-Api-Key,X-Amz-Security-Token'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+        requestTemplates:
+          application/json: "{\"statusCode\": 200}"
+        passthroughBehavior: "when_no_match"
+        type: "mock"
+  /custaccount:
+    post:
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "CreateAccount"
+        required: true
+        schema:
+          $ref: "#/definitions/CreateAccount"
+      responses:
+        200:
+          description: "200 response"
+          schema:
+            $ref: "#/definitions/createAccountResp"
+        201:
+          description: "201 response"
+          schema:
+            $ref: "#/definitions/createAccountResp"
+        400:
+          description: "400 response"
+          schema:
+            $ref: "#/definitions/ErrorDetails"
+        202:
+          description: "202 response"
+          headers:
+            link:
+              type: "string"
+        500:
+          description: "500 response"
+          schema:
+            $ref: "#/definitions/ErrorDetails"
+        401:
+          description: "401 response"
+          schema:
+            $ref: "#/definitions/ErrorDetails"
+        403:
+          description: "403 response"
+          schema:
+            $ref: "#/definitions/ErrorDetails"
+        404:
+          description: "404 response"
+          schema:
+            $ref: "#/definitions/ErrorDetails"
+        418:
+          description: "418 response"
+          schema:
+            $ref: "#/definitions/ErrorDetails"
+      x-amazon-apigateway-request-validator: "Validate body"
+      x-amazon-apigateway-integration:
+        responses:
+          \S*403.*:
+            statusCode: "403"
+            responseTemplates:
+              application/json: "#set($inputRoot = $input.path('$.errorMessage'))\n\
+                $input.path('$.errorMessage')"
+          \S*500.*:
+            statusCode: "500"
+            responseTemplates:
+              application/json: "#set($inputRoot = $input.path('$.errorMessage'))\n\
+                $input.path('$.errorMessage')"
+          \S*404.*:
+            statusCode: "404"
+            responseTemplates:
+              application/json: "#set($inputRoot = $input.path('$.errorMessage'))\n\
+                $input.path('$.errorMessage')"
+          \S418.*:
+            statusCode: "418"
+            responseTemplates:
+              application/json: "#set($inputRoot = $input.path('$.errorMessage'))\n\
+                $input.path('$.errorMessage')"
+          \S*201.*:
+            statusCode: "201"
+            responseTemplates:
+              application/json: "#set($inputRoot = $input.path('$.errorMessage'))\n\
+                $input.path('$.errorMessage')"
+          \S*202.*:
+            statusCode: "202"
+            responseTemplates:
+              application/json: "#set($inputRoot = $input.path('$.errorMessage'))\n\
+                $input.path('$.errorMessage')"
+          \S*400.*:
+            statusCode: "400"
+            responseTemplates:
+              application/json: "#set($inputRoot = $input.path('$.errorMessage'))\n\
+                $input.path('$.errorMessage')\n"
+          \S*401.*:
+            statusCode: "401"
+            responseTemplates:
+              application/json: "#set($inputRoot = $input.path('$.errorMessage'))\n\
+                $input.path('$.errorMessage')"
+          default:
+            statusCode: "200"
+            responseTemplates:
+              application/json: "#set($inputRoot = $input.path('$'))\n    \n{\n  \
+                \  \"accountNumber\": \"$inputRoot.accountNumber\",\n    \"custId\"\
+                : \"$inputRoot.custId\",\n    \"links\": [{\"rel\": \"$inputRoot.links[0].rel\"\
+                ,\n    \"href\" : \"$inputRoot.links[0].href\"\n}]}"
+        requestTemplates:
+          application/json: "##  See http://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-mapping-template-reference.html\n\
+            ##  This template will pass through all parameters including path, querystring,\
+            \ header, stage variables, and context through to the integration endpoint\
+            \ via the body/payload\n#set($allParams = $input.params())\n{\n\"body-json\"\
+            \ : $input.json('$'),\n\"params\" : {\n#foreach($type in $allParams.keySet())\n\
+            \    #set($params = $allParams.get($type))\n\"$type\" : {\n    #foreach($paramName\
+            \ in $params.keySet())\n    \"$paramName\" : \"$util.escapeJavaScript($params.get($paramName))\"\
+            \n        #if($foreach.hasNext),#end\n    #end\n}\n    #if($foreach.hasNext),#end\n\
+            #end\n},\n\"stage-variables\" : {\n#foreach($key in $stageVariables.keySet())\n\
+            \"$key\" : \"$util.escapeJavaScript($stageVariables.get($key))\"\n   \
+            \ #if($foreach.hasNext),#end\n#end\n},\n\"context\" : {\n    \"account-id\"\
+            \ : \"$context.identity.accountId\",\n    \"api-id\" : \"$context.apiId\"\
+            ,\n    \"api-key\" : \"$context.identity.apiKey\",\n    \"authorizer-principal-id\"\
+            \ : \"$context.authorizer.principalId\",\n    \"caller\" : \"$context.identity.caller\"\
+            ,\n    \"cognito-authentication-provider\" : \"$context.identity.cognitoAuthenticationProvider\"\
+            ,\n    \"cognito-authentication-type\" : \"$context.identity.cognitoAuthenticationType\"\
+            ,\n    \"cognito-identity-id\" : \"$context.identity.cognitoIdentityId\"\
+            ,\n    \"cognito-identity-pool-id\" : \"$context.identity.cognitoIdentityPoolId\"\
+            ,\n    \"http-method\" : \"$context.httpMethod\",\n    \"stage\" : \"\
+            $context.stage\",\n    \"source-ip\" : \"$context.identity.sourceIp\"\
+            ,\n    \"user\" : \"$context.identity.user\",\n    \"user-agent\" : \"\
+            $context.identity.userAgent\",\n    \"user-arn\" : \"$context.identity.userArn\"\
+            ,\n    \"request-id\" : \"$context.requestId\",\n    \"resource-id\" :\
+            \ \"$context.resourceId\",\n    \"resource-path\" : \"$context.resourcePath\"\
+            \n    },\n    \"operation\" : \"createCustomerAccount\"\n}\n"
+        uri: "arn:aws:apigateway:us-west-2:lambda:path/2015-03-31/functions/arn:aws:lambda:us-west-2:223135171140:function:orchestrator/invocations"
+        passthroughBehavior: "when_no_match"
+        httpMethod: "POST"
+        contentHandling: "CONVERT_TO_TEXT"
+        type: "aws"
+  /custaccount/{id}:
+    get:
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "id"
+        in: "path"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "200 response"
+          schema:
+            $ref: "#/definitions/custAccountIDResp"
+        201:
+          description: "201 response"
+          schema:
+            $ref: "#/definitions/custAccountIDResp"
+        400:
+          description: "400 response"
+          schema:
+            $ref: "#/definitions/ErrorDetails"
+        202:
+          description: "202 response"
+          headers:
+            link:
+              type: "string"
+        500:
+          description: "500 response"
+          schema:
+            $ref: "#/definitions/ErrorDetails"
+        401:
+          description: "401 response"
+          schema:
+            $ref: "#/definitions/ErrorDetails"
+        403:
+          description: "403 response"
+          schema:
+            $ref: "#/definitions/ErrorDetails"
+        404:
+          description: "404 response"
+          schema:
+            $ref: "#/definitions/ErrorDetails"
+        418:
+          description: "418 response"
+          schema:
+            $ref: "#/definitions/ErrorDetails"
+      x-amazon-apigateway-integration:
+        responses:
+          default:
+            statusCode: "200"
+            responseTemplates:
+              application/json: "#set($inputRoot = $input.path('$.account'))\n{  \
+                \  \n\"account\" : [\n    #foreach($elem in $inputRoot)\n    {\n \
+                \   \"_id\": \"$elem._id\",\n    \"accountType\": \"$elem.accountType\"\
+                ,\n    \"accountBalance\": $elem.accountBalance,\n    \"accountLabel\"\
+                \ : \"$elem.accountLabel\"\n    }#if($foreach.hasNext),#end\n    #end\n\
+                \    ]\n}"
+        requestTemplates:
+          application/json: "##  See http://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-mapping-template-reference.html\n\
+            ##  This template will pass through all parameters including path, querystring,\
+            \ header, stage variables, and context through to the integration endpoint\
+            \ via the body/payload\n#set($allParams = $input.params())\n{\n\"body-json\"\
+            \ : $input.json('$'),\n\"params\" : {\n#foreach($type in $allParams.keySet())\n\
+            \    #set($params = $allParams.get($type))\n\"$type\" : {\n    #foreach($paramName\
+            \ in $params.keySet())\n    \"$paramName\" : \"$util.escapeJavaScript($params.get($paramName))\"\
+            \n        #if($foreach.hasNext),#end\n    #end\n}\n    #if($foreach.hasNext),#end\n\
+            #end\n},\n\"stage-variables\" : {\n#foreach($key in $stageVariables.keySet())\n\
+            \"$key\" : \"$util.escapeJavaScript($stageVariables.get($key))\"\n   \
+            \ #if($foreach.hasNext),#end\n#end\n},\n\"context\" : {\n    \"account-id\"\
+            \ : \"$context.identity.accountId\",\n    \"api-id\" : \"$context.apiId\"\
+            ,\n    \"api-key\" : \"$context.identity.apiKey\",\n    \"authorizer-principal-id\"\
+            \ : \"$context.authorizer.principalId\",\n    \"caller\" : \"$context.identity.caller\"\
+            ,\n    \"cognito-authentication-provider\" : \"$context.identity.cognitoAuthenticationProvider\"\
+            ,\n    \"cognito-authentication-type\" : \"$context.identity.cognitoAuthenticationType\"\
+            ,\n    \"cognito-identity-id\" : \"$context.identity.cognitoIdentityId\"\
+            ,\n    \"cognito-identity-pool-id\" : \"$context.identity.cognitoIdentityPoolId\"\
+            ,\n    \"http-method\" : \"$context.httpMethod\",\n    \"stage\" : \"\
+            $context.stage\",\n    \"source-ip\" : \"$context.identity.sourceIp\"\
+            ,\n    \"user\" : \"$context.identity.user\",\n    \"user-agent\" : \"\
+            $context.identity.userAgent\",\n    \"user-arn\" : \"$context.identity.userArn\"\
+            ,\n    \"request-id\" : \"$context.requestId\",\n    \"resource-id\" :\
+            \ \"$context.resourceId\",\n    \"resource-path\" : \"$context.resourcePath\"\
+            \n    },\n    \"operation\" : \"getUserAccounts\",\n    \"product_id\"\
+            \ : \"$input.params('id')\"\n}\n"
+        uri: "arn:aws:apigateway:us-west-2:lambda:path/2015-03-31/functions/arn:aws:lambda:us-west-2:223135171140:function:orchestrator/invocations"
+        passthroughBehavior: "when_no_templates"
+        httpMethod: "POST"
+        contentHandling: "CONVERT_TO_TEXT"
+        type: "aws"
+    options:
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "200 response"
+          schema:
+            $ref: "#/definitions/Empty"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+      x-amazon-apigateway-integration:
+        responses:
+          default:
+            statusCode: "200"
+            responseParameters:
+              method.response.header.Access-Control-Allow-Methods: "'DELETE,GET,HEAD,OPTIONS,PATCH,POST,PUT'"
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,Authorization,X-Amz-Date,X-Api-Key,X-Amz-Security-Token'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+        requestTemplates:
+          application/json: "{\"statusCode\": 200}"
+        passthroughBehavior: "when_no_match"
+        type: "mock"
+  /custapphistory:
+    get:
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "200 response"
+          schema:
+            $ref: "#/definitions/custAppPurchHistory"
+        201:
+          description: "201 response"
+          schema:
+            $ref: "#/definitions/custAppPurchHistory"
+        400:
+          description: "400 response"
+          schema:
+            $ref: "#/definitions/ErrorDetails"
+        202:
+          description: "202 response"
+          headers:
+            link:
+              type: "string"
+        500:
+          description: "500 response"
+          schema:
+            $ref: "#/definitions/ErrorDetails"
+        401:
+          description: "401 response"
+          schema:
+            $ref: "#/definitions/ErrorDetails"
+        403:
+          description: "403 response"
+          schema:
+            $ref: "#/definitions/ErrorDetails"
+        404:
+          description: "404 response"
+          schema:
+            $ref: "#/definitions/ErrorDetails"
+        418:
+          description: "418 response"
+          schema:
+            $ref: "#/definitions/ErrorDetails"
+      x-amazon-apigateway-integration:
+        responses:
+          \S*403.*:
+            statusCode: "403"
+            responseTemplates:
+              application/json: "#set($inputRoot = $input.path('$.errorMessage'))\n\
+                $input.path('$.errorMessage')"
+          \S*500.*:
+            statusCode: "500"
+            responseTemplates:
+              application/json: "#set($inputRoot = $input.path('$.errorMessage'))\n\
+                $input.path('$.errorMessage')"
+          \S*404.*:
+            statusCode: "404"
+            responseTemplates:
+              application/json: "#set($inputRoot = $input.path('$.errorMessage'))\n\
+                $input.path('$.errorMessage')"
+          \S418.*:
+            statusCode: "418"
+            responseTemplates:
+              application/json: "#set($inputRoot = $input.path('$.errorMessage'))\n\
+                $input.path('$.errorMessage')"
+          \S*201.*:
+            statusCode: "201"
+            responseTemplates:
+              application/json: "#set($inputRoot = $input.path('$.errorMessage'))\n\
+                $input.path('$.errorMessage')"
+          \S*202.*:
+            statusCode: "202"
+            responseTemplates:
+              application/json: "#set($inputRoot = $input.path('$.errorMessage'))\n\
+                $input.path('$.errorMessage')"
+          \S*400.*:
+            statusCode: "400"
+            responseTemplates:
+              application/json: "#set($inputRoot = $input.path('$.errorMessage'))\n\
+                $input.path('$.errorMessage')\n"
+          \S*401.*:
+            statusCode: "401"
+            responseTemplates:
+              application/json: "#set($inputRoot = $input.path('$.errorMessage'))\n\
+                $input.path('$.errorMessage')"
+          default:
+            statusCode: "200"
+            responseTemplates:
+              application/json: "#set($inputRoot = $input.path('$'))\n    \n[\n  \
+                \  #foreach($elem in $inputRoot)\n    {\n    \"productId\": \"$elem.productID\"\
+                ,\n    \"orderID\": \"$elem.orderID\",\n    \"status\": \"$elem.status\"\
+                ,\n    \"links\": [ \n    #foreach($item in $elem.links)\n    {\n\
+                \    \"rel\": \"$item.rel\",\n    \"href\": \"$item.href\"\n    }#if($foreach.hasNext),#end\n\
+                \    #end\n    ]\n    }#if($foreach.hasNext),#end\n    #end\n]\n"
+        requestTemplates:
+          application/json: "##  See http://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-mapping-template-reference.html\n\
+            ##  This template will pass through all parameters including path, querystring,\
+            \ header, stage variables, and context through to the integration endpoint\
+            \ via the body/payload\n#set($allParams = $input.params())\n{\n\"body-json\"\
+            \ : $input.json('$'),\n\"params\" : {\n#foreach($type in $allParams.keySet())\n\
+            \    #set($params = $allParams.get($type))\n\"$type\" : {\n    #foreach($paramName\
+            \ in $params.keySet())\n    \"$paramName\" : \"$util.escapeJavaScript($params.get($paramName))\"\
+            \n        #if($foreach.hasNext),#end\n    #end\n}\n    #if($foreach.hasNext),#end\n\
+            #end\n},\n\"stage-variables\" : {\n#foreach($key in $stageVariables.keySet())\n\
+            \"$key\" : \"$util.escapeJavaScript($stageVariables.get($key))\"\n   \
+            \ #if($foreach.hasNext),#end\n#end\n},\n\"context\" : {\n    \"account-id\"\
+            \ : \"$context.identity.accountId\",\n    \"api-id\" : \"$context.apiId\"\
+            ,\n    \"api-key\" : \"$context.identity.apiKey\",\n    \"authorizer-principal-id\"\
+            \ : \"$context.authorizer.principalId\",\n    \"caller\" : \"$context.identity.caller\"\
+            ,\n    \"cognito-authentication-provider\" : \"$context.identity.cognitoAuthenticationProvider\"\
+            ,\n    \"cognito-authentication-type\" : \"$context.identity.cognitoAuthenticationType\"\
+            ,\n    \"cognito-identity-id\" : \"$context.identity.cognitoIdentityId\"\
+            ,\n    \"cognito-identity-pool-id\" : \"$context.identity.cognitoIdentityPoolId\"\
+            ,\n    \"http-method\" : \"$context.httpMethod\",\n    \"stage\" : \"\
+            $context.stage\",\n    \"source-ip\" : \"$context.identity.sourceIp\"\
+            ,\n    \"user\" : \"$context.identity.user\",\n    \"user-agent\" : \"\
+            $context.identity.userAgent\",\n    \"user-arn\" : \"$context.identity.userArn\"\
+            ,\n    \"request-id\" : \"$context.requestId\",\n    \"resource-id\" :\
+            \ \"$context.resourceId\",\n    \"resource-path\" : \"$context.resourcePath\"\
+            \n    },\n    \"operation\" : \"custAppPurchaseHistory\"\n}\n"
+        uri: "arn:aws:apigateway:us-west-2:lambda:path/2015-03-31/functions/arn:aws:lambda:us-west-2:223135171140:function:orchestrator/invocations"
+        passthroughBehavior: "when_no_match"
+        httpMethod: "POST"
+        contentHandling: "CONVERT_TO_TEXT"
+        type: "aws"
+    options:
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "200 response"
+          schema:
+            $ref: "#/definitions/Empty"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+      x-amazon-apigateway-integration:
+        responses:
+          default:
+            statusCode: "200"
+            responseParameters:
+              method.response.header.Access-Control-Allow-Methods: "'DELETE,GET,HEAD,OPTIONS,PATCH,POST,PUT'"
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,Authorization,X-Amz-Date,X-Api-Key,X-Amz-Security-Token'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+        requestTemplates:
+          application/json: "{\"statusCode\": 200}"
+        passthroughBehavior: "when_no_match"
+        type: "mock"
+  /customersingle:
+    get:
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "200 response"
+          schema:
+            $ref: "#/definitions/custSingleResp"
+        201:
+          description: "201 response"
+          schema:
+            $ref: "#/definitions/custSingleResp"
+        400:
+          description: "400 response"
+          schema:
+            $ref: "#/definitions/ErrorDetails"
+        202:
+          description: "202 response"
+          headers:
+            link:
+              type: "string"
+        500:
+          description: "500 response"
+          schema:
+            $ref: "#/definitions/ErrorDetails"
+        401:
+          description: "401 response"
+          schema:
+            $ref: "#/definitions/ErrorDetails"
+        403:
+          description: "403 response"
+          schema:
+            $ref: "#/definitions/ErrorDetails"
+        404:
+          description: "404 response"
+          schema:
+            $ref: "#/definitions/ErrorDetails"
+        418:
+          description: "418 response"
+          schema:
+            $ref: "#/definitions/ErrorDetails"
+      x-amazon-apigateway-integration:
+        responses:
+          \S*403.*:
+            statusCode: "403"
+            responseTemplates:
+              application/json: "#set($inputRoot = $input.path('$.errorMessage'))\n\
+                $input.path('$.errorMessage')"
+          \S*500.*:
+            statusCode: "500"
+            responseTemplates:
+              application/json: "#set($inputRoot = $input.path('$.errorMessage'))\n\
+                $input.path('$.errorMessage')"
+          \S*404.*:
+            statusCode: "404"
+            responseTemplates:
+              application/json: "#set($inputRoot = $input.path('$.errorMessage'))\n\
+                $input.path('$.errorMessage')"
+          \S418.*:
+            statusCode: "418"
+            responseTemplates:
+              application/json: "#set($inputRoot = $input.path('$.errorMessage'))\n\
+                $input.path('$.errorMessage')"
+          \S*201.*:
+            statusCode: "201"
+            responseTemplates:
+              application/json: "#set($inputRoot = $input.path('$.errorMessage'))\n\
+                $input.path('$.errorMessage')"
+          \S*202.*:
+            statusCode: "202"
+            responseTemplates:
+              application/json: "#set($inputRoot = $input.path('$.errorMessage'))\n\
+                $input.path('$.errorMessage')"
+          \S*400.*:
+            statusCode: "400"
+            responseTemplates:
+              application/json: "#set($inputRoot = $input.path('$.errorMessage'))\n\
+                $input.path('$.errorMessage')\n"
+          \S*401.*:
+            statusCode: "401"
+            responseTemplates:
+              application/json: "#set($inputRoot = $input.path('$.errorMessage'))\n\
+                $input.path('$.errorMessage')"
+          default:
+            statusCode: "200"
+            responseTemplates:
+              application/json: "#set($inputRoot = $input.path('$'))\n    \n{   \n\
+                \    \"emailID\": \"$inputRoot.emailID\",\n    \"custName\" : \"$inputRoot.custName\"\
+                ,\n    \"password\" : \"$inputRoot.password\",\n    \"isVerified\"\
+                \ : \"$inputRoot.isVerified\",\n    \"role\" : \"$inputRoot.role\"\
+                ,\n    \"custID\" : \"$inputRoot.custID\",\n}"
+        requestTemplates:
+          application/json: "##  See http://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-mapping-template-reference.html\n\
+            ##  This template will pass through all parameters including path, querystring,\
+            \ header, stage variables, and context through to the integration endpoint\
+            \ via the body/payload\n#set($allParams = $input.params())\n{\n\"body-json\"\
+            \ : $input.json('$'),\n\"params\" : {\n#foreach($type in $allParams.keySet())\n\
+            \    #set($params = $allParams.get($type))\n\"$type\" : {\n    #foreach($paramName\
+            \ in $params.keySet())\n    \"$paramName\" : \"$util.escapeJavaScript($params.get($paramName))\"\
+            \n        #if($foreach.hasNext),#end\n    #end\n}\n    #if($foreach.hasNext),#end\n\
+            #end\n},\n\"stage-variables\" : {\n#foreach($key in $stageVariables.keySet())\n\
+            \"$key\" : \"$util.escapeJavaScript($stageVariables.get($key))\"\n   \
+            \ #if($foreach.hasNext),#end\n#end\n},\n\"context\" : {\n    \"account-id\"\
+            \ : \"$context.identity.accountId\",\n    \"api-id\" : \"$context.apiId\"\
+            ,\n    \"api-key\" : \"$context.identity.apiKey\",\n    \"authorizer-principal-id\"\
+            \ : \"$context.authorizer.principalId\",\n    \"caller\" : \"$context.identity.caller\"\
+            ,\n    \"cognito-authentication-provider\" : \"$context.identity.cognitoAuthenticationProvider\"\
+            ,\n    \"cognito-authentication-type\" : \"$context.identity.cognitoAuthenticationType\"\
+            ,\n    \"cognito-identity-id\" : \"$context.identity.cognitoIdentityId\"\
+            ,\n    \"cognito-identity-pool-id\" : \"$context.identity.cognitoIdentityPoolId\"\
+            ,\n    \"http-method\" : \"$context.httpMethod\",\n    \"stage\" : \"\
+            $context.stage\",\n    \"source-ip\" : \"$context.identity.sourceIp\"\
+            ,\n    \"user\" : \"$context.identity.user\",\n    \"user-agent\" : \"\
+            $context.identity.userAgent\",\n    \"user-arn\" : \"$context.identity.userArn\"\
+            ,\n    \"request-id\" : \"$context.requestId\",\n    \"resource-id\" :\
+            \ \"$context.resourceId\",\n    \"resource-path\" : \"$context.resourcePath\"\
+            \n    },\n    \"operation\" : \"customerSingle\"\n}\n"
+        uri: "arn:aws:apigateway:us-west-2:lambda:path/2015-03-31/functions/arn:aws:lambda:us-west-2:223135171140:function:orchestrator/invocations"
+        passthroughBehavior: "when_no_match"
+        httpMethod: "POST"
+        contentHandling: "CONVERT_TO_TEXT"
+        type: "aws"
+    options:
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "200 response"
+          schema:
+            $ref: "#/definitions/Empty"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+      x-amazon-apigateway-integration:
+        responses:
+          default:
+            statusCode: "200"
+            responseParameters:
+              method.response.header.Access-Control-Allow-Methods: "'DELETE,GET,HEAD,OPTIONS,PATCH,POST,PUT'"
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,Authorization,X-Amz-Date,X-Api-Key,X-Amz-Security-Token'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+        requestTemplates:
+          application/json: "{\"statusCode\": 200}"
+        passthroughBehavior: "when_no_match"
+        type: "mock"
+  /login:
+    post:
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "User"
+        required: true
+        schema:
+          $ref: "#/definitions/User"
+      responses:
+        200:
+          description: "200 response"
+          schema:
+            $ref: "#/definitions/LoginRsp"
+        201:
+          description: "201 response"
+          schema:
+            $ref: "#/definitions/LoginRsp"
+        400:
+          description: "400 response"
+          schema:
+            $ref: "#/definitions/ErrorDetails"
+        202:
+          description: "202 response"
+          headers:
+            link:
+              type: "string"
+        500:
+          description: "500 response"
+          schema:
+            $ref: "#/definitions/ErrorDetails"
+        401:
+          description: "401 response"
+          schema:
+            $ref: "#/definitions/ErrorDetails"
+        403:
+          description: "403 response"
+          schema:
+            $ref: "#/definitions/ErrorDetails"
+        404:
+          description: "404 response"
+          schema:
+            $ref: "#/definitions/ErrorDetails"
+        418:
+          description: "418 response"
+          schema:
+            $ref: "#/definitions/ErrorDetails"
+      x-amazon-apigateway-integration:
+        responses:
+          \S*403.*:
+            statusCode: "403"
+            responseTemplates:
+              application/json: "#set($inputRoot = $input.path('$.errorMessage'))\n\
+                $input.path('$.errorMessage')"
+          \S*500.*:
+            statusCode: "500"
+            responseTemplates:
+              application/json: "#set($inputRoot = $input.path('$.errorMessage'))\n\
+                $input.path('$.errorMessage')"
+          \S*404.*:
+            statusCode: "404"
+            responseTemplates:
+              application/json: "#set($inputRoot = $input.path('$.errorMessage'))\n\
+                $input.path('$.errorMessage')"
+          \S418.*:
+            statusCode: "418"
+            responseTemplates:
+              application/json: "#set($inputRoot = $input.path('$.errorMessage'))\n\
+                $input.path('$.errorMessage')"
+          \S*201.*:
+            statusCode: "201"
+            responseTemplates:
+              application/json: "#set($inputRoot = $input.path('$.errorMessage'))\n\
+                $input.path('$.errorMessage')"
+          \S*202.*:
+            statusCode: "202"
+            responseTemplates:
+              application/json: "#set($inputRoot = $input.path('$.errorMessage'))\n\
+                $input.path('$.errorMessage')"
+          \S*400.*:
+            statusCode: "400"
+            responseTemplates:
+              application/json: "#set($inputRoot = $input.path('$.errorMessage'))\n\
+                $input.path('$.errorMessage')\n"
+          \S*401.*:
+            statusCode: "401"
+            responseTemplates:
+              application/json: "#set($inputRoot = $input.path('$.errorMessage'))\n\
+                $input.path('$.errorMessage')"
+          default:
+            statusCode: "200"
+            responseTemplates:
+              application/json: "#set($inputRoot = $input.path('$'))\n    \n{\n  \
+                \  \"token\": \"$inputRoot.token\",\n    \"custID\": \"$inputRoot.custID\"\
+                ,\n    \"custName\" : \"$inputRoot.custName\"\n}"
+        requestTemplates:
+          application/json: "##  See http://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-mapping-template-reference.html\n\
+            ##  This template will pass through all parameters including path, querystring,\
+            \ header, stage variables, and context through to the integration endpoint\
+            \ via the body/payload\n#set($allParams = $input.params())\n{\n\"body-json\"\
+            \ : $input.json('$'),\n\"params\" : {\n#foreach($type in $allParams.keySet())\n\
+            \    #set($params = $allParams.get($type))\n\"$type\" : {\n    #foreach($paramName\
+            \ in $params.keySet())\n    \"$paramName\" : \"$util.escapeJavaScript($params.get($paramName))\"\
+            \n        #if($foreach.hasNext),#end\n    #end\n}\n    #if($foreach.hasNext),#end\n\
+            #end\n},\n\"stage-variables\" : {\n#foreach($key in $stageVariables.keySet())\n\
+            \"$key\" : \"$util.escapeJavaScript($stageVariables.get($key))\"\n   \
+            \ #if($foreach.hasNext),#end\n#end\n},\n\"context\" : {\n    \"account-id\"\
+            \ : \"$context.identity.accountId\",\n    \"api-id\" : \"$context.apiId\"\
+            ,\n    \"api-key\" : \"$context.identity.apiKey\",\n    \"authorizer-principal-id\"\
+            \ : \"$context.authorizer.principalId\",\n    \"caller\" : \"$context.identity.caller\"\
+            ,\n    \"cognito-authentication-provider\" : \"$context.identity.cognitoAuthenticationProvider\"\
+            ,\n    \"cognito-authentication-type\" : \"$context.identity.cognitoAuthenticationType\"\
+            ,\n    \"cognito-identity-id\" : \"$context.identity.cognitoIdentityId\"\
+            ,\n    \"cognito-identity-pool-id\" : \"$context.identity.cognitoIdentityPoolId\"\
+            ,\n    \"http-method\" : \"$context.httpMethod\",\n    \"stage\" : \"\
+            $context.stage\",\n    \"source-ip\" : \"$context.identity.sourceIp\"\
+            ,\n    \"user\" : \"$context.identity.user\",\n    \"user-agent\" : \"\
+            $context.identity.userAgent\",\n    \"user-arn\" : \"$context.identity.userArn\"\
+            ,\n    \"request-id\" : \"$context.requestId\",\n    \"resource-id\" :\
+            \ \"$context.resourceId\",\n    \"resource-path\" : \"$context.resourcePath\"\
+            \n    },\n    \"operation\" : \"login\"\n}\n"
+        uri: "arn:aws:apigateway:us-west-2:lambda:path/2015-03-31/functions/arn:aws:lambda:us-west-2:223135171140:function:orchestrator/invocations"
+        passthroughBehavior: "when_no_match"
+        httpMethod: "POST"
+        contentHandling: "CONVERT_TO_TEXT"
+        type: "aws"
+  /order:
+    options:
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "200 response"
+          schema:
+            $ref: "#/definitions/Empty"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+      x-amazon-apigateway-integration:
+        responses:
+          default:
+            statusCode: "200"
+            responseParameters:
+              method.response.header.Access-Control-Allow-Methods: "'DELETE,GET,HEAD,OPTIONS,PATCH,POST,PUT'"
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,Authorization,X-Amz-Date,X-Api-Key,X-Amz-Security-Token'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+        requestTemplates:
+          application/json: "{\"statusCode\": 200}"
+        passthroughBehavior: "when_no_match"
+        type: "mock"
+  /order/{id}:
+    get:
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "id"
+        in: "path"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "200 response"
+          schema:
+            $ref: "#/definitions/SignUpResp"
+        201:
+          description: "201 response"
+          schema:
+            $ref: "#/definitions/SignUpResp"
+        400:
+          description: "400 response"
+          schema:
+            $ref: "#/definitions/ErrorDetails"
+        202:
+          description: "202 response"
+          headers:
+            link:
+              type: "string"
+        500:
+          description: "500 response"
+          schema:
+            $ref: "#/definitions/ErrorDetails"
+        401:
+          description: "401 response"
+          schema:
+            $ref: "#/definitions/ErrorDetails"
+        403:
+          description: "403 response"
+          schema:
+            $ref: "#/definitions/ErrorDetails"
+        404:
+          description: "404 response"
+          schema:
+            $ref: "#/definitions/ErrorDetails"
+        418:
+          description: "418 response"
+          schema:
+            $ref: "#/definitions/ErrorDetails"
+      x-amazon-apigateway-integration:
+        responses:
+          \S*403.*:
+            statusCode: "403"
+            responseTemplates:
+              application/json: "#set($inputRoot = $input.path('$.errorMessage'))\n\
+                $input.path('$.errorMessage')"
+          \S*500.*:
+            statusCode: "500"
+            responseTemplates:
+              application/json: "#set($inputRoot = $input.path('$.errorMessage'))\n\
+                $input.path('$.errorMessage')"
+          \S*404.*:
+            statusCode: "404"
+            responseTemplates:
+              application/json: "#set($inputRoot = $input.path('$.errorMessage'))\n\
+                $input.path('$.errorMessage')"
+          \S418.*:
+            statusCode: "418"
+            responseTemplates:
+              application/json: "#set($inputRoot = $input.path('$.errorMessage'))\n\
+                $input.path('$.errorMessage')"
+          \S*201.*:
+            statusCode: "201"
+            responseTemplates:
+              application/json: "#set($inputRoot = $input.path('$.errorMessage'))\n\
+                $input.path('$.errorMessage')"
+          \S*202.*:
+            statusCode: "202"
+            responseTemplates:
+              application/json: "#set($inputRoot = $input.path('$.errorMessage'))\n\
+                $input.path('$.errorMessage')"
+          \S*400.*:
+            statusCode: "400"
+            responseTemplates:
+              application/json: "#set($inputRoot = $input.path('$.errorMessage'))\n\
+                $input.path('$.errorMessage')\n"
+          \S*401.*:
+            statusCode: "401"
+            responseTemplates:
+              application/json: "#set($inputRoot = $input.path('$.errorMessage'))\n\
+                $input.path('$.errorMessage')"
+          default:
+            statusCode: "200"
+            responseTemplates:
+              application/json: "#set($inputRoot = $input.path('$'))\n    \n{\n  \
+                \  \"status\": \"$inputRoot.status\"\n}"
+        requestTemplates:
+          application/json: "##  See http://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-mapping-template-reference.html\n\
+            ##  This template will pass through all parameters including path, querystring,\
+            \ header, stage variables, and context through to the integration endpoint\
+            \ via the body/payload\n#set($allParams = $input.params())\n{\n\"body-json\"\
+            \ : $input.json('$'),\n\"params\" : {\n#foreach($type in $allParams.keySet())\n\
+            \    #set($params = $allParams.get($type))\n\"$type\" : {\n    #foreach($paramName\
+            \ in $params.keySet())\n    \"$paramName\" : \"$util.escapeJavaScript($params.get($paramName))\"\
+            \n        #if($foreach.hasNext),#end\n    #end\n}\n    #if($foreach.hasNext),#end\n\
+            #end\n},\n\"stage-variables\" : {\n#foreach($key in $stageVariables.keySet())\n\
+            \"$key\" : \"$util.escapeJavaScript($stageVariables.get($key))\"\n   \
+            \ #if($foreach.hasNext),#end\n#end\n},\n\"context\" : {\n    \"account-id\"\
+            \ : \"$context.identity.accountId\",\n    \"api-id\" : \"$context.apiId\"\
+            ,\n    \"api-key\" : \"$context.identity.apiKey\",\n    \"authorizer-principal-id\"\
+            \ : \"$context.authorizer.principalId\",\n    \"caller\" : \"$context.identity.caller\"\
+            ,\n    \"cognito-authentication-provider\" : \"$context.identity.cognitoAuthenticationProvider\"\
+            ,\n    \"cognito-authentication-type\" : \"$context.identity.cognitoAuthenticationType\"\
+            ,\n    \"cognito-identity-id\" : \"$context.identity.cognitoIdentityId\"\
+            ,\n    \"cognito-identity-pool-id\" : \"$context.identity.cognitoIdentityPoolId\"\
+            ,\n    \"http-method\" : \"$context.httpMethod\",\n    \"stage\" : \"\
+            $context.stage\",\n    \"source-ip\" : \"$context.identity.sourceIp\"\
+            ,\n    \"user\" : \"$context.identity.user\",\n    \"user-agent\" : \"\
+            $context.identity.userAgent\",\n    \"user-arn\" : \"$context.identity.userArn\"\
+            ,\n    \"request-id\" : \"$context.requestId\",\n    \"resource-id\" :\
+            \ \"$context.resourceId\",\n    \"resource-path\" : \"$context.resourcePath\"\
+            \n    },\n    \"operation\" : \"order\",\n    \"product_id\" : \"$input.params('id')\"\
+            \n}\n"
+        uri: "arn:aws:apigateway:us-west-2:lambda:path/2015-03-31/functions/arn:aws:lambda:us-west-2:223135171140:function:orchestrator/invocations"
+        passthroughBehavior: "when_no_templates"
+        httpMethod: "POST"
+        contentHandling: "CONVERT_TO_TEXT"
+        type: "aws"
+    options:
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "200 response"
+          schema:
+            $ref: "#/definitions/Empty"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+      x-amazon-apigateway-integration:
+        responses:
+          default:
+            statusCode: "200"
+            responseParameters:
+              method.response.header.Access-Control-Allow-Methods: "'DELETE,GET,HEAD,OPTIONS,PATCH,POST,PUT'"
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,Authorization,X-Amz-Date,X-Api-Key,X-Amz-Security-Token'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+        requestTemplates:
+          application/json: "{\"statusCode\": 200}"
+        passthroughBehavior: "when_no_match"
+        type: "mock"
+  /signup:
+    post:
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "User"
+        required: true
+        schema:
+          $ref: "#/definitions/User"
+      responses:
+        200:
+          description: "200 response"
+          schema:
+            $ref: "#/definitions/SignUpResp"
+        201:
+          description: "201 response"
+          schema:
+            $ref: "#/definitions/SignUpResp"
+        400:
+          description: "400 response"
+          schema:
+            $ref: "#/definitions/ErrorDetails"
+        202:
+          description: "202 response"
+          headers:
+            link:
+              type: "string"
+        500:
+          description: "500 response"
+          schema:
+            $ref: "#/definitions/ErrorDetails"
+        401:
+          description: "401 response"
+          schema:
+            $ref: "#/definitions/ErrorDetails"
+        403:
+          description: "403 response"
+          schema:
+            $ref: "#/definitions/ErrorDetails"
+        404:
+          description: "404 response"
+          schema:
+            $ref: "#/definitions/ErrorDetails"
+        418:
+          description: "418 response"
+          schema:
+            $ref: "#/definitions/ErrorDetails"
+      x-amazon-apigateway-integration:
+        responses:
+          \S*403.*:
+            statusCode: "403"
+            responseTemplates:
+              application/json: "#set($inputRoot = $input.path('$.errorMessage'))\n\
+                $input.path('$.errorMessage')"
+          \S*500.*:
+            statusCode: "500"
+            responseTemplates:
+              application/json: "#set($inputRoot = $input.path('$.errorMessage'))\n\
+                $input.path('$.errorMessage')"
+          \S*404.*:
+            statusCode: "404"
+            responseTemplates:
+              application/json: "#set($inputRoot = $input.path('$.errorMessage'))\n\
+                $input.path('$.errorMessage')"
+          \S418.*:
+            statusCode: "418"
+            responseTemplates:
+              application/json: "#set($inputRoot = $input.path('$.errorMessage'))\n\
+                $input.path('$.errorMessage')"
+          \S*201.*:
+            statusCode: "201"
+            responseTemplates:
+              application/json: "#set($inputRoot = $input.path('$.errorMessage'))\n\
+                $input.path('$.errorMessage')"
+          \S*202.*:
+            statusCode: "202"
+            responseTemplates:
+              application/json: "#set($inputRoot = $input.path('$.errorMessage'))\n\
+                $input.path('$.errorMessage')"
+          \S*400.*:
+            statusCode: "400"
+            responseTemplates:
+              application/json: "#set($inputRoot = $input.path('$.errorMessage'))\n\
+                $input.path('$.errorMessage')\n"
+          \S*401.*:
+            statusCode: "401"
+            responseTemplates:
+              application/json: "#set($inputRoot = $input.path('$.errorMessage'))\n\
+                $input.path('$.errorMessage')"
+          default:
+            statusCode: "200"
+            responseTemplates:
+              application/json: "#set($inputRoot = $input.path('$'))\n    \n{\n  \
+                \  \"status\": \"$inputRoot.status\"\n}"
+        requestTemplates:
+          application/json: "##  See http://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-mapping-template-reference.html\n\
+            ##  This template will pass through all parameters including path, querystring,\
+            \ header, stage variables, and context through to the integration endpoint\
+            \ via the body/payload\n#set($allParams = $input.params())\n{\n\"body-json\"\
+            \ : $input.json('$'),\n\"params\" : {\n#foreach($type in $allParams.keySet())\n\
+            \    #set($params = $allParams.get($type))\n\"$type\" : {\n    #foreach($paramName\
+            \ in $params.keySet())\n    \"$paramName\" : \"$util.escapeJavaScript($params.get($paramName))\"\
+            \n        #if($foreach.hasNext),#end\n    #end\n}\n    #if($foreach.hasNext),#end\n\
+            #end\n},\n\"stage-variables\" : {\n#foreach($key in $stageVariables.keySet())\n\
+            \"$key\" : \"$util.escapeJavaScript($stageVariables.get($key))\"\n   \
+            \ #if($foreach.hasNext),#end\n#end\n},\n\"context\" : {\n    \"account-id\"\
+            \ : \"$context.identity.accountId\",\n    \"api-id\" : \"$context.apiId\"\
+            ,\n    \"api-key\" : \"$context.identity.apiKey\",\n    \"authorizer-principal-id\"\
+            \ : \"$context.authorizer.principalId\",\n    \"caller\" : \"$context.identity.caller\"\
+            ,\n    \"cognito-authentication-provider\" : \"$context.identity.cognitoAuthenticationProvider\"\
+            ,\n    \"cognito-authentication-type\" : \"$context.identity.cognitoAuthenticationType\"\
+            ,\n    \"cognito-identity-id\" : \"$context.identity.cognitoIdentityId\"\
+            ,\n    \"cognito-identity-pool-id\" : \"$context.identity.cognitoIdentityPoolId\"\
+            ,\n    \"http-method\" : \"$context.httpMethod\",\n    \"stage\" : \"\
+            $context.stage\",\n    \"source-ip\" : \"$context.identity.sourceIp\"\
+            ,\n    \"user\" : \"$context.identity.user\",\n    \"user-agent\" : \"\
+            $context.identity.userAgent\",\n    \"user-arn\" : \"$context.identity.userArn\"\
+            ,\n    \"request-id\" : \"$context.requestId\",\n    \"resource-id\" :\
+            \ \"$context.resourceId\",\n    \"resource-path\" : \"$context.resourcePath\"\
+            \n    },\n    \"operation\" : \"signup\"\n}\n"
+        uri: "arn:aws:apigateway:us-west-2:lambda:path/2015-03-31/functions/arn:aws:lambda:us-west-2:223135171140:function:orchestrator/invocations"
+        passthroughBehavior: "when_no_match"
+        httpMethod: "POST"
+        contentHandling: "CONVERT_TO_TEXT"
+        type: "aws"
+definitions:
+  SingleProduct:
+    type: "object"
+    required:
+    - "products"
+    properties:
+      products:
+        type: "object"
+        properties:
+          productId:
+            type: "string"
+          productName:
+            type: "string"
+          productPrice:
+            type: "number"
+        required:
+        - "productId"
+        - "productName"
+        - "productPrice"
+  User:
+    type: "object"
+    required:
+    - "emailID"
+    - "password"
+    properties:
+      emailID:
+        type: "string"
+      password:
+        type: "string"
+  CreateAccount:
+    type: "object"
+    required:
+    - "accountBalance"
+    - "accountLabel"
+    - "accountType"
+    - "custID"
+    properties:
+      custID:
+        type: "string"
+      accountBalance:
+        type: "number"
+      accountType:
+        type: "number"
+      accountLabel:
+        type: "string"
+  Product:
+    type: "object"
+    required:
+    - "products"
+    properties:
+      products:
+        type: "object"
+        properties:
+          productId:
+            type: "string"
+          productName:
+            type: "string"
+          productPrice:
+            type: "number"
+        required:
+        - "productId"
+        - "productName"
+        - "productPrice"
+  ErrorDetails:
+    type: "object"
+    properties:
+      code:
+        type: "string"
+      msg:
+        type: "string"
+      details:
+        type: "object"
+        properties: {}
+  SignUpResp:
+    type: "object"
+    required:
+    - "status"
+    properties:
+      status:
+        type: "string"
+  LoginRsp:
+    type: "object"
+    required:
+    - "custID"
+    - "custName"
+    - "token"
+    properties:
+      token:
+        type: "string"
+      custID:
+        type: "string"
+      custName:
+        type: "string"
+  custSingleResp:
+    type: "object"
+    required:
+    - "custID"
+    - "custName"
+    - "emailID"
+    - "password"
+    - "role"
+    properties:
+      emailID:
+        type: "string"
+      custName:
+        type: "string"
+      password:
+        type: "string"
+      isVerified:
+        type: "boolean"
+      role:
+        type: "string"
+      custID:
+        type: "string"
+  createOrderResp:
+    type: "object"
+    required:
+    - "callback"
+    properties:
+      callback:
+        type: "string"
+  Empty:
+    type: "object"
+    title: "Empty Schema"
+  createOrderModel:
+    type: "object"
+    required:
+    - "accountNumber"
+    - "custID"
+    - "productID"
+    - "productPrice"
+    - "stripeToken"
+    properties:
+      productID:
+        type: "string"
+      productPrice:
+        type: "number"
+      custID:
+        type: "string"
+      accountNumber:
+        type: "string"
+      stripeToken:
+        type: "string"
+  custAccountIDResp:
+    type: "object"
+    required:
+    - "accounts"
+    properties:
+      accounts:
+        type: "object"
+        properties:
+          _id:
+            type: "string"
+          accountType:
+            type: "number"
+          accountBalance:
+            type: "number"
+          accountLabel:
+            type: "string"
+        required:
+        - "_id"
+        - "accountBalance"
+        - "accountLabel"
+        - "accountType"
+  createAccountResp:
+    type: "object"
+    required:
+    - "accountNumber"
+    - "custId"
+    - "links"
+    properties:
+      accountNumber:
+        type: "string"
+      custId:
+        type: "string"
+      links:
+        type: "object"
+        properties:
+          rel:
+            type: "string"
+          href:
+            type: "string"
+        required:
+        - "href"
+        - "rel"
+  custAppPurchHistory:
+    properties:
+      productID:
+        type: "string"
+      orderID:
+        type: "string"
+      status:
+        type: "string"
+      links:
+        type: "object"
+        properties:
+          rel:
+            type: "string"
+          href:
+            type: "string"
+        required:
+        - "href"
+        - "rel"
+    type: "object"
+x-amazon-apigateway-request-validators:
+  Validate body:
+    validateRequestParameters: false
+    validateRequestBody: true

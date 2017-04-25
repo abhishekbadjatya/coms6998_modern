@@ -1,0 +1,6 @@
+module.exports = {
+	'USERMICROSERVICE' : '',
+	'PRODUCTMICROSERVICE' : '',
+	'ORDERMICROSERVICE' : '',
+	'USERACCOUNTMICROSERVICE' : ''
+};

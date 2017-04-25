@@ -47,8 +47,8 @@ res.status(200).json({message:"Hello"});
 app.get ('/jwtDetails', (req, res) => {
 
 	let {custID,role,accessRules} = req.user;
-	console.log(custID);
-	console.log(role);
+	// console.log(custID);
+	// console.log(role);
 	res.status(200).json({custID,role,accessRules});
 
 });
@@ -185,7 +185,8 @@ app.post ('/signup' , (req, res) => {
 		
 		var emailData={to,from,subject,body};
 		console.log(emailData);
-		res.status(200).json(accountData);
+		// res.status(200).json(accountData);
+		res.status(200).json({status:"USER_SIGN_UP_DONE"})
 		return fetch(config.sendEmailURL, { method: 'POST', 
                                      body: JSON.stringify(emailData)
                 })

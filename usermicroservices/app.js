@@ -127,7 +127,7 @@ app.post ('/login' , (req, res) => {
 					operation: ['GET','POST','PUT','DELETE']
 				},
 				{
-					resource:'product',
+					resource:'app',
 					operation: ['GET','POST','PUT','DELETE']
 				}
 				];

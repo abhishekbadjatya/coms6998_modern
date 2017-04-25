@@ -9,7 +9,7 @@ exports.handler =  (event, context, callback) => {
     let principalId;
     fetch (config.USERMICROSERVICE + 'jwtDetails', {
             headers : {
-            'Authorization' : 'Bearer ' + token
+            'Authorization' : token
         }
     })
     .then ((response) => {
@@ -24,9 +24,9 @@ exports.handler =  (event, context, callback) => {
         
     })
     .then ((isAllowed) => {
-            
+        
             switch (isAllowed) {
-            
+
             case 'allow':
                 console.log('allowed');
                 callback(null, generatePolicy(principalId, 'Allow', event.methodArn));
@@ -40,6 +40,8 @@ exports.handler =  (event, context, callback) => {
                 callback("Error: Invalid token"); 
             }
 
+    }).catch((err) => {
+        console.log(err);
     });
 
     

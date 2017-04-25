@@ -34,7 +34,7 @@ class Customer {
 
 				break;
 			case 'order' :
-				if (!resource_instance && http_method == 'POST') {
+				if (!resource_instance && (http_method == 'POST' || http_method == 'OPTIONS') ) {
 					return Promise.resolve('allow');
 				} else if ( resource_instance && anyofTheAll(http_method) ) {
 					
@@ -62,14 +62,14 @@ class Customer {
 
 				break;
 			case 'app' :
-				if ( http_method == 'GET' ) {
+				if ( http_method == 'GET' || http_method == 'OPTIONS' ) {
 					return Promise.resolve ('allow');
 				} else {
 					return Promise.resolve ('deny');
 				}
 				break;
 			case 'account' :
-				if (!resource_instance && http_method == 'POST') {
+				if (!resource_instance && (http_method == 'POST' || http_method == 'OPTIONS') ) {
 					return Promise.resolve('allow');
 
 
@@ -82,7 +82,9 @@ class Customer {
 					return Promise.resolve ('deny');
 				}
 				break;
+			default:
 
+				return Promise.resolve('deny');
 
 		}
 

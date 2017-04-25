@@ -115,11 +115,11 @@ app.post ('/login' , (req, res) => {
 			else if (customer.role=='ADMIN') {
 				let accessRules = [
 				{
-					resource:'custInfo',
+					resource:'customer',
 					operation: ['GET','POST','PUT','DELETE']
 				},
 				{
-					resource:'custAccount',
+					resource:'account',
 					operation: ['GET','POST','PUT','DELETE']
 				},
 				{

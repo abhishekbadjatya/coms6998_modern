@@ -73,6 +73,8 @@ app.get ('/customerInfo', (req, res) => {
 		let customer = customers[0];
 		customer.password = '';
 		customer.custID=customer._id;
+		delete customer['_id'];
+		// console.log(customer);
 		res.status(200).json(customer);
 
 	})

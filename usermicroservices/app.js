@@ -116,19 +116,19 @@ app.post ('/login' , (req, res) => {
 				let accessRules = [
 				{
 					resource:'customer',
-					operation: ['GET','POST','PUT','DELETE']
+					operation: ['GET','POST','PUT','DELETE', 'OPTIONS']
 				},
 				{
 					resource:'account',
-					operation: ['GET','POST','PUT','DELETE']
+					operation: ['GET','POST','PUT','DELETE', 'OPTIONS']
 				},
 				{
 					resource:'order',
-					operation: ['GET','POST','PUT','DELETE']
+					operation: ['GET','POST','PUT','DELETE', 'OPTIONS']
 				},
 				{
 					resource:'app',
-					operation: ['GET','POST','PUT','DELETE']
+					operation: ['GET','POST','PUT','DELETE', 'OPTIONS']
 				}
 				];
 				myToken = jwt.sign ({custID: customer.custID, role: customer.role, accessRules:accessRules}, SECRET_KEY);	

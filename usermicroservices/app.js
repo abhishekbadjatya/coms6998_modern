@@ -24,7 +24,7 @@ app.use(bodyParser.urlencoded({extended:true}));
 
 app.use (
 	expressJWT ({secret: SECRET_KEY})
-	.unless({path : ['/','/login','/signup', '/updateVerificationStatus',new RegExp('^/grocery/*', 'i'), new RegExp('/accountverification/*', 'i')] }));
+	.unless({path : ['/','/login','/signup', '/updateVerificationStatus',new RegExp('^/customerInfo/*', 'i'), new RegExp('/accountverification/*', 'i')] }));
 
 app.use(function (err, req, res, next) {
   if (err.name === 'UnauthorizedError') {
@@ -53,10 +53,10 @@ app.get ('/jwtDetails', (req, res) => {
 
 });
 
-app.get ('/customerInfo', (req, res) => {
+app.get ('/customerInfo/:custID', (req, res) => {
 
-	let {custID} = req.user;
-	console.log(req.user);
+	let {custID} = req.params;
+	// console.log(req.user);
 	console.log(custID);
 
 	customerModel.find({_id:custID}).lean().exec()
@@ -71,9 +71,11 @@ app.get ('/customerInfo', (req, res) => {
 		}
 
 		let customer = customers[0];
+		console.log(customer);
 		customer.password = '';
 		customer.custID=customer._id;
 		delete customer['_id'];
+		delete customer['__v'];
 		// console.log(customer);
 		res.status(200).json(customer);
 
@@ -169,7 +171,7 @@ app.post ('/signup' , (req, res) => {
 		accountData=data;
 		accountData.custID=accountData._id;
 		accountData.password="";
-		
+		// delete accountData['_id'];
 		console.log(req.hostname);
 
 		let myToken = jwt.sign({emailID: emailID}, SECRET_KEY);
@@ -187,8 +189,9 @@ app.post ('/signup' , (req, res) => {
 		
 		var emailData={to,from,subject,body};
 		console.log(emailData);
+
 		// res.status(200).json(accountData);
-		res.status(200).json({status:"USER_SIGN_UP_DONE"})
+		res.status(200).json({status:"USER_SIGN_UP_DONE",custID:accountData.custID})
 		return fetch(config.sendEmailURL, { method: 'POST', 
                                      body: JSON.stringify(emailData)
                 })

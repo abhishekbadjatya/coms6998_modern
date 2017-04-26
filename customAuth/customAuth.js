@@ -4,13 +4,16 @@ let fetch = require ('node-fetch');
 let config = require ('./config.js');
 
 exports.handler =  (event, context, callback) => {
-    
+    console.log(event)
     var token = event.authorizationToken;
     let principalId;
+    console.log(config.USERMICROSERVICE + 'jwtDetails');
     fetch (config.USERMICROSERVICE + 'jwtDetails', {
+            method: 'GET',
             headers : {
-            'Authorization' : token
-        }
+                'Content-type' : 'application/json',
+                'Authorization' : token
+            }
     })
     .then ((response) => {
       return response.json();  
@@ -41,6 +44,7 @@ exports.handler =  (event, context, callback) => {
             }
 
     }).catch((err) => {
+        callback(null, generatePolicy(principalId, 'Deny', event.methodArn));
         console.log(err);
     });
 

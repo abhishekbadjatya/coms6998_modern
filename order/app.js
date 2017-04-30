@@ -17,6 +17,30 @@ var accountModel = dao.account;
 
 
 AWS.config.update(config.AWS_config);
+
+var sqs = new AWS.SQS();
+
+var sqsParams = {
+  DelaySeconds: 10,
+  MessageAttributes: {
+    "Title": {
+      DataType: "String",
+      StringValue: "The Whistler"
+    },
+    "Author": {
+    DataType: "String",
+    StringValue: "John Grisham"
+    },
+  "WeeksOn": {
+    DataType: "Number",
+    StringValue: "6"
+   }
+ },
+ MessageBody: "Information about current NY Times fiction bestseller for week of 12/11/2016.",
+ QueueUrl: "QUEUE_URL"
+};
+
+
 dao.connectToDB();
 
 app.get('/api/orders/purchaseHistory/:custID', function(req, res) {
@@ -85,7 +109,7 @@ app.post('/api/orders/createOrder', function(req, res) {
 	var stripeToken = req.body.stripeToken;
 	var orderID = req.body.order;
 
-
+  console.log("came here");
 	/*dao.connectToDB();
 	orderModel({
 		"customer_id" 	 : customerID,
@@ -119,7 +143,8 @@ app.post('/api/orders/createOrder', function(req, res) {
 			console.log(orderID);
 			var charge = json.stripeInfo;
 			status = json.status;
-			//dao.connectToDB();
+      console.log(status);
+      //dao.connectToDB();
 			return orderModel.findByIdAndUpdate(orderID, {
 				"charge"	: charge,
 				"status"  : status
@@ -136,9 +161,112 @@ app.post('/api/orders/createOrder', function(req, res) {
 		}).save();
 	})
 	.then(function(orderProduct){*/
+    console.log("about asndasdjaskdjakjdaksjdkasjdkasjdkas");
+		var params = {
+			AttributeNames: [
+				"SentTimestamp"
+			],
+			MaxNumberOfMessages: 1,
+			MessageAttributeNames: [
+				"All"
+			],
+			QueueUrl: config.sqsURL,
+			VisibilityTimeout: 20,
+			WaitTimeSeconds: 5
+		};
+    var deleteParams = null;
+
+    var found = false;
+    console.log(!found);
+    readMessage();
+    // while(!found){
+    // sleep(1000);
+    function readMessage(){
+    console.log('inside while');
+		sqs.receiveMessage(params, function(err, data) {
+  		if (err) {
+    		console.log("Receive Error", err);
+  		} else {
+        console.log("inside receiveMessage");
+        console.log(data);
+        if(data.Messages != undefined) {
+  				for(var i = 0; i < data.Messages.length; i++){
+  					var id = JSON.parse(data.Messages[i].Body).orderID;
+            console.log("humara iddd " + id);
+            if(id == orderID){
+              console.log(id);
+              found = true;
+  						deleteParams = {
+  							QueueUrl: config.sqsURL,
+  							ReceiptHandle: data.Messages[i].ReceiptHandle
+  						};
+  						break;
+  					}
+				}
+        console.log(deleteParams);
+        if(found) {
+				sqs.deleteMessage(deleteParams, function(err, data) {
+      		if (err) {
+        		console.log("Delete Error", err);
+      		} else {
+        		console.log("Message Deleted", data);
+            sqs1();
+      		}
+    		});
+        }
+        else{
+          readMessage();
+        }
+      }
+      else{
+        readMessage();
+      }
+       //here if of undefined check ends
+			}
+		});
+    }
+
+function sqs1(){
+
+		var sqsBody = {
+				"orderID" : orderID,
+				"status"	: status
+		};
+
+		var sqsParams = {
+				DelaySeconds	: 10,
+				MessageAttributes: {
+					"Title": {
+						DataType: "String",
+						StringValue: "The Whistler"
+					},
+					"Author": {
+						DataType: "String",
+						StringValue: "John Grisham"
+					},
+					"WeeksOn": {
+						DataType: "Number",
+						StringValue: "6"
+					}
+				},
+				MessageBody: JSON.stringify(sqsBody),
+				QueueUrl: config.sqsURL
+		};
+
+		sqs.sendMessage(sqsParams, function(err, data) {
+			if (err) {
+				console.log("Error", err);
+			} else {
+				console.log("Success", data.MessageId);
+			}
+		});
+
+
+
 		console.log("Order product created. Everything done");
 		//dao.disConnectFromDB();
 		res.status(200).send({"status" :"SUCCESS"});
+  }
 	})
 	.catch(function(err){
 		//dao.disConnectFromDB();
@@ -288,9 +416,47 @@ app.post('/api/orders/createBlankOrder', function(req, res) {
 		//dao.disConnectFromDB();
 
 		res.status(202).send({
-			"callback" 	:"/api/orders/poll/"+orderID
-			//"links"			:linksArray
+			//"callback" 	:"/api/orders/poll/"+orderID
+			"callback" 	:"/sqs/"+orderID
 		});
+
+    //sqs
+
+    var sqsBody = {
+        "orderID" : orderID,
+        "status"	: "pending"
+    };
+
+    var sqsParams = {
+        DelaySeconds	: 10,
+        MessageAttributes: {
+          "Title": {
+            DataType: "String",
+            StringValue: "The Whistler"
+          },
+          "Author": {
+            DataType: "String",
+            StringValue: "John Grisham"
+          },
+          "WeeksOn": {
+            DataType: "Number",
+            StringValue: "6"
+          }
+        },
+        MessageBody: JSON.stringify(sqsBody),
+        QueueUrl: config.sqsURL
+    };
+    console.log("hihih");
+    sqs.sendMessage(sqsParams, function(err, data) {
+      if (err) {
+        console.log("Error", err);
+      } else {
+        console.log("Success", data.MessageId);
+      }
+    });
+
+    //sqs
+
 		var sns = new AWS.SNS();
 		var respJSON = {
 			"order" 	: orderID,
@@ -317,6 +483,7 @@ app.post('/api/orders/createBlankOrder', function(req, res) {
 				}
 
 		});
+
 	})
 	.catch(function(err){
 		//dao.disConnectFromDB();
@@ -342,6 +509,77 @@ app.get('/api/orders/poll/:id', function(req, res) {
 		res.status(500).send({error:"INTERNAL_SERVER_ERROR"});
 	});
 });
+
+
+
+
+app.get('/sqs/:id', function(req, res) {
+
+	var orderID = req.params.id;
+	var completed = false;
+  var deleteParams = null;
+  var params = {
+		AttributeNames: [
+			"SentTimestamp"
+		],
+		MaxNumberOfMessages: 10,
+		MessageAttributeNames: [
+			"All"
+		],
+		QueueUrl: config.sqsURL,
+		VisibilityTimeout: 0,
+		WaitTimeSeconds: 0
+	};
+
+	sqs.receiveMessage(params, function(err, data) {
+		if (err) {
+			console.log("Receive Error", err);
+			res.status(500).send({error:"INTERNAL_SERVER_ERROR"});
+		} else {
+      console.log(data.Messages[0]);
+      if(data.Messages != undefined){
+
+      for(var i = 0; i < data.Messages.length; i++){
+				var id = JSON.parse(data.Messages[i].Body).orderID;
+				var status = JSON.parse(data.Messages[i].Body).status;
+				if(id == orderID) {//} && status == "SUCCESS"){
+					deleteParams = {
+						QueueUrl: config.sqsURL,
+						ReceiptHandle: data.Messages[i].ReceiptHandle
+					};
+					completed = true;
+					break;
+				}
+			}
+
+      console.log(deleteParams);
+      if(completed) {
+      sqs.deleteMessage(deleteParams, function(err, data) {
+				if (err) {
+					console.log("Delete Error", err);
+				} else {
+					console.log("Message Deleted", data);
+
+				}
+			});
+      }
+      }
+		}
+    if(completed) {
+      res.status(200).json({'status':'SUCCESS'});
+    } else {
+      res.status(404).json({'status':'FAILURE'});
+    }
+	});
+
+});
+
+
+
+
+
+
+
 
 app.get('/order/:id', function(req, res) {
 

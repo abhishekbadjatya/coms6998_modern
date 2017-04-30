@@ -24,7 +24,7 @@ app.use(bodyParser.urlencoded({extended:true}));
 
 app.use (
 	expressJWT ({secret: SECRET_KEY})
-	.unless({path : ['/','/login','/signup', '/updateVerificationStatus',new RegExp('^/grocery/*', 'i'), new RegExp('/accountverification/*', 'i')] }));
+	.unless({path : ['/','/login','/signup', '/updateVerificationStatus',new RegExp('^/customerInfo/*', 'i'), new RegExp('/accountverification/*', 'i')] }));
 
 app.use(function (err, req, res, next) {
   if (err.name === 'UnauthorizedError') {
@@ -44,10 +44,19 @@ app.get('/',(req,res) =>{
 res.status(200).json({message:"Hello"});
 });
 
-app.get ('/customerInfo', (req, res) => {
+app.get ('/jwtDetails', (req, res) => {
 
-	let {custID} = req.user;
-	console.log(req.user);
+	let {custID,role,accessRules} = req.user;
+	// console.log(custID);
+	// console.log(role);
+	res.status(200).json({custID,role,accessRules});
+
+});
+
+app.get ('/customerInfo/:custID', (req, res) => {
+
+	let {custID} = req.params;
+	// console.log(req.user);
 	console.log(custID);
 
 	customerModel.find({_id:custID}).lean().exec()
@@ -62,8 +71,12 @@ app.get ('/customerInfo', (req, res) => {
 		}
 
 		let customer = customers[0];
+		console.log(customer);
 		customer.password = '';
 		customer.custID=customer._id;
+		delete customer['_id'];
+		delete customer['__v'];
+		// console.log(customer);
 		res.status(200).json(customer);
 
 	})
@@ -97,7 +110,31 @@ app.post ('/login' , (req, res) => {
 				res.status(401).json({error:"USER_NOT_VERIFIED"});			
 
 		} else if(customer.password == password) {
-			let myToken = jwt.sign ({custID: customer.custID}, SECRET_KEY);
+			let myToken;
+			if (customer.role=='CUSTOMER'){
+				myToken = jwt.sign ({custID: customer.custID, role: customer.role}, SECRET_KEY);
+			}
+			else if (customer.role=='ADMIN') {
+				let accessRules = [
+				{
+					resource:'customer',
+					operation: ['GET','POST','PUT','DELETE', 'OPTIONS']
+				},
+				{
+					resource:'account',
+					operation: ['GET','POST','PUT','DELETE', 'OPTIONS']
+				},
+				{
+					resource:'order',
+					operation: ['GET','POST','PUT','DELETE', 'OPTIONS']
+				},
+				{
+					resource:'app',
+					operation: ['GET','POST','PUT','DELETE', 'OPTIONS']
+				}
+				];
+				myToken = jwt.sign ({custID: customer.custID, role: customer.role, accessRules:accessRules}, SECRET_KEY);	
+			}
 			res.status(200).json({token:myToken, custID : customer.custID, custName:customer.custName});
 
 		} else {
@@ -119,22 +156,22 @@ app.post ('/login' , (req, res) => {
 
 app.post ('/signup' , (req, res) => {
 
-	let {custName,emailID, password} = req.body;
-	// console.log(custName);
+	let {emailID, password, role} = req.body;
+	let custName = emailID;
 	customerModel.find({emailID:emailID}).exec()
 	.then((cutomers) => {
 
 		if (cutomers.length >= 1) {
 			res.status(401).json({error:"USER_EXISTS"});
 		}
-    	return customerModel({"custName":custName,"emailID":emailID,"password":password,"isVerified":false}).save();
+    	return customerModel({"custName":custName,"emailID":emailID,"password":password,"isVerified":false,"role":role}).save();
 	})
 	.then(function(data){
 		console.log(data);
 		accountData=data;
 		accountData.custID=accountData._id;
 		accountData.password="";
-		
+		// delete accountData['_id'];
 		console.log(req.hostname);
 
 		let myToken = jwt.sign({emailID: emailID}, SECRET_KEY);
@@ -152,7 +189,9 @@ app.post ('/signup' , (req, res) => {
 		
 		var emailData={to,from,subject,body};
 		console.log(emailData);
-		res.status(200).json(accountData);
+
+		// res.status(200).json(accountData);
+		res.status(200).json({status:"USER_SIGN_UP_DONE",custID:accountData.custID})
 		return fetch(config.sendEmailURL, { method: 'POST', 
                                      body: JSON.stringify(emailData)
                 })

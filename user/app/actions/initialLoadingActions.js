@@ -281,7 +281,7 @@ export function signUp (payload)  {
 
 	return function (dispatch, getState)  {
 
-
+		payload.emailID = payload.username;
 		kfetch(urlConstants.signup, {
 
 			method :'POST',

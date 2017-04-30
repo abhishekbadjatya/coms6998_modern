@@ -64,6 +64,10 @@ class ProductComponent extends React.Component {
 		}
 	}
 
+	componentWillUnmount() {
+		clearInterval(this.getUserPurchaseHistoryInterval);
+	}
+
 
 	render () {
 

@@ -103,241 +103,241 @@ exports.handler = (event, context, callback) => {
 
         switch (resource) {
             case '/login':
-            fetch (config.USERMICROSERVICE + 'login', {
-                method: 'POST',
-                headers : header,
-                body : payload
-            })
-            .then ((response) => {
-                return response.json();
-
-            })
-            .then ((json) => {
-                callback(null, {
-                    statusCode: 200,
-                    headers:resHeader,
-                    body: JSON.stringify(json)
+                fetch (config.USERMICROSERVICE + 'login', {
+                    method: 'POST',
+                    headers : header,
+                    body : payload
+                })
+                .then ((response) => {
+                    return response.json();
 
                 })
-            })
-            .catch ((err) => {
-                callback(null, {
-                    statusCode: 500,
-                    headers:resHeader,
-                    body: JSON.stringify(err)
-                });
-                console.log(err);
-            });
-
-            break;
-
-            case '/signup' :
-            
-            var userSignUpStatus;
-            var userCreatedDetails;
-            fetch (config.USERMICROSERVICE + 'signup', {
-                method: 'POST',
-                headers : header,
-                body : payload
-            })
-            .then ((response) => {
-                console.log(response);
-                userSignUpStatus = response.status;
-                return response.json();
-            })
-            .then ((json) => {
-                console.log(json);
-                var custID=json._id;
-                var accountBalance = 0;
-                var accountType = 0;
-                var accountLabel = 'PRIVATE';
-                var accountData= {custID,accountBalance,accountType, accountLabel}
-                
-                if (userSignUpStatus == 200) {
-                    userCreatedDetails = json;
-                    if (header.Authorization) {
-                        delete header.Authorization;
-                    }
-                    fetch(config.USERACCOUNTMICROSERVICE+'customerAccount', {
-                        method: 'POST',
-                        headers : header,
-                        body: JSON.stringify(accountData)
-                    })
-                    .then((response) => {
-                        return response.json();
-                    }).then ((accountJSON) => {
-                        console.log(accountJSON);
-                        callback(null, { 
-                            statusCode: userSignUpStatus,
-                            headers:resHeader,
-                            body: JSON.stringify(userCreatedDetails)
-
-                        });
-                    }).catch ((err) => {
-                        callback(null, {
-                            statusCode: 500,
-                            headers:resHeader,
-                            body: JSON.stringify(err)
-                        });
-                        console.log(err);
-                    });
-
-                } else {
+                .then ((json) => {
                     callback(null, {
-                        statusCode: userSignUpStatus,
+                        statusCode: 200,
                         headers:resHeader,
                         body: JSON.stringify(json)
 
+                    })
+                })
+                .catch ((err) => {
+                    callback(null, {
+                        statusCode: 500,
+                        headers:resHeader,
+                        body: JSON.stringify(err)
                     });
+                    console.log(err);
+                });
 
-                }
-                
-                console.log(json);
+                break;
 
-            });
+            case '/signup' :
+            
+                var userSignUpStatus;
+                var userCreatedDetails;
+                fetch (config.USERMICROSERVICE + 'signup', {
+                    method: 'POST',
+                    headers : header,
+                    body : payload
+                })
+                .then ((response) => {
+                    console.log(response);
+                    userSignUpStatus = response.status;
+                    return response.json();
+                })
+                .then ((json) => {
+                    console.log(json);
+                    var custID=json._id;
+                    var accountBalance = 0;
+                    var accountType = 0;
+                    var accountLabel = 'PRIVATE';
+                    var accountData= {custID,accountBalance,accountType, accountLabel}
+                    
+                    if (userSignUpStatus == 200) {
+                        userCreatedDetails = json;
+                        if (header.Authorization) {
+                            delete header.Authorization;
+                        }
+                        fetch(config.USERACCOUNTMICROSERVICE+'customerAccount', {
+                            method: 'POST',
+                            headers : header,
+                            body: JSON.stringify(accountData)
+                        })
+                        .then((response) => {
+                            return response.json();
+                        }).then ((accountJSON) => {
+                            console.log(accountJSON);
+                            callback(null, { 
+                                statusCode: userSignUpStatus,
+                                headers:resHeader,
+                                body: JSON.stringify(userCreatedDetails)
+
+                            });
+                        }).catch ((err) => {
+                            callback(null, {
+                                statusCode: 500,
+                                headers:resHeader,
+                                body: JSON.stringify(err)
+                            });
+                            console.log(err);
+                        });
+
+                    } else {
+                        callback(null, {
+                            statusCode: userSignUpStatus,
+                            headers:resHeader,
+                            body: JSON.stringify(json)
+
+                        });
+
+                    }
+                    
+                    console.log(json);
+
+                });
             break;
             
             case '/app' :
-            var callingURL=null;
-            if (httpMethod=='GET'){
-                callingURL= config.PRODUCTMICROSERVICE + 'api/getproducts';
-            }
-            fetch (callingURL, {
-                method: httpMethod,
-                headers : header,
-                body : payload
-            })
-            .then ((response) => {
-                return response.json();
-
-            })
-            .then ((json) => {
-                callback(null, {
-                    statusCode: 200,
-                    headers:resHeader,
-                    body: JSON.stringify(json)
+                var callingURL=null;
+                if (httpMethod=='GET'){
+                    callingURL= config.PRODUCTMICROSERVICE + 'api/getproducts';
+                }
+                fetch (callingURL, {
+                    method: httpMethod,
+                    headers : header,
+                    body : payload
+                })
+                .then ((response) => {
+                    return response.json();
 
                 })
-                console.log(json);
+                .then ((json) => {
+                    callback(null, {
+                        statusCode: 200,
+                        headers:resHeader,
+                        body: JSON.stringify(json)
 
-            })
-            .catch ((err) => {
-                callback(null, {
-                    statusCode: 500,
-                    headers:resHeader,
-                    body: JSON.stringify(err)
+                    })
+                    console.log(json);
+
+                })
+                .catch ((err) => {
+                    callback(null, {
+                        statusCode: 500,
+                        headers:resHeader,
+                        body: JSON.stringify(err)
+                    });
+                    console.log(err);
                 });
-                console.log(err);
-            });
 
             break;
-
+            //TODO - change this route /customer/self
             case '/customer-single' :
-            var callingURL=null;
-            if (httpMethod=='GET'){
-                callingURL= config.USERMICROSERVICE + '/customerInfo';
-            }
-            fetch (callingURL, {
-                method: httpMethod,
-                headers : header,
-                body : payload
-            })
-            .then ((response) => {
-                return response.json();
-
-            }).then ((json) => {
-                callback(null, {
-                    statusCode: 200,
-                    headers:resHeader,
-                    body: JSON.stringify(json)
-
+                var callingURL=null;
+                if (httpMethod=='GET'){
+                    callingURL= config.USERMICROSERVICE + '/customerInfo';
+                }
+                fetch (callingURL, {
+                    method: httpMethod,
+                    headers : header,
+                    body : payload
                 })
-                console.log(json);
+                .then ((response) => {
+                    return response.json();
 
-            }).catch ((err) => {
-                callback(null, {
-                    statusCode: 500,
-                    headers:resHeader,
-                    body: JSON.stringify(err)
+                }).then ((json) => {
+                    callback(null, {
+                        statusCode: 200,
+                        headers:resHeader,
+                        body: JSON.stringify(json)
+
+                    })
+                    console.log(json);
+
+                }).catch ((err) => {
+                    callback(null, {
+                        statusCode: 500,
+                        headers:resHeader,
+                        body: JSON.stringify(err)
+                    });
+                    console.log(err);
                 });
-                console.log(err);
-            });
             
             break;
 
             case '/order' :
-            var callingURL=null;
-            if (httpMethod=='POST'){
-                callingURL= config.ORDERMICROSERVICE + 'api/orders/createBlankOrder';
-            }
+                var callingURL=null;
+                if (httpMethod=='POST'){
+                    callingURL= config.ORDERMICROSERVICE + 'api/orders/createBlankOrder';
+                }
 
-            fetch (callingURL, {
-                method: httpMethod,
-                headers : header,
-                body : payload
-            }).then ((response) => {
-                return response.json();
+                fetch (callingURL, {
+                    method: httpMethod,
+                    headers : header,
+                    body : payload
+                }).then ((response) => {
+                    return response.json();
 
-            }).then ((json) => {
-                callback(null, {
-                    statusCode: 202,
-                    headers:resHeader,
-                    body: JSON.stringify(json)
+                }).then ((json) => {
+                    callback(null, {
+                        statusCode: 202,
+                        headers:resHeader,
+                        body: JSON.stringify(json)
 
-                })
-                console.log(json);
+                    })
+                    console.log(json);
 
-            }).catch ((err) => {
-                callback(null, {
-                    statusCode: 500,
-                    headers:resHeader,
-                    body: JSON.stringify(err)
+                }).catch ((err) => {
+                    callback(null, {
+                        statusCode: 500,
+                        headers:resHeader,
+                        body: JSON.stringify(err)
+                    });
+                    console.log(err);
                 });
-                console.log(err);
-            });
             break;
 
-
+            //TODO - change this route name to /customer/self/app
             case '/customer/app' :
-            var callingURL=null;
-            if (httpMethod=='GET'){
-                callingURL= config.USERMICROSERVICE + '/customerInfo';
-            }
+                var callingURL=null;
+                if (httpMethod=='GET'){
+                    callingURL= config.USERMICROSERVICE + '/customerInfo';
+                }
 
 
-            fetch (callingURL, {
-                method: httpMethod,
-                headers : header
-            })
-            .then ((response) => {
-                return response.json();
+                fetch (callingURL, {
+                    method: httpMethod,
+                    headers : header
+                })
+                .then ((response) => {
+                    return response.json();
 
-            }).then ((json) => {
+                }).then ((json) => {
 
-                let _id = json._id;
-                
-                return fetch (config.ORDERMICROSERVICE + 'api/orders/purchaseHistory/' + _id)
+                    let custID = json.custID;
+                    
+                    return fetch (config.ORDERMICROSERVICE + 'api/orders/purchaseHistory/' + custID)
 
-            })
-            .then ((response) => {
-                return response.json();
-            })
-            .then ((json) => {
+                })
+                .then ((response) => {
+                    return response.json();
+                })
+                .then ((json) => {
 
-                callback(null, {
-                    statusCode: 200,
-                    headers:resHeader,
-                    body: JSON.stringify(json)
+                    callback(null, {
+                        statusCode: 200,
+                        headers:resHeader,
+                        body: JSON.stringify(json)
+                    });
+
+                }).catch ((err) => {
+                    callback(null, {
+                        statusCode: 500,
+                        headers:resHeader,
+                        body: JSON.stringify(err)
+                    });
+                    console.log(err);
                 });
-
-            }).catch ((err) => {
-                callback(null, {
-                    statusCode: 500,
-                    headers:resHeader,
-                    body: JSON.stringify(err)
-                });
-                console.log(err);
-            });
             
             break;
 
@@ -448,7 +448,7 @@ exports.handler = (event, context, callback) => {
             case '/app/{id}' :
                 let appID = event.pathParameters.id;
 
-                fetch (config.PRODUCTMICROSERVICE + '/api/getproducts/' + appID).then((response) => {
+                fetch (config.PRODUCTMICROSERVICE + 'api/getproducts/' + appID).then((response) => {
 
                     return response.json();
 

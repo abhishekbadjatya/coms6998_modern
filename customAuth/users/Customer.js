@@ -73,7 +73,7 @@ class Customer {
 					return Promise.resolve('allow');
 
 
-				} else if ( resource_instance == 'self' && anyofTheAll(http_method) ) {
+				} else if ( (resource_instance == 'self' || resource_instance == this.custID) && anyofTheAll(http_method) ) {
 
 					return Promise.resolve ('allow');
 

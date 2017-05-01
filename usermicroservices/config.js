@@ -4,5 +4,6 @@ module.exports = {
 	'aws_secretAccessKey': '',
 	'dbURL' : '',
 	'sendEmailURL' : '',
-	'customerAccountURL' : ''
+	'customerAccountURL' : '',
+	'snsEventsARN' : ''
 }

@@ -95,7 +95,7 @@ app.post ('/login' , (req, res) => {
 
 	customerModel.find({emailID:emailID}).exec()
 	.then((customers) => {
-
+		console.log(customers);
 		if (customers.length > 1) {
 			return Promise.reject("MORE_THAN_ONE_USER");
 		}
@@ -158,19 +158,26 @@ app.post ('/signup' , (req, res) => {
 
 	let {emailID, password, role} = req.body;
 	let custName = emailID;
+	let snsEventPayload = {};
 	customerModel.find({emailID:emailID}).exec()
 	.then((cutomers) => {
 
 		if (cutomers.length >= 1) {
 			res.status(401).json({error:"USER_EXISTS"});
+			return Promise.reject("USER_EXISTS");
 		}
     	return customerModel({"custName":custName,"emailID":emailID,"password":password,"isVerified":false,"role":role}).save();
 	})
 	.then(function(data){
+
+
 		console.log(data);
+
 		accountData=data;
 		accountData.custID=accountData._id;
 		accountData.password="";
+		snsEventPayload = accountData;
+
 		// delete accountData['_id'];
 		console.log(req.hostname);
 
@@ -190,20 +197,34 @@ app.post ('/signup' , (req, res) => {
 		var emailData={to,from,subject,body};
 		console.log(emailData);
 
-		// res.status(200).json(accountData);
 		res.status(200).json({status:"USER_SIGN_UP_DONE",custID:accountData.custID})
-		return fetch(config.sendEmailURL, { method: 'POST', 
-                                     body: JSON.stringify(emailData)
-                })
+		return fetch(config.sendEmailURL, {
+			method: 'POST', 
+			body: JSON.stringify(emailData)
+        })
 		
 
 
 	}).then((response) => {
-
 		return response.json();
 	}).then((json) => {
 
 		console.log(json);
+
+
+		var sns = new aws.SNS();
+		var params = {
+
+			Message: JSON.stringify({ 'default' : JSON.stringify(snsEventPayload)}),
+			MessageStructure: 'json',
+			Subject: 'NEW_USER_SIGN_UP',
+			TargetArn: config.snsEventsARN
+		};
+
+		sns.publish(params, function(err, data) {
+  			if (err) console.log(err, err.stack); // an error occurred
+  			else     console.log(data);           // successful response
+		});
 	})
 	.catch ((error) => {
 		console.log(error);

@@ -416,10 +416,7 @@ app.post('/api/orders/createBlankOrder', function(req, res) {
 	.then(function(orderProduct){
 		//dao.disConnectFromDB();
 
-		res.status(202).send({
-			"callback" 	:"/api/orders/poll/"+orderID
-			// "callback" 	:"//"+orderID
-		});
+
 
     //sqs
 
@@ -462,6 +459,10 @@ app.post('/api/orders/createBlankOrder', function(req, res) {
         console.log("Error", err);
       } else {
         console.log("Success", data.MessageId);
+        res.status(202).send({
+          "callback" 	:"/order/"+orderID
+          // "callback" 	:"//"+orderID
+        });
       }
     });
 

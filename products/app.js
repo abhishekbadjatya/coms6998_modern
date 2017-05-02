@@ -48,7 +48,7 @@ app.get('/api/getproducts', function(req, res) {
 
 	/*var productID = req.body.productID;
 	console.log("Saving product... ")
-	
+
 	var product_data = [{productID: 1, productName: 'app1', productPrice: 5},{productID: 2, productName: 'app2', productPrice: 3.99}]
 	res.status(200).send(product_data)
 	*/
@@ -80,7 +80,7 @@ app.get('/api/getproducts', function(req, res) {
 app.post('/api/products', function(req, res) {
 
 	var orderProducts = req.body.orderProducts;
-	
+
 	var productsId = [];
 	var result = [];
 
@@ -124,7 +124,7 @@ app.get('/api/getproducts/:id', function(req, res) {
 	console.log(productID);
 	productModel.findOne({"_id": productID})
 	.then ((product_data) => {
-		
+
 				res.status(200).send({
 				"productId" : product_data._id,
 				"productName" : product_data.productName,
@@ -151,8 +151,8 @@ app.post('/api/getproductsbyid', function(req, res) {
 	productModel.findOne({"_id": productID})
 	.then ((product_data) => {
 
-				res.status(202).send();
-		
+				// res.status(202).send();
+
 				var data = {
 				"productID" : product_data._id,
 				"productName" : product_data.productName,
@@ -166,23 +166,25 @@ app.post('/api/getproductsbyid', function(req, res) {
 			var data_str = JSON.stringify(data)
 			console.log(data_str)
 
-		var sns = new AWS.SNS();
-		
-		var params = {
-		  Message: JSON.stringify({
-		  	"object" : data_str,
-		  	"default" : "Default Message."
-		  }),
+			res.status(200).json({"body" : data});
 
-		  MessageStructure: 'JSON',
-		  Subject: 'createOrder',
-		  TargetArn: config.placeOrderARN
-		};
-		 console.log(params)
-		sns.publish(params, function(err, data) {
-  			if (err) console.log(err, err.stack); // an error occurred
-  			else     console.log(data);           // successful response
-		});
+		// var sns = new AWS.SNS();
+		//
+		// var params = {
+		//   Message: JSON.stringify({
+		//   	"object" : data_str,
+		//   	"default" : "Default Message."
+		//   }),
+		//
+		//   MessageStructure: 'JSON',
+		//   Subject: 'createOrder',
+		//   TargetArn: config.placeOrderARN
+		// };
+		//  console.log(params)
+		// sns.publish(params, function(err, data) {
+  	// 		if (err) console.log(err, err.stack); // an error occurred
+  	// 		else     console.log(data);           // successful response
+		// });
 	})
 	.catch((error) => {
 		console.log(error)

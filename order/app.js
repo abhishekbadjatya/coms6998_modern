@@ -161,112 +161,113 @@ app.post('/api/orders/createOrder', function(req, res) {
 		}).save();
 	})
 	.then(function(orderProduct){*/
-    console.log("about asndasdjaskdjakjdaksjdkasjdkasjdkas");
-		var params = {
-			AttributeNames: [
-				"SentTimestamp"
-			],
-			MaxNumberOfMessages: 1,
-			MessageAttributeNames: [
-				"All"
-			],
-			QueueUrl: config.sqsURL,
-			VisibilityTimeout: 20,
-			WaitTimeSeconds: 5
-		};
-    var deleteParams = null;
+  //   console.log("about asndasdjaskdjakjdaksjdkasjdkasjdkas");
+		// var params = {
+		// 	AttributeNames: [
+		// 		"SentTimestamp"
+		// 	],
+		// 	MaxNumberOfMessages: 1,
+		// 	MessageAttributeNames: [
+		// 		"All"
+		// 	],
+		// 	QueueUrl: config.sqsURL,
+		// 	VisibilityTimeout: 20,
+		// 	WaitTimeSeconds: 5
+		// };
+  //   var deleteParams = null;
 
-    var found = false;
-    console.log(!found);
-    readMessage();
+  //   var found = false;
+  //   console.log(!found);
+    // readMessage();
     // while(!found){
     // sleep(1000);
-    function readMessage(){
-    console.log('inside while');
-		sqs.receiveMessage(params, function(err, data) {
-  		if (err) {
-    		console.log("Receive Error", err);
-  		} else {
-        console.log("inside receiveMessage");
-        console.log(data);
-        if(data.Messages != undefined) {
-  				for(var i = 0; i < data.Messages.length; i++){
-  					var id = JSON.parse(data.Messages[i].Body).orderID;
-            console.log("humara iddd " + id);
-            if(id == orderID){
-              console.log(id);
-              found = true;
-  						deleteParams = {
-  							QueueUrl: config.sqsURL,
-  							ReceiptHandle: data.Messages[i].ReceiptHandle
-  						};
-  						break;
-  					}
-				}
-        console.log(deleteParams);
-        if(found) {
-				sqs.deleteMessage(deleteParams, function(err, data) {
-      		if (err) {
-        		console.log("Delete Error", err);
-      		} else {
-        		console.log("Message Deleted", data);
-            sqs1();
-      		}
-    		});
-        }
-        else{
-          readMessage();
-        }
-      }
-      else{
-        readMessage();
-      }
-       //here if of undefined check ends
-			}
-		});
-    }
+// function readMessage(){
+//     console.log('inside while');
+// 		sqs.receiveMessage(params, function(err, data) {
+//   		if (err) {
+//     		console.log("Receive Error", err);
+//   		} else {
+//         console.log("inside receiveMessage");
+//         console.log(data);
+//         if(data.Messages != undefined) {
+//   				for(var i = 0; i < data.Messages.length; i++){
+//   					var id = JSON.parse(data.Messages[i].Body).orderID;
+//             console.log("humara iddd " + id);
+//             if(id == orderID){
+//               console.log(id);
+//               found = true;
+//   						deleteParams = {
+//   							QueueUrl: config.sqsURL,
+//   							ReceiptHandle: data.Messages[i].ReceiptHandle
+//   						};
+//   						break;
+//   					}
+// 				}
+//         console.log(deleteParams);
+//         if(found) {
+// 				sqs.deleteMessage(deleteParams, function(err, data) {
+//       		if (err) {
+//         		console.log("Delete Error", err);
+//       		} else {
+//         		console.log("Message Deleted", data);
+//             sqs1();
+//       		}
+//     		});
+//         }
+//         else{
+//           readMessage();
+//         }
+//       }
+//       else{
+//         readMessage();
+//       }
+//        //here if of undefined check ends
+// 		}
+// 	});
+// }
 
-function sqs1(){
+// function sqs1(){
 
-		var sqsBody = {
-				"orderID" : orderID,
-				"status"	: status
-		};
+// 		var sqsBody = {
+// 				"orderID" : orderID,
+// 				"status"	: status
+// 		};
 
-		var sqsParams = {
-				DelaySeconds	: 10,
-				MessageAttributes: {
-					"Title": {
-						DataType: "String",
-						StringValue: "The Whistler"
-					},
-					"Author": {
-						DataType: "String",
-						StringValue: "John Grisham"
-					},
-					"WeeksOn": {
-						DataType: "Number",
-						StringValue: "6"
-					}
-				},
-				MessageBody: JSON.stringify(sqsBody),
-				QueueUrl: config.sqsURL
-		};
+// 		var sqsParams = {
+// 				DelaySeconds	: 10,
+// 				MessageAttributes: {
+// 					"Title": {
+// 						DataType: "String",
+// 						StringValue: "The Whistler"
+// 					},
+// 					"Author": {
+// 						DataType: "String",
+// 						StringValue: "John Grisham"
+// 					},
+// 					"WeeksOn": {
+// 						DataType: "Number",
+// 						StringValue: "6"
+// 					}
+// 				},
+// 				MessageBody: JSON.stringify(sqsBody),
+// 				QueueUrl: config.sqsURL
+// 		};
 
-		sqs.sendMessage(sqsParams, function(err, data) {
-			if (err) {
-				console.log("Error", err);
-			} else {
-				console.log("Success", data.MessageId);
-			}
-		});
+// 		sqs.sendMessage(sqsParams, function(err, data) {
+// 			if (err) {
+// 				console.log("Error", err);
+// 			} else {
+// 				console.log("Success", data.MessageId);
+// 			}
+// 		});
 
 
 
-		console.log("Order product created. Everything done");
-		//dao.disConnectFromDB();
-		res.status(200).send({"status" :"SUCCESS"});
-  }
+// 		console.log("Order product created. Everything done");
+// 		//dao.disConnectFromDB();
+// 		res.status(200).send({"status" :"SUCCESS"});
+//   }
+	res.status(200).send({"status":status})
 	})
 	.catch(function(err){
 		//dao.disConnectFromDB();

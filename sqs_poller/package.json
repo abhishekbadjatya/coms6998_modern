@@ -1,0 +1,16 @@
+{
+  "name": "sqs_poller",
+  "version": "1.0.0",
+  "description": "sqs poller for order ms",
+  "main": "sqs_poller.js",
+  "scripts": {
+    "test": "sqs_poller.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "async": "^2.4.0",
+    "aws-sdk": "^2.48.0",
+    "node-fetch": "^1.6.3"
+  }
+}

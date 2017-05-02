@@ -1,0 +1,14 @@
+{
+  "name": "sqs_worker",
+  "version": "1.0.0",
+  "description": "",
+  "main": "sqs_worker.js",
+  "scripts": {
+    "test": "sqs_worker.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "node-fetch": "^1.6.3"
+  }
+}

@@ -416,16 +416,25 @@ app.post('/api/orders/createBlankOrder', function(req, res) {
 		//dao.disConnectFromDB();
 
 		res.status(202).send({
-			//"callback" 	:"/api/orders/poll/"+orderID
-			"callback" 	:"/sqs/"+orderID
+			"callback" 	:"/api/orders/poll/"+orderID
+			// "callback" 	:"//"+orderID
 		});
 
     //sqs
 
+    // var sqsBody = {
+    //     "orderID" : orderID,
+    //     "status"	: "pending"
+    // };
+
     var sqsBody = {
-        "orderID" : orderID,
-        "status"	: "pending"
-    };
+			"order" 	: orderID,
+			"productID" : productID,
+			"custID" : custID,
+			"accountNumber" : accountNumber,
+			"stripeToken" : stripeToken,
+			"status" : "pending"
+	};
 
     var sqsParams = {
         DelaySeconds	: 10,
@@ -457,32 +466,32 @@ app.post('/api/orders/createBlankOrder', function(req, res) {
 
     //sqs
 
-		var sns = new AWS.SNS();
-		var respJSON = {
-			"order" 	: orderID,
-			"productID" : productID,
-			"custID" : custID,
-			"accountNumber" : accountNumber,
-			"stripeToken" : stripeToken,
-		};
-		var respJSONStr = JSON.stringify(respJSON);
-		var params = {
-			Message: JSON.stringify({
-				"object" : respJSONStr,
-				"default" : "Default message."
-			}),
-		  MessageStructure: 'JSON',
-		  Subject: 'pickPrice',
-		  TargetArn: config.takeProductARN
-		};
-		sns.publish(params, function(err, data){
-				if(err) {
-					console.log(err);
-				} else {
-					console.log(data);
-				}
+		// var sns = new AWS.SNS();
+		// var respJSON = {
+		// 	"order" 	: orderID,
+		// 	"productID" : productID,
+		// 	"custID" : custID,
+		// 	"accountNumber" : accountNumber,
+		// 	"stripeToken" : stripeToken,
+		// };
+		// var respJSONStr = JSON.stringify(respJSON);
+		// var params = {
+		// 	Message: JSON.stringify({
+		// 		"object" : respJSONStr,
+		// 		"default" : "Default message."
+		// 	}),
+		//   MessageStructure: 'JSON',
+		//   Subject: 'pickPrice',
+		//   TargetArn: config.takeProductARN
+		// };
+		// sns.publish(params, function(err, data){
+		// 		if(err) {
+		// 			console.log(err);
+		// 		} else {
+		// 			console.log(data);
+		// 		}
 
-		});
+		// });
 
 	})
 	.catch(function(err){

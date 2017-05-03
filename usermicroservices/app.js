@@ -155,6 +155,8 @@ app.post ('/login' , (req, res) => {
 
 
 app.post ('/signup' , (req, res) => {
+	let aws_sns = require('aws-sdk');
+	aws_sns.config={ "accessKeyId": config.aws_accessKeyId_sns, "secretAccessKey": config.aws_secretAccessKey_sns, "region": "us-west-2" };
 
 	let {emailID, password, role} = req.body;
 	let custName = emailID;
@@ -212,7 +214,7 @@ app.post ('/signup' , (req, res) => {
 		console.log(json);
 
 
-		var sns = new aws.SNS();
+		var sns = new aws_sns.SNS();
 		var params = {
 
 			Message: JSON.stringify({ 'default' : JSON.stringify(snsEventPayload)}),

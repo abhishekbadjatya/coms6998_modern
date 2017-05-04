@@ -7,11 +7,10 @@ let urlConstants = () => {
 
 		"login" : baseOrchestratorURL + 'login',
 		"signup" : baseOrchestratorURL + 'signup',
-		"singleCustomerInfo" : baseOrchestratorURL + 'customer-single',
-		"getCustomerAllPurchases" : baseOrchestratorURL + 'customer/app',
+		"singleCustomerInfo" : baseOrchestratorURL + 'customer/self',
 		"newOrder" : baseOrchestratorURL + 'order',
-		"customerAllAccounts" : baseOrchestratorURL + 'account',
-		"customerPurchaseHistory" : baseOrchestratorURL + 'customer/app',
+		"customerAllAccounts" : baseOrchestratorURL + 'account/self',
+		"customerPurchaseHistory" : baseOrchestratorURL + 'customer/self/app',
 		"fetchGroceries" : baseOrchestratorURL + 'app',
 		"sendStripeToken" : baseOrchestratorURL + 'api/gateway/charge',
 		"addProductToUser" : baseOrchestratorURL + 'user/grocery'

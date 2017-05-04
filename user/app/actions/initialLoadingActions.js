@@ -160,7 +160,7 @@ export function fetchGroceries () {
 			dispatch({
 				
 				type : actionConstants.SET_GROCERIES,
-				payload : json
+				payload : json.products
 			
 			});
 
@@ -180,20 +180,22 @@ export function login (emailID, password) {
 
 	return function (dispatch, getState) {
 
-		
+			let responseStatus;
 
 			kfetch(urlConstants.login, {
 
 				method :'POST',
 				body: JSON.stringify({emailID, password})
 			}).then((response) => {
+				let responseStatus = response.status;
+
 				return response.json();
 			}).then((json)=> {
 
 
 
 				if (!json.error) {
-					console.log(json);
+
 					localStorage.setItem('token',json.token);
 
 					dispatch({
@@ -206,16 +208,9 @@ export function login (emailID, password) {
 
 
 				} else {
+					
 
-					if (json.error == "INCORRECT_CREDENTIALS") {
-
-						dispatch (triggerNotification({
-							message : 'Incorrect Crendentials',
-							level: 'error'
-						}));
-
-					}
-					if (json.error == "USER_DOES_NOT_EXIST") {
+					if (json.error.split(" ")[1] == "INCORRECT_CREDENTIALS") {
 
 						dispatch (triggerNotification({
 							message : 'Incorrect Crendentials',
@@ -223,7 +218,15 @@ export function login (emailID, password) {
 						}));
 
 					}
-					if (json.error == 'USER_NOT_VERIFIED') {
+					if (json.error.split(" ")[1] == "USER_DOES_NOT_EXIST") {
+
+						dispatch (triggerNotification({
+							message : 'Incorrect Crendentials',
+							level: 'error'
+						}));
+
+					}
+					if (json.error.split(" ")[1] == 'USER_NOT_VERIFIED') {
 
 						dispatch (triggerNotification({
 							message : 'Please, verify the your email.',
@@ -237,6 +240,10 @@ export function login (emailID, password) {
 
 
 			}).catch((error) => {
+				dispatch (triggerNotification({
+							message : 'Something isn\'t right.',
+							level: 'error'
+				}));
 
 				console.log(error);
 
@@ -282,6 +289,7 @@ export function signUp (payload)  {
 	return function (dispatch, getState)  {
 
 		payload.emailID = payload.username;
+		payload.role = 'CUSTOMER';
 		kfetch(urlConstants.signup, {
 
 			method :'POST',

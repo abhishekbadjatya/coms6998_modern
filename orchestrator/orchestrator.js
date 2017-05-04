@@ -247,6 +247,10 @@ exports.handler = (event, context, callback) => {
                 console.log(json);
                 callback(null, json);
 
+            })
+            .catch((error) => {
+                console.log(error);
+                callback ("500 Internal Server Error");
             });
         }
 

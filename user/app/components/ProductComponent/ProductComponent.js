@@ -21,17 +21,17 @@ class ProductComponent extends React.Component {
 	componentWillMount() {
 		this.props.fetchGroceries();
 		if (this.props.customerAccounts.length > 0) {
-			this.setState({selectedAccount : this.props.customerAccounts[0]._id});
+			this.setState({selectedAccount : this.props.customerAccounts[0].id});
 		}
 
-		this.getUserPurchaseHistoryInterval = setInterval (this.props.getUserPurchaseHistory, 3000);
+		this.getUserPurchaseHistoryInterval = setInterval (this.props.getUserPurchaseHistory, 10000);
 
 	}
 	makeCustomerAccountsForm (customerAccounts) {
 
 		return customerAccounts.map ((singleAccount, index) => {
 
-			return (<option key = {singleAccount._id} value = {singleAccount._id}>{singleAccount.accountLabel}</option>);
+			return (<option key = {singleAccount.id} value = {singleAccount.id}>{singleAccount.accountLabel}</option>);
 		})
 	}
 	onChangeAccountHandler (e) {
@@ -42,7 +42,7 @@ class ProductComponent extends React.Component {
 	isThisProductAlreadyBought (productId, userPurchaseHistory) {
 
 		let product = _.find (userPurchaseHistory, (singlePurchase) => {
-			return singlePurchase.productID == productId;
+			return singlePurchase.productId == productId;
 		});
 
 		return product;
